@@ -25,11 +25,15 @@ def buttonway(list):
         i += 2
     return markup
 
+markup_list = (buttonway(["Проблемы с оборудованием КЕДР", " " , "Проблемы с сетью" ,"Проблемы с программами DCSoft"]) ,
+                   buttonway(["УСО", "Пульт бурильщика", "Датчики", "Кабели", "Назад"]) ,
+                   buttonway(["Wifi точки", "Камеры", "Ip адресса", "Ip телефоны", "Назад"])  ,
+                   buttonway(["DSServer", " ", "DSPlot", "DSDevice", "Назад"]) )
+
 
 @bot.message_handler(commands=['start'])
 def main(message):
     #bot.send_message(message.chat.id, '<b>Привет!</b>', parse_mode='html')
-    markup = buttonway(['Проблемы с оборудованием КЕДР', ' ' , 'Проблемы с сетью' ,'Проблемы с программами DCSoft'])
     """
     markup = types.ReplyKeyboardMarkup()
     markup.add(types.KeyboardButton('Общие проблемы монтажа станции'))
@@ -38,7 +42,7 @@ def main(message):
     markup.row(btn1, btn2)
     """
     text = DB.exe_queryKey("Старт")
-    bot.send_message(message.chat.id, text, reply_markup=markup)
+    bot.send_message(message.chat.id, text, reply_markup=markup_list[0])
     #bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}', reply_markup=markup)
     #bot.register_next_step_handler(message, on_click) Срабатывание следующей функции 
 
@@ -88,6 +92,11 @@ def feedbackSendtext(message):
 
 @bot.message_handler(commands=['site', 'website'])
 def site(message):
+    #bot.send_message(chat_id_Demiurge, message)
+    webbrowser.open('https://gfm.ru/')
+
+@bot.message_handler(commands=['network'])
+def site(message):
     bot.send_message(chat_id_Demiurge, message)
     webbrowser.open('https://gfm.ru/')
 
@@ -134,11 +143,16 @@ def callback_message(callback):
         bot.edit_message_text('Edit text', callback.message.chat.id, callback.message.message_id)
 
 @bot.message_handler()
-def info(message):
-    if message.text.lower() == 'привет':
-        bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}')
-    elif message.text.lower() == 'id':
-        bot.reply_to(message, f'ID: {message.from_user.id}')
+def navigation(message):
+    if message.text.lower() == 'проблемы с оборудованием кедр':
+        bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}',reply_markup=markup_list[1])
+    elif message.text.lower() == 'проблемы с сетью':
+        bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}',reply_markup=markup_list[2])
+    elif message.text.lower() == 'проблемы с программами dcsoft':
+        bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}', reply_markup=markup_list[3])
+    elif message.text.lower() == 'назад':
+        bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}', reply_markup=markup_list[0])
+
 
 
 
