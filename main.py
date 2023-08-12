@@ -47,43 +47,41 @@ def help(message):
     text = DB.exe_queryKey("Помощь")
     bot.send_message(message.chat.id, text)
 
-@bot.message_handler(commands=['mail'])
-def feedback(message):
-    text = DB.exe_queryKey("Сообщить о проблеме")
-    bot.send_message(message.chat.id, text)
-    bot.register_next_step_handler(message, feedbackSend)
-
-@bot.message_handler(commands=['feedback'])
-def feedback(message):
-    text = DB.exe_queryKey("Обратная связь")
-    bot.send_message(message.chat.id, text)
-    bot.register_next_step_handler(message, feedbackSend)
+@bot.message_handler(content_types=['photo','video','voice','video_note','document'])
 def feedbackSend(message):
     if message.content_type == "photo":
-        """
-        if message.media_group_id != None:
-            media = []
-            for i in message.photo:
-                media.append(types.InputMediaPhoto(i.file_id, caption=message.caption))
-            bot.send_media_group(chat_id_Demiurge, media)
-            bot.send_media_group(chat_id_Demiurge,for i in message.photo: telebot.types.InputMediaPhoto.(i.file_id) ) message.photo[0].file_id, f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-            bot.send_photo(chat_id_Shippuden, message.photo[0].file_id, f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-        """
-
         bot.send_photo(chat_id_Demiurge,message.photo[0].file_id,f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
         bot.send_photo(chat_id_Shippuden,message.photo[0].file_id,f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
     elif message.content_type == "video":
         bot.send_video(chat_id_Demiurge, message.video.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
         bot.send_video(chat_id_Shippuden, message.video.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-    elif message.content_type == "voice":
-        bot.send_voice(chat_id_Demiurge,message.voice.file_id)
-        bot.send_voice(chat_id_Shippuden,message.voice.file_id)
+    elif message.content_type == "video_note":
+        bot.send_video_note(chat_id_Demiurge, message.video_note.file_id)
+        bot.send_video_note(chat_id_Shippuden, message.video_note.file_id)
         bot.send_message(chat_id_Demiurge,f"User {message.from_user.username} ID {message.from_user.id}")
         bot.send_message(chat_id_Shippuden,f"User {message.from_user.username} ID {message.from_user.id}")
+    elif message.content_type == "voice":
+        bot.send_voice(chat_id_Demiurge,message.voice.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}")
+        bot.send_voice(chat_id_Shippuden,message.voice.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}")
     elif message.content_type == "document":
         bot.send_document(chat_id_Demiurge, message.document.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
         bot.send_document(chat_id_Shippuden, message.document.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-    elif message.content_type == "text":
+    #bot.send_message(chat_id_Demiurge, message)
+
+@bot.message_handler(commands=['mail'])
+def feedback(message):
+    text = DB.exe_queryKey("Сообщить о проблеме")
+    bot.send_message(message.chat.id, text)
+    bot.register_next_step_handler(message, feedbackSendtext)
+
+@bot.message_handler(commands=['feedback'])
+def feedback(message):
+    text = DB.exe_queryKey("Обратная связь")
+    bot.send_message(message.chat.id, text)
+    bot.register_next_step_handler(message, feedbackSendtext)
+
+def feedbackSendtext(message):
+    if message.content_type == "text":
         bot.send_message(chat_id_Demiurge,f"User {message.from_user.username} ID {message.from_user.id}: {message.text}")
         bot.send_message(chat_id_Shippuden, f"User {message.from_user.username} ID {message.from_user.id}: {message.text}")
     bot.send_message(chat_id_Demiurge, message)
@@ -134,10 +132,6 @@ def callback_message(callback):
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
     elif callback.data == 'edit':
         bot.edit_message_text('Edit text', callback.message.chat.id, callback.message.message_id)
-
-#@bot.message_handler(content_types=['photo'])
-#def get_photo(message):
-    #bot.reply_to(message, 'Nice')
 
 @bot.message_handler()
 def info(message):
