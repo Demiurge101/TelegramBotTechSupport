@@ -12,35 +12,45 @@ chat_id_Shippuden = Config.Shippuden
 
 bot = telebot.TeleBot(Config.Token)
 
-def buttonway(list):
-    markup = types.ReplyKeyboardMarkup()
-    i = 0
-    while i < len(list):
-        btn1 = types.KeyboardButton(list[i])
-        if i + 1 < len(list) and list[i + 1] != " ":
-            btn2 = types.KeyboardButton(list[i + 1])
-            markup.row(btn1, btn2)
-        else:
-            markup.row(btn1)
-        i += 2
+def buttonway(list, button):
+    if button == "Reply":
+        markup = types.ReplyKeyboardMarkup()
+        i = 0
+        while i < len(list):
+            btn1 = types.KeyboardButton(list[i])
+            if i + 1 < len(list) and list[i + 1] != " ":
+                btn2 = types.KeyboardButton(list[i + 1])
+                markup.row(btn1, btn2)
+            else:
+                markup.row(btn1)
+            i += 2
+    elif button == "Inline":
+        markup = types.InlineKeyboardMarkup()
+        i = 0
+        while i < len(list):
+            btn1 = types.InlineKeyboardButton(list[i], callback_data=list[i])
+            if i + 1 < len(list) and list[i + 1] != " ":
+                btn2 = types.InlineKeyboardButton(list[i + 1], callback_data=list[i])
+                markup.row(btn1, btn2)
+            else:
+                markup.row(btn1)
+            i += 2
     return markup
 
-markup_list = (buttonway(["Проблемы с оборудованием КЕДР", " " , "Проблемы с сетью" ,"Проблемы с программами DCSoft"]) ,
-                   buttonway(["УСО", "Пульт бурильщика", "Датчики", "Кабели", "Назад"]) ,
-                   buttonway(["Wifi точки", "Камеры", "Ip адресса", "Ip телефоны", "Назад"])  ,
-                   buttonway(["DSServer", " ", "DSPlot", "DSDevice", "Назад"]) )
+markup_list = (buttonway(["Проблемы с оборудованием КЕДР", " " , "Проблемы с сетью" ,"Проблемы с программами DCSoft"], "Reply") ,
+                   buttonway(["УСО", "Пульт бурильщика", "Датчики", "Кабели", "Назад"], "Reply") ,
+                   buttonway(["Wifi точки", "Камеры", "Ip адресса", "Ip телефоны и атс", "Назад"], "Reply")  ,
+                   buttonway(["DSServer", " ", "DSPlot", "DSDevice", "Назад"], "Reply") )
 
+markup_list_inline = (buttonway(["Ubiquiti", "TP-Link"], "Inline"),
+                      buttonway(["Fanvil X4","Fanvil X1", "Yeastar S20", "Yeastar S50"], "Inline"),
+                      buttonway(["Кабели датчиков ГТИ","Магистральные Кабели"], "Inline")
+                      )
 
 @bot.message_handler(commands=['start'])
 def main(message):
     #bot.send_message(message.chat.id, '<b>Привет!</b>', parse_mode='html')
-    """
-    markup = types.ReplyKeyboardMarkup()
-    markup.add(types.KeyboardButton('Общие проблемы монтажа станции'))
-    btn1 = types.KeyboardButton('Проблемы с сетью')
-    btn2 = types.KeyboardButton('Проблемы с программами DCSoft')
-    markup.row(btn1, btn2)
-    """
+
     text = DB.exe_queryKey("Старт")
     bot.send_message(message.chat.id, text, reply_markup=markup_list[0])
     #bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}', reply_markup=markup)
@@ -88,17 +98,18 @@ def feedbackSendtext(message):
     if message.content_type == "text":
         bot.send_message(chat_id_Demiurge,f"User {message.from_user.username} ID {message.from_user.id}: {message.text}")
         bot.send_message(chat_id_Shippuden, f"User {message.from_user.username} ID {message.from_user.id}: {message.text}")
-    bot.send_message(chat_id_Demiurge, message)
+    #bot.send_message(chat_id_Demiurge, message)
 
 @bot.message_handler(commands=['site', 'website'])
 def site(message):
     #bot.send_message(chat_id_Demiurge, message)
     webbrowser.open('https://gfm.ru/')
 
-@bot.message_handler(commands=['network'])
-def site(message):
-    bot.send_message(chat_id_Demiurge, message)
-    webbrowser.open('https://gfm.ru/')
+@bot.message_handler(commands=['network', 'wifi', 'telephones',
+                               'hardware','cables',
+                               'software'])
+def net(message):
+    navigation(message)
 
 @bot.message_handler(commands=['table'])
 def gettable(message):
@@ -144,14 +155,20 @@ def callback_message(callback):
 
 @bot.message_handler()
 def navigation(message):
-    if message.text.lower() == 'проблемы с оборудованием кедр':
-        bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}',reply_markup=markup_list[1])
-    elif message.text.lower() == 'проблемы с сетью':
-        bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}',reply_markup=markup_list[2])
-    elif message.text.lower() == 'проблемы с программами dcsoft':
-        bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}', reply_markup=markup_list[3])
+    if message.text.lower() == 'проблемы с оборудованием кедр' or message.text== '/hardware':
+        bot.send_message(message.chat.id, f'Пусто',reply_markup=markup_list[1])
+    elif message.text.lower() == 'кабели' or message.text == '/cables':
+        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[2])
+    elif message.text.lower() == 'проблемы с сетью' or message.text == '/network':
+        bot.send_message(message.chat.id, f'Пусто',reply_markup=markup_list[2])
+    elif message.text.lower() == 'wifi точки' or message.text == '/wifi':
+        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[0])
+    elif message.text.lower() == 'ip телефоны и атс' or message.text == '/telephones':
+        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[1])
+    elif message.text.lower() == 'проблемы с программами dcsoft' or message.text == '/software':
+        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list[3])
     elif message.text.lower() == 'назад':
-        bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}', reply_markup=markup_list[0])
+        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list[0])
 
 
 
