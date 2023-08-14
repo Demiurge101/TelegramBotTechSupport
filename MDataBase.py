@@ -29,6 +29,7 @@ class Database:
     def exe_query(self, query):
         with self.connection.cursor() as cursor:
             cursor.execute(query)
+            self.connection.commit()
     def map_table(self):
         with self.connection.cursor() as cursor:
             cursor.execute("select * from map")
@@ -52,5 +53,11 @@ class Database:
             cursor.execute(f"select text_val from map where key_val = \"{key}\"")
             res = cursor.fetchall()
             return res[0]['text_val']
+
+    def exe_queryPath(self, key):
+        with self.connection.cursor() as cursor:
+            cursor.execute(f"select dir from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
+            res = cursor.fetchall()
+            return res
     def close_connect(self):
         self.connection.close()

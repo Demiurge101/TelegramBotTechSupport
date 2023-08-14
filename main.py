@@ -3,6 +3,7 @@ from telebot import types
 import webbrowser
 import MDataBase
 import Config
+import os
 
 DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 DB.connect()
@@ -111,6 +112,14 @@ def site(message):
 def net(message):
     navigation(message)
 
+@bot.message_handler(commands=['books'])
+def books(message):
+    text = DB.exe_queryKey("Материалы")
+    dirs = DB.exe_queryPath("Материалы")
+    bot.send_message(message.chat.id, text)
+    sendMedia(message, dirs)
+
+
 @bot.message_handler(commands=['table'])
 def gettable(message):
     if message.from_user.id == chat_id_Shippuden or message.from_user.id == chat_id_Demiurge:
@@ -170,7 +179,30 @@ def navigation(message):
     elif message.text.lower() == 'назад':
         bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list[0])
 
-
-
+def sendMedia(message, dirs):
+    files = []
+    type_names = []
+    for i in dirs:
+        type_names.append(os.path.basename(i['dir']))
+        files.append(os.listdir(i['dir']))
+    dir = os.path.dirname(dirs[0]['dir'])
+    media = []
+    i = 0
+    while i < type_names.__len__():
+        if type_names[i] == "document":
+            media.clear()
+            for j in files[i]:
+                media.append(types.InputMediaDocument(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
+        elif type_names[i] == "photo":
+            media.clear()
+            for j in files[i]:
+                media.append(types.InputMediaPhoto(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
+        elif type_names[i] == "video":
+            media.clear()
+            for j in files[i]:
+                media.append(types.InputMediaVideo(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
+        if len(media) != 0:
+            bot.send_media_group(message.chat.id, media)
+        i += 1
 
 bot.polling(none_stop=True)
