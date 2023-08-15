@@ -180,29 +180,36 @@ def navigation(message):
         bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list[0])
 
 def sendMedia(message, dirs):
-    files = []
-    type_names = []
-    for i in dirs:
-        type_names.append(os.path.basename(i['dir']))
-        files.append(os.listdir(i['dir']))
-    dir = os.path.dirname(dirs[0]['dir'])
-    media = []
-    i = 0
-    while i < type_names.__len__():
-        if type_names[i] == "document":
-            media.clear()
-            for j in files[i]:
-                media.append(types.InputMediaDocument(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
-        elif type_names[i] == "photo":
-            media.clear()
-            for j in files[i]:
-                media.append(types.InputMediaPhoto(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
-        elif type_names[i] == "video":
-            media.clear()
-            for j in files[i]:
-                media.append(types.InputMediaVideo(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
-        if len(media) != 0:
-            bot.send_media_group(message.chat.id, media)
-        i += 1
-
+    if dirs is not None:
+        files = []
+        type_names = []
+        for i in dirs:
+            type_names.append(os.path.basename(i['dir']))
+            files.append(os.listdir(i['dir']))
+        dir = os.path.dirname(dirs[0]['dir'])
+        media = []
+        i = 0
+        while i < type_names.__len__():
+            if type_names[i] == "document":
+                media.clear()
+                for j in files[i]:
+                    media.append(types.InputMediaDocument(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
+            elif type_names[i] == "photo":
+                media.clear()
+                for j in files[i]:
+                    media.append(types.InputMediaPhoto(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
+            elif type_names[i] == "video":
+                media.clear()
+                for j in files[i]:
+                    media.append(types.InputMediaVideo(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
+            if len(media) != 0:
+                if len(media) > 10:
+                    submedia = media[0:10]
+                    media = media[10:]
+                    bot.send_media_group(message.chat.id, submedia)
+                    bot.send_media_group(message.chat.id, media)
+                else:
+                    bot.send_media_group(message.chat.id, media)
+            i += 1
+            
 bot.polling(none_stop=True)

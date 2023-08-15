@@ -11,6 +11,9 @@ class Database:
         self.password = password
         self.db_name = db_name
 
+    def __del__(self):
+        self.close_connect()
+
     def connect(self):
         try:
             self.connection = pymysql.connect(
@@ -54,8 +57,18 @@ class Database:
             res = cursor.fetchall()
             return res[0]['text_val']
 
+    def is_content(self, key):
+        with self.connection.cursor() as cursor:
+            cursor.execute(f"select is_content from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
+            res = cursor.fetchall()
+            for i in res:
+                if i['is_content'] == True:
+                    return True
+            return False
     def exe_queryPath(self, key):
         with self.connection.cursor() as cursor:
+            if not self.is_content(key):
+                return None
             cursor.execute(f"select dir from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
             res = cursor.fetchall()
             return res
