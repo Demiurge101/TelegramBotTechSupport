@@ -117,7 +117,14 @@ def books(message):
     text = DB.exe_queryKey("Материалы")
     dirs = DB.exe_queryPath("Материалы")
     bot.send_message(message.chat.id, text)
-    sendMedia(message, dirs)
+    sendMedia(message, dirs, 'ts')
+
+@bot.message_handler(commands=['son'])
+def sysonenum(message):
+   # text = DB.exe_queryKey("Материалы")
+   # dirs = DB.exe_queryPath("Материалы")
+   bot.send_message(message.chat.id, "Введите номер датчика")
+   bot.register_next_step_handler(message, son)
 
 
 @bot.message_handler(commands=['table'])
@@ -179,20 +186,27 @@ def navigation(message):
     elif message.text.lower() == 'назад':
         bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list[0])
 
-def sendMedia(message, dirs):
+def sendMedia(message, dirs, method):
     if dirs is not None:
         files = []
         type_names = []
-        for i in dirs:
-            type_names.append(os.path.basename(i['dir']))
-            files.append(os.listdir(i['dir']))
-        dir = os.path.dirname(dirs[0]['dir'])
+        if method == 'son':
+            for i in dirs:
+                type_names.append(os.path.basename(i))
+                files.append(os.listdir(i))
+            dir = os.path.dirname(dirs[0])
+        else:
+            for i in dirs:
+                type_names.append(os.path.basename(i['dir']))
+                files.append(os.listdir(i['dir']))
+            dir = os.path.dirname(dirs[0]['dir'])
         media = []
         i = 0
         while i < type_names.__len__():
             if type_names[i] == "document":
                 media.clear()
                 for j in files[i]:
+                    s = f"{dir}/{type_names[i]}/{j}"
                     media.append(types.InputMediaDocument(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
             elif type_names[i] == "photo":
                 media.clear()
@@ -203,13 +217,24 @@ def sendMedia(message, dirs):
                 for j in files[i]:
                     media.append(types.InputMediaVideo(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
             if len(media) != 0:
-                if len(media) > 10:
+                while len(media) > 10:
                     submedia = media[0:10]
                     media = media[10:]
                     bot.send_media_group(message.chat.id, submedia)
-                    bot.send_media_group(message.chat.id, media)
+                    #bot.send_media_group(message.chat.id, media)
                 else:
                     bot.send_media_group(message.chat.id, media)
             i += 1
-            
+
+def son(message):
+    number = message.text
+    dir = "./son"
+    l_dirs = list(os.walk(dir))
+    for i in l_dirs:
+        if os.path.basename(i[0]) == number:
+            dirs = []
+            for j in os.listdir(i[0]):
+                dirs.append(f"{i[0]}/{j}")
+            sendMedia(message, dirs, 'son')
+
 bot.polling(none_stop=True)
