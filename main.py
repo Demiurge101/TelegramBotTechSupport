@@ -8,8 +8,9 @@ import os
 DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 DB.connect()
 
-chat_id_Demiurge = Config.demiurge
+chat_id_Demiurge = Config.Demiurge
 chat_id_Shippuden = Config.Shippuden
+chat_id_ITGenerator = Config.ITGenerator
 
 bot = telebot.TeleBot(Config.Token)
 
@@ -45,8 +46,11 @@ markup_list = (buttonway(["Проблемы с оборудованием КЕД
 
 markup_list_inline = (buttonway(["Ubiquiti", "TP-Link"], "Inline"),
                       buttonway(["Fanvil X4","Fanvil X1", "Yeastar S20", "Yeastar S50"], "Inline"),
-                      buttonway(["Кабели датчиков ГТИ","Магистральные Кабели"], "Inline")
-                      )
+                      buttonway(["Кабели датчиков ГТИ","Магистральные Кабели"], "Inline"),
+                      buttonway(["УСО Exd PowerLine","УСО Exd WDSL", "УСО Exn WDSL"], "Inline"),
+                      buttonway(["ПНД Exd PowerLine","ПНД Exd WDSL", "ПНД Exn WDSL"], "Inline"),
+                      buttonway(["ДНК","ДДИ", "ДУП", "РУД", "ДОП-М", "БЗУД", "ДТ"], "Inline"),
+                    )
 
 @bot.message_handler(commands=['start'])
 def main(message):
@@ -129,28 +133,34 @@ def sysonenum(message):
 
 @bot.message_handler(commands=['table'])
 def gettable(message):
-    if message.from_user.id == chat_id_Shippuden or message.from_user.id == chat_id_Demiurge:
+    if message.from_user.id == chat_id_Shippuden or message.from_user.id == chat_id_Demiurge\
+            or chat_id_ITGenerator:
         table = DB.map_table()
         for row in table:
             bot.send_message(message.chat.id,f"{row['id']}\t {row['key_val']}  \n {row['text_val']}")
 
 @bot.message_handler(commands=['add', 'update', 'delete'])
 def add(message):
-    if message.from_user.id == chat_id_Shippuden or message.from_user.id == chat_id_Demiurge:
+    if message.from_user.id == chat_id_Shippuden or message.from_user.id == chat_id_Demiurge\
+            or chat_id_ITGenerator:
         if message.text == "/update":
             bot.send_message(message.chat.id,"Введи ключ который у тебя уже есть для изменения соблюдая регистр и пробелы ")
         elif message.text == "/delete":
             bot.send_message(message.chat.id, "Введи ключ который ты хочешь удалить соблюдая регистр и пробелы ")
         elif message.text == "/add":
             bot.send_message(message.chat.id, "Первым сообщением введи ключ. Ключи не должны повторятся!!! До 100 символов.")
+        bot.send_message(message.chat.id, "Введите назад или отмена для отмены действия ")
         bot.register_next_step_handler(message, addkey, message.text)
 
 def addkey(message, *args):
-    method = args[0]
-    key = message.text
-    if method != '/delete':
-        bot.send_message(message.chat.id, "Теперь можешь вводи текст до 3000 символов. \\n это символ для переноса строки")
-    bot.register_next_step_handler(message, addtext, key, method)
+    if(message.text.lower() == 'назад' or message.text.lower() == 'отмена'):
+        bot.send_message(message.chat.id, "Действие отменено")
+    else:
+        method = args[0]
+        key = message.text
+        if method != '/delete':
+            bot.send_message(message.chat.id, "Теперь можешь вводи текст до 3000 символов. \\n это символ для переноса строки")
+        bot.register_next_step_handler(message, addtext, key, method)
 
 def addtext(message, *args):
     text = message.text
@@ -171,20 +181,26 @@ def callback_message(callback):
 
 @bot.message_handler()
 def navigation(message):
-    if message.text.lower() == 'проблемы с оборудованием кедр' or message.text== '/hardware':
-        bot.send_message(message.chat.id, f'Пусто',reply_markup=markup_list[1])
+    if message.text.lower() == 'проблемы с оборудованием кедр' or message.text == '/hardware':
+        bot.send_message(message.chat.id, DB.exe_queryKey('Кедр'),reply_markup=markup_list[1])
     elif message.text.lower() == 'кабели' or message.text == '/cables':
         bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[2])
+    elif message.text.lower() == 'усо' or message.text == '/uso':
+        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[3])
+    elif message.text.lower() == 'пульт бурильщика' or message.text == '/pnd':
+        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[4])
+    elif message.text.lower() == 'датчики' or message.text == '/sensors':
+        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[5])
     elif message.text.lower() == 'проблемы с сетью' or message.text == '/network':
-        bot.send_message(message.chat.id, f'Пусто',reply_markup=markup_list[2])
+        bot.send_message(message.chat.id, DB.exe_queryKey('Сеть'), reply_markup=markup_list[2])
     elif message.text.lower() == 'wifi точки' or message.text == '/wifi':
         bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[0])
     elif message.text.lower() == 'ip телефоны и атс' or message.text == '/telephones':
         bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[1])
     elif message.text.lower() == 'проблемы с программами dcsoft' or message.text == '/software':
-        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list[3])
+        bot.send_message(message.chat.id, DB.exe_queryKey('DCSoft'), reply_markup=markup_list[3])
     elif message.text.lower() == 'назад':
-        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list[0])
+        bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
 
 def sendMedia(message, dirs, method):
     if dirs is not None:
