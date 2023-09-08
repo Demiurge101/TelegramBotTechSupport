@@ -5,6 +5,8 @@ import MDataBase
 import Config
 import os
 
+# test
+
 DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 DB.connect()
 
