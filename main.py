@@ -134,10 +134,22 @@ def sysonenum(message):
    # dirs = DB.exe_queryPath("Материалы")
 
    # AUTH here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   if SN.check_user(message.from_user.id) == False:
+    bot.send_message(message.chat.id, "Введите код доступа (номер договора)")
+    bot.register_next_step_handler(message, adduser)
+    return
 
    bot.send_message(message.chat.id, "Введите номер датчика")
    bot.register_next_step_handler(message, son)
 
+
+def adduser(message):
+    if SN.add_user(message.text, message.from_user.id, message.from_user.first_name) == False:
+        bot.send_message(message.chat.id, "Отказ!")
+        return
+    else:
+        bot.send_message(message.chat.id, "Введите номер датчика")
+        bot.register_next_step_handler(message, son)
 
 @bot.message_handler(commands=['table'])
 def gettable(message):
