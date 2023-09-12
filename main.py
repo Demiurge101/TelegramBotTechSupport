@@ -9,6 +9,7 @@ import os
 #test branch gen
 
 
+
 DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 =======
 DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
