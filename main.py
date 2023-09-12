@@ -318,6 +318,7 @@ def sendMedia(message, dirs, method):
                     bot.send_media_group(message.chat.id, media)
             i += 1
 
+
 def son(message, overcount=0):
     number = message.text
     dir = "./son"
@@ -326,6 +327,7 @@ def son(message, overcount=0):
     for i in l_dirs:
         if os.path.basename(i[0]) == number:
             check_number = True
+            overcount = 0
             dirs = []
             for j in os.listdir(i[0]):
                 dirs.append(f"{i[0]}/{j}")
@@ -333,11 +335,11 @@ def son(message, overcount=0):
     if check_number == False:
         if(message.text in {"/cancel", "/back", "Назад"}) or (overcount > 10):
             if(overcount > 10):
-                bot.send_message(message.chat.id, "Слишком большое количество ошибок")
+                bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
             bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
             return
         overcount += 1
         bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.")
-        bot.register_next_step_handler(message, son)
+        bot.register_next_step_handler(message, son, overcount)
 
 bot.polling(none_stop=True)
