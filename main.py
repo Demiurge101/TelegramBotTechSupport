@@ -5,11 +5,18 @@ import MDataBase
 import Config
 import os
 
+<<<<<<< HEAD
 #test branch gen
 
 
 DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
+=======
+DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
+>>>>>>> dem
 DB.connect()
+
+SN = MDataBase.DatabaseAuthSon("localhost", "root", Config.password, Config.bd_name_son)
+SN.connect()
 
 chat_id_Demiurge = Config.Demiurge
 chat_id_Shippuden = Config.Shippuden
@@ -177,10 +184,17 @@ def addtext(message, *args):
 
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
+<<<<<<< HEAD
     if callback.data == 'delete':
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
     elif callback.data == 'edit':
         bot.edit_message_text('Edit text', callback.message.chat.id, callback.message.message_id)
+=======
+    bot.send_message(callback.message.chat.id, DB.exe_queryKey(callback.data))
+    sendMedia(callback.message, DB.exe_queryPath(callback.data), 'ts')
+
+
+>>>>>>> dem
 
 @bot.message_handler()
 def navigation(message):
