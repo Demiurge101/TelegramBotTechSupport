@@ -56,6 +56,11 @@ class Database:
 
 
 
+
+
+
+
+
 class DatabaseTS(Database):
     "Database class for TechSupport"
     def map_table(self):
@@ -141,13 +146,23 @@ class DatabaseAuthSon(Database):
 
 class SonDB(Database):
     """Database for SON paths"""
+    def addStation(self, serial_id, mkcb, date, description=""):
+        self.commit(f"insert into stations(serial_number, mkcb, date_out, description_) \
+            value({serial_id}, \"{mkcb}\", {date}, \"{description}\")")
 
+    def addDevice(self, serial_id, station_id, name, mkcb, date, path, description):
+        self.commit(f"insert into devices(serial_number, station_number, device_name, mkcb, date_out, location, description_) \
+            value({serial_id}, {station_id}, \"{name}\", \"{mkcb}\", {date}, \"{path}\", \"{description}\")")
 
+    def getDevice(self, serial_number):
+        return
 
+    def getStation(self, serial_number):
+        return
 
-    def delDevice(self, serial_number, tp="device"):
-        self.commit(f"delete from {tp}s where serial_number = {serial_number}", "delete serial_number error")
+    def deleteDevice(self, serial_number, tp="device"):
+        self.commit(f"delete from {tp}s where serial_number = {serial_number}", "delete <serial_number> error")
 
     def delStation(self, serial_number):
-        delDevice(serial_number, "station")
+        deleteDevice(serial_number, "station")
         

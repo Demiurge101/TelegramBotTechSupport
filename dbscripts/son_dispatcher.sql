@@ -9,8 +9,8 @@ CREATE TABLE stations
   -- id INT(4) NOT NULL AUTO_INCREMENT,
     serial_number INT(4) NOT NULL unique,
     mkcb varchar(20) not null,
-    date_out date not null,
-    description varchar(100),
+    date_out date,
+    description_ varchar(100),
     CONSTRAINT pk_stations
     PRIMARY KEY(serial_number)
 );
@@ -19,12 +19,12 @@ CREATE TABLE devices
 (
   -- id INT(4) NOT NULL AUTO_INCREMENT,
      serial_number INT(4) NOT NULL unique,
-     station_number INT(4) NOT NULL,
+     station_number INT(4),
      device_name varchar(30) not null,
      mkcb varchar(20) not null,
-     date_out date not null,
-     location varchar(255),
-     description varchar(100),
+     date_out date,
+     location varchar(255) not null,
+     description_ varchar(100),
     CONSTRAINT PK_devices
     PRIMARY KEY(serial_number),
   CONSTRAINT FK_devices
