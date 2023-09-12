@@ -5,15 +5,9 @@ import MDataBase
 import Config
 import os
 
-<<<<<<< HEAD
-#test branch gen
-
-
 
 DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
-=======
 DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
->>>>>>> dem
 DB.connect()
 
 SN = MDataBase.DatabaseAuthSon("localhost", "root", Config.password, Config.bd_name_son)
@@ -182,20 +176,64 @@ def addtext(message, *args):
     elif args[1] == "/update":
         DB.update_text(args[0], text)
 
+@bot.message_handler(commands=['map'])
+def project_map(message, *args):
+    print("map")
+    text = "\
+    Проблемы с оборудованием КЕДР (/hardware)\r\n\
+        УСО (/uso)\r\n\
+            УСО Exd PowerLine (hole)\r\n\
+            УСО Exd WDSL (hole)\r\n\
+            УСО Exn WDSL (hole)\r\n\
+        Пульт бурильщика (/pnd)\r\n\
+            ПНД Exd PowerLine (hole)\r\n\
+            ПНД Exd WDSL (hole)\r\n\
+            ПНД Exn WDSL (hole)\r\n\
+        Датчики (/sensors)\r\n\
+            ДНК (hole)\r\n\
+            ДДИ (hole)\r\n\
+            ДУП (hole)\r\n\
+            РУД (hole)\r\n\
+            ДОП-М (hole)\r\n\
+            БЗУД (hole)\r\n\
+            ДТ (hole)\r\n\
+        Кабели (/cables)\r\n\
+            Кабели датчиков ГТИ (hole)\r\n\
+            Магистральные Кабели (hole)\r\n\
+    Проблемы с сетью (/network)\r\n\
+        Wifi точки (/wifi)\r\n\
+            Ubiquiti (hole)\r\n\
+            TP-Link (hole)\r\n\
+        Камеры (/camers) (hole)\r\n\
+        Ip адресса (/ip) (hole)\r\n\
+        Ip телефоны и атс (/telephones)\r\n\
+            Fanvil X1 (hole)\r\n\
+            Fanvil X4 (hole)\r\n\
+            Yeastar S20 (hole)\r\n\
+            Yeastar S50 (hole)\r\n\
+    Проблемы с программами DCSoft (/software)\r\n\
+        DSServer (/DSServer) (hole)\r\n\
+        DSPlot (/DSPlot) (hole)\r\n\
+        DSDevice (/DSDevice) (hole)\r\n\
+        \r\n\
+    /help\r\n\
+        ...\r\n\
+        /books - Обучающие материалы \r\n\
+        /mail - Сообщить о проблеме \r\n\
+        /feedback - сообщение об ошибке или предложение по улучшению\r\n\
+        /son - Система одного номера\r\n\
+    "
+    bot.send_message(message.chat.id, text)
 
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
-<<<<<<< HEAD
     if callback.data == 'delete':
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
     elif callback.data == 'edit':
         bot.edit_message_text('Edit text', callback.message.chat.id, callback.message.message_id)
-=======
     bot.send_message(callback.message.chat.id, DB.exe_queryKey(callback.data))
     sendMedia(callback.message, DB.exe_queryPath(callback.data), 'ts')
 
-
->>>>>>> dem
 
 @bot.message_handler()
 def navigation(message):
@@ -263,12 +301,19 @@ def sendMedia(message, dirs, method):
 def son(message):
     number = message.text
     dir = "./son"
+    check_number = False
     l_dirs = list(os.walk(dir))
     for i in l_dirs:
         if os.path.basename(i[0]) == number:
+            check_number = True
             dirs = []
             for j in os.listdir(i[0]):
                 dirs.append(f"{i[0]}/{j}")
             sendMedia(message, dirs, 'son')
+    if check_number == False:
+        if(message.text in {"/cancel", "/back", "Назад"}):
+            return
+        bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.")
+        bot.register_next_step_handler(message, son)
 
 bot.polling(none_stop=True)
