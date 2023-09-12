@@ -13,6 +13,7 @@ DB.connect()
 SN = MDataBase.DatabaseAuthSon("localhost", "root", Config.password, Config.bd_name_son)
 SN.connect()
 
+# admins
 chat_id_Demiurge = Config.Demiurge
 chat_id_Shippuden = Config.Shippuden
 chat_id_ITGenerator = Config.ITGenerator
@@ -144,7 +145,7 @@ def sysonenum(message):
 
 
 def adduser(message):
-    if SN.add_user(message.text, message.from_user.id, message.from_user.first_name) == False:
+    if SN.add_user(message.text, message.from_user.id, message.from_user.username) == False:
         bot.send_message(message.chat.id, "Отказ!")
         return
     else:
