@@ -48,8 +48,9 @@ def buttonway(list, button):
 markup_list = (buttonway(["Проблемы с оборудованием КЕДР", "Проблемы с сетью" ,"Проблемы с программами DCSoft", "Система одного номера"], "Reply") ,
                    buttonway(["УСО", "Пульт бурильщика", "Датчики", "Кабели", "Назад"], "Reply") ,
                    buttonway(["Wifi точки", "Камеры", "Ip адресса", "Ip телефоны и атс", "Назад"], "Reply")  ,
-                   buttonway(["DSServer", " ", "DSPlot", "DSDevice", "Назад"], "Reply"),
-                   buttonway(["Назад"], "Reply") )
+                   buttonway(["DSServer", " ", "DSPlot", "DSDevice", "Назад"], "Reply"))
+
+son_main_menu = (buttonway(["Назад"], "Reply"))
 
 markup_list_inline = (buttonway(["Ubiquiti", "TP-Link"], "Inline"),
                       buttonway(["Fanvil X4","Fanvil X1", "Yeastar S20", "Yeastar S50"], "Inline"),
@@ -137,11 +138,11 @@ def sysonenum(message):
 
    # AUTH here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    if SN.check_user(message.from_user.id) == False:
-    bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=markup_list[4])
+    bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=son_main_menu)
     bot.register_next_step_handler(message, adduser)
     return
 
-   bot.send_message(message.chat.id, "Введите номер датчика")
+   bot.send_message(message.chat.id, "Введите номер датчика", reply_markup=son_main_menu)
    bot.register_next_step_handler(message, son)
 
 
@@ -317,7 +318,7 @@ def sendMedia(message, dirs, method):
                     bot.send_media_group(message.chat.id, media)
             i += 1
 
-def son(message):
+def son(message, overcount=0):
     number = message.text
     dir = "./son"
     check_number = False
@@ -330,8 +331,12 @@ def son(message):
                 dirs.append(f"{i[0]}/{j}")
             sendMedia(message, dirs, 'son')
     if check_number == False:
-        if(message.text in {"/cancel", "/back", "Назад"}):
+        if(message.text in {"/cancel", "/back", "Назад"}) or (overcount > 10):
+            if(overcount > 10):
+                bot.send_message(message.chat.id, "Слишком большое количество ошибок")
+            bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
             return
+        overcount += 1
         bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.")
         bot.register_next_step_handler(message, son)
 
