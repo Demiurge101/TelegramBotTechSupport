@@ -6,7 +6,7 @@ import Config
 import os
 
 
-DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
+# DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
 DB.connect()
 
@@ -44,7 +44,7 @@ def buttonway(list, button):
             i += 2
     return markup
 
-markup_list = (buttonway(["Проблемы с оборудованием КЕДР", " " , "Проблемы с сетью" ,"Проблемы с программами DCSoft"], "Reply") ,
+markup_list = (buttonway(["Проблемы с оборудованием КЕДР", ". " , "Проблемы с сетью" ,"Проблемы с программами DCSoft", "Система одного номера"], "Reply") ,
                    buttonway(["УСО", "Пульт бурильщика", "Датчики", "Кабели", "Назад"], "Reply") ,
                    buttonway(["Wifi точки", "Камеры", "Ip адресса", "Ip телефоны и атс", "Назад"], "Reply")  ,
                    buttonway(["DSServer", " ", "DSPlot", "DSDevice", "Назад"], "Reply") )
@@ -132,6 +132,9 @@ def books(message):
 def sysonenum(message):
    # text = DB.exe_queryKey("Материалы")
    # dirs = DB.exe_queryPath("Материалы")
+
+   # AUTH here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
    bot.send_message(message.chat.id, "Введите номер датчика")
    bot.register_next_step_handler(message, son)
 
@@ -255,6 +258,8 @@ def navigation(message):
         bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[1])
     elif message.text.lower() == 'проблемы с программами dcsoft' or message.text == '/software':
         bot.send_message(message.chat.id, DB.exe_queryKey('DCSoft'), reply_markup=markup_list[3])
+    elif message.text.lower() == "система одного номера":
+        sysonenum(message)
     elif message.text.lower() == 'назад':
         bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
 
