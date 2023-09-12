@@ -41,6 +41,7 @@ class Database:
                 self.connection.commit()
                 return True
             except Exception as ex:
+                print(cmd)
                 print(err)
                 print(ex)
                 return False
@@ -48,8 +49,15 @@ class Database:
 
     def fetchall(self, cmd, err="fetch error"):
          with self.connection.cursor() as cursor:
-            cursor.execute(cmd)
-            return cursor.fetchall()
+            try:
+                cursor.execute(cmd)
+                return cursor.fetchall()
+            except Exception as ex:
+                print(cmd)
+                print(err)
+                print(ex)
+                return
+            return
 
     def close_connect(self):
         self.connection.close()
@@ -152,7 +160,8 @@ class SonDB(Database):
 
     def addDevice(self, serial_id, station_id, name, mkcb, date, path, description):
         self.commit(f"insert into devices(serial_number, station_number, device_name, mkcb, date_out, location, description_) \
-            value({serial_id}, {station_id}, \"{name}\", \"{mkcb}\", {date}, \"{path}\", \"{description}\")")
+            value({serial_id}, {station_id}, \"{name}\", \"{mkcb}\", {date}, \"{path}\", \"{description}\")", \
+            "insert")
 
     def getDevice(self, serial_number):
         return
