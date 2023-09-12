@@ -45,7 +45,7 @@ def buttonway(list, button):
             i += 2
     return markup
 
-markup_list = (buttonway(["Проблемы с оборудованием КЕДР", ". " , "Проблемы с сетью" ,"Проблемы с программами DCSoft", "Система одного номера"], "Reply") ,
+markup_list = (buttonway(["Проблемы с оборудованием КЕДР", "Проблемы с сетью" ,"Проблемы с программами DCSoft", "Система одного номера"], "Reply") ,
                    buttonway(["УСО", "Пульт бурильщика", "Датчики", "Кабели", "Назад"], "Reply") ,
                    buttonway(["Wifi точки", "Камеры", "Ip адресса", "Ip телефоны и атс", "Назад"], "Reply")  ,
                    buttonway(["DSServer", " ", "DSPlot", "DSDevice", "Назад"], "Reply") )
