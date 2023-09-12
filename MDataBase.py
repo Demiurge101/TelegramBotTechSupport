@@ -1,7 +1,7 @@
 import pymysql
 
-class DatabaseTS:
-    "Database class for TechSupport"
+class Database:
+    "Base class for Database"
     host = "localhost"
     user = "root"
 
@@ -17,22 +17,25 @@ class DatabaseTS:
     def connect(self):
         try:
             self.connection = pymysql.connect(
-                host = self.host,
-                port = 3306,
-                user = self.user,
-                password = self.password,
-                database= self.db_name,
+                host=self.host,
+                port=3306,
+                user=self.user,
+                password=self.password,
+                database=self.db_name,
                 cursorclass=pymysql.cursors.DictCursor
             )
-            print("success TechSupport")
+            print(f"success {self.db_name}")
         except Exception as ex:
-            print("Connection refused TechSupport")
+            print(f"Connection refused {self.db_name}")
             print(ex)
 
     def exe_query(self, query):
         with self.connection.cursor() as cursor:
             cursor.execute(query)
             self.connection.commit()
+
+class DatabaseTS(Database):
+    "Database class for TechSupport"
     def map_table(self):
         with self.connection.cursor() as cursor:
             cursor.execute("select * from map")
@@ -75,40 +78,8 @@ class DatabaseTS:
     def close_connect(self):
         self.connection.close()
 
-class DatabaseAuthSon:
+class DatabaseAuthSon(Database):
     "Database class for authorization system one number"
-    host = "localhost"
-    user = "root"
-
-    def __init__(self, host, user, password, db_name):
-        self.host = host
-        self.user = user
-        self.password = password
-        self.db_name = db_name
-
-    def __del__(self):
-        self.close_connect()
-
-    def connect(self):
-        try:
-            self.connection = pymysql.connect(
-                host=self.host,
-                port=3306,
-                user=self.user,
-                password=self.password,
-                database=self.db_name,
-                cursorclass=pymysql.cursors.DictCursor
-            )
-            print("success AuthSon")
-        except Exception as ex:
-            print("Connection refused AuthSon")
-            print(ex)
-
-    def exe_query(self, query):
-        with self.connection.cursor() as cursor:
-            cursor.execute(query)
-            self.connection.commit()
-
     def check_user(self, user_id):
         with self.connection.cursor() as cursor:
             cursor.execute(f"select * from users where user_id = {user_id}")
@@ -141,8 +112,6 @@ class DatabaseAuthSon:
                 print(ex)
                 return False
             return False
-
-
 
     def close_connect(self):
         self.connection.close()
