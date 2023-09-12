@@ -48,7 +48,8 @@ def buttonway(list, button):
 markup_list = (buttonway(["Проблемы с оборудованием КЕДР", "Проблемы с сетью" ,"Проблемы с программами DCSoft", "Система одного номера"], "Reply") ,
                    buttonway(["УСО", "Пульт бурильщика", "Датчики", "Кабели", "Назад"], "Reply") ,
                    buttonway(["Wifi точки", "Камеры", "Ip адресса", "Ip телефоны и атс", "Назад"], "Reply")  ,
-                   buttonway(["DSServer", " ", "DSPlot", "DSDevice", "Назад"], "Reply") )
+                   buttonway(["DSServer", " ", "DSPlot", "DSDevice", "Назад"], "Reply"),
+                   buttonway(["Назад"], "Reply") )
 
 markup_list_inline = (buttonway(["Ubiquiti", "TP-Link"], "Inline"),
                       buttonway(["Fanvil X4","Fanvil X1", "Yeastar S20", "Yeastar S50"], "Inline"),
@@ -136,7 +137,7 @@ def sysonenum(message):
 
    # AUTH here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    if SN.check_user(message.from_user.id) == False:
-    bot.send_message(message.chat.id, "Введите код доступа (номер договора)")
+    bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=markup_list[4])
     bot.register_next_step_handler(message, adduser)
     return
 
