@@ -34,6 +34,28 @@ class Database:
             cursor.execute(query)
             self.connection.commit()
 
+    def commit(self, cmd, err="commit error"):
+        with self.connection.cursor() as cursor:
+            try:
+                cursor.execute(cmd)
+                self.connection.commit()
+                return True
+            except Exception as ex:
+                print(err)
+                print(ex)
+                return False
+            return False
+
+    def fetchall(self, cmd, err="fetch error"):
+         with self.connection.cursor() as cursor:
+            cursor.execute(cmd)
+            return cursor.fetchall()
+
+    def close_connect(self):
+        self.connection.close()
+
+
+
 class DatabaseTS(Database):
     "Database class for TechSupport"
     def map_table(self):
@@ -75,8 +97,9 @@ class DatabaseTS(Database):
             cursor.execute(f"select dir from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
             res = cursor.fetchall()
             return res
-    def close_connect(self):
-        self.connection.close()
+
+
+
 
 class DatabaseAuthSon(Database):
     "Database class for authorization system one number"
@@ -113,5 +136,18 @@ class DatabaseAuthSon(Database):
                 return False
             return False
 
-    def close_connect(self):
-        self.connection.close()
+
+
+
+class SonDB(Database):
+    """Database for SON paths"""
+
+
+
+
+    def delDevice(self, serial_number, tp="device"):
+        self.commit(f"delete from {tp}s where serial_number = {serial_number}", "delete serial_number error")
+
+    def delStation(self, serial_number):
+        delDevice(serial_number, "station")
+        
