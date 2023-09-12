@@ -8,6 +8,7 @@ import os
 #test branch gen
 
 
+
 DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 DB.connect()
 
