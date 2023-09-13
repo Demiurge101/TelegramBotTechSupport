@@ -153,7 +153,22 @@ class DatabaseAuthSon(Database):
 
 
 class SonDB(Database):
-    """Database for SON paths"""
+    """Database for SON"""
+    def check_user(self, user_id):
+        res = self.fetchall(f"select * from users where user_id = {user_id}")
+        return True if len(res) == 1 else False
+
+    def add_user(self, order_key, user_id, user_name):
+        res = self.fetchall(f"select id from clients where order_key = \"{order_key}\"")
+        if len(res) == 1:
+            self.commit(f"insert into users(org_id, user_id, user_name) value({res[0]['id']}, {user_id}, \"{user_name}\")")
+            return True
+        return False
+
+    def del_user(self, user_id):
+        self.commit(f"delete from users where user_id = {user_id}")
+                
+
     def addStation(self, serial_id, mkcb, date, description=""):
         self.commit(f"insert into stations(serial_number, mkcb, date_out, description_) \
             value({serial_id}, \"{mkcb}\", {date}, \"{description}\")")
@@ -163,11 +178,20 @@ class SonDB(Database):
             value({serial_id}, {station_id}, \"{name}\", \"{mkcb}\", {date}, \"{path}\", \"{description}\")", \
             "insert")
 
-    def getDevice(self, serial_number):
-        return
+    def getDevices(self, serial_number, client_id):
+        res = self.fetchall(f"select * from devices where serial_number = {serial_number}")
+        if len(res) == 1:
+            if res[0]['client_id'] == client_id:
+                return res[0]
+        return {}
 
-    def getStation(self, serial_number):
-        return
+    def getStations(self, serial_number, client_id):
+        res = self.fetchall(f"select * from stations where serial_number = {serial_number}")
+        if len(res) == 1:
+            if res[0]['client_id'] == client_id:
+                devices = self.fetchall(f"select * from devices where station_number = {res[0]['serial_number']}")
+                return devices
+        return {}
 
     def deleteDevice(self, serial_number, tp="device"):
         self.commit(f"delete from {tp}s where serial_number = {serial_number}", "delete <serial_number> error")

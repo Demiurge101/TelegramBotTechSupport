@@ -10,7 +10,7 @@ import os
 DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
 DB.connect()
 
-SN = MDataBase.DatabaseAuthSon("localhost", "root", Config.password, Config.bd_name_son)
+SN = MDataBase.DatabaseAuthSon("localhost", "root", Config.password, Config.bd_name_dispatcher_son)
 SN.connect()
 
 # admins
@@ -320,6 +320,7 @@ def sendMedia(message, dirs, method):
 
 def son(message, overcount=0):
     number = message.text
+    client_id = message.from_user.id
     dir = "./son"
     check_number = False
     l_dirs = list(os.walk(dir))
