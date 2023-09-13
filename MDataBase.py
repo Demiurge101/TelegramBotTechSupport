@@ -91,9 +91,12 @@ class DatabaseTS(Database):
 
     def exe_queryKey(self, key):
         with self.connection.cursor() as cursor:
-            cursor.execute(f"select text_val from map where key_val = \"{key}\"")
-            res = cursor.fetchall()
-            return res[0]['text_val']
+            try:
+                cursor.execute(f"select text_val from map where key_val = \"{key}\"")
+                res = cursor.fetchall()
+                return res[0]['text_val']
+            except Exception as e:
+                print(e)
 
     def is_content(self, key):
         with self.connection.cursor() as cursor:
