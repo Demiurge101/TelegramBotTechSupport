@@ -33,15 +33,15 @@ CREATE TABLE stations
 (
   -- id INT(4) NOT NULL AUTO_INCREMENT,
     serial_number INT(8) NOT NULL unique,
-    org VARCHAR(70) NOT NULL,
+    org_id INT(4) NOT NULL,
     mkcb varchar(20) not null,
     date_out date,
     description_ varchar(50),
     CONSTRAINT pk_stations
         PRIMARY KEY(serial_number),
-    CONSTRAINT FK_devices
-        FOREIGN KEY(org)
-            REFERENCES clients(org)
+    CONSTRAINT FK_clients
+        FOREIGN KEY(org_id)
+            REFERENCES clients(id)
 );
 
 CREATE TABLE devices
@@ -49,7 +49,7 @@ CREATE TABLE devices
   -- id INT(4) NOT NULL AUTO_INCREMENT,
      serial_number INT(8) NOT NULL unique,
      station_number INT(8),
-     org VARCHAR(70) NOT NULL,
+     org_id INT(4) NOT NULL,
      device_name varchar(30) not null,
      mkcb varchar(20) not null,
      date_out date,
@@ -60,8 +60,8 @@ CREATE TABLE devices
     CONSTRAINT FK_stations
         FOREIGN KEY(station_number)
             REFERENCES stations(serial_number),
-    CONSTRAINT FK_clients
-        FOREIGN KEY(org)
-            REFERENCES clients(org)
+    CONSTRAINT FK_org
+        FOREIGN KEY(org_id)
+            REFERENCES clients(id)
     ON UPDATE CASCADE
 );
