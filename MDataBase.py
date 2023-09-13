@@ -56,8 +56,8 @@ class Database:
                 print(cmd)
                 print(err)
                 print(ex)
-                return
-            return
+                return {}
+            return {}
 
     def close_connect(self):
         self.connection.close()
