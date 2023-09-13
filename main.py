@@ -10,7 +10,7 @@ import os
 DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
 DB.connect()
 
-SN = MDataBase.DatabaseAuthSon("localhost", "root", Config.password, Config.bd_name_dispatcher_son)
+SN = MDataBase.SonDB("localhost", "root", Config.password, Config.bd_name_dispatcher_son)
 SN.connect()
 
 # admins
@@ -318,7 +318,7 @@ def sendMedia(message, dirs, method):
             i += 1
 
 
-def son(message, overcount=0):
+def son_backup(message, overcount=0):
     number = message.text
     client_id = message.from_user.id
     dir = "./son"
@@ -342,7 +342,7 @@ def son(message, overcount=0):
         bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.")
         bot.register_next_step_handler(message, son, overcount)
 
-def forson(message, overcount=0):
+def son(message, overcount=0):
     number = message.text
     client_id = message.from_user.id
     stations = SN.getStations(number, client_id)

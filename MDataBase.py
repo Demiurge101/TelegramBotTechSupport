@@ -183,15 +183,16 @@ class SonDB(Database):
 
     def getDevices(self, serial_number, client_id):
         res = self.fetchall(f"select * from devices where serial_number = {serial_number}")
+        org_id = self.fetchall(f"select org_id from users where user_id ={client_id}")
         if len(res) == 1:
-            if res[0]['client_id'] == client_id:
+            if res[0]['org_id'] == org_id:
                 return res[0]
         return {}
 
     def getStations(self, serial_number, client_id):
         res = self.fetchall(f"select * from stations where serial_number = {serial_number}")
         if len(res) == 1:
-            if res[0]['client_id'] == client_id:
+            if res[0]['org_id'] == client_id:
                 devices = self.fetchall(f"select * from devices where station_number = {res[0]['serial_number']}")
                 return devices
         return {}
