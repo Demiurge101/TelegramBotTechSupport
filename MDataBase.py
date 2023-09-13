@@ -202,4 +202,8 @@ class SonDB(Database):
 
     def delStation(self, serial_number):
         deleteDevice(serial_number, "station")
+
+    def test(self, serial_number, client_id):
+        print(" For serial_number ", serial_number, "and client_id ", client_id)
+        
         
