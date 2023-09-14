@@ -345,15 +345,16 @@ def son_backup(message, overcount=0):
 def son(message, overcount=0):
     number = message.text
     client_id = message.from_user.id
-    SN.test(number, client_id)
-    # stations = SN.getStations(number, client_id)
-    # devices = SN.getDevices(number, client_id)
-    # print("_")
-    # for i in stations:
-    #     print(i)
-    # print("-")
-    # for i in devices:
-    #     print(j)
+    # SN.test(number, client_id)
+    devices = SN.getDevices(number, client_id)
+    stations = SN.getStations(number, client_id)
+    print("_______________________")
+    print("-stations")
+    for i in stations:
+        print(i)
+    print("-devices")
+    for i in devices:
+        print(i)
 
 
 bot.polling(none_stop=True)
