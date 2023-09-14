@@ -18,6 +18,12 @@ chat_id_Demiurge = Config.Demiurge
 chat_id_Shippuden = Config.Shippuden
 chat_id_ITGenerator = Config.ITGenerator
 
+document_type = {".pdf", ".txt", ".bin", ""}
+image_type = {".img", ".png", ".bmp"}
+video_type = {".mp4"}
+audio_type = {".mp3"}
+
+
 bot = telebot.TeleBot(Config.Token)
 
 def buttonway(list, button):
@@ -351,19 +357,55 @@ def son(message, overcount=0):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
         bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
         return
-    devices = SN.getDevices(number, client_id)
-    stations = SN.getStations(number, client_id)
-    if(len(stations) == 0 and len(devices) == 0):
+    device = SN.getDevices(number, client_id)
+    station = SN.getStations(number, client_id)
+    if(len(station) == 0 and len(device) == 0):
         bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.")
         bot.register_next_step_handler(message, son, overcount + 1)
         return
     overcount = 0
-    dirs = []
+    print("--")
+    print(len(device))
+    print(len(station))
+    if(len(device) > 0):
+        # sendMedia(message, device['location'], 'son')
+        sendFromFolder(message, device['location'])
 
-    # for j in os.listdir(i[0]):
-    #     dirs.append(f"{i[0]}/{j}")
-    # sendMedia(message, dirs, 'son')
+    if(len(station) > 0):
+        print("station")
+        for k in station:
+            print(k)
 
+
+def sendFromFolder(message, location, subfolders=True):
+    print("sendFromFolder()")
+    full_path = os.path.abspath(location)
+    l_dirs = os.listdir(full_path)
+    for i in l_dirs:
+        if os.path.isdir(full_path + "\\" + i):
+            if subfolders:
+                print("SUBFOLDER")
+                sendFromFolder(message, full_path + "\\" + i)
+        else:
+            media = {}
+            os.path.splitext(i)
+            if i[-1] in document_type:
+                media.append(InputMediaDocument(full_path + "\\" + i, 'rb'))
+            elif i[-1] in image_type:
+                media.append(InputMediaPhoto(full_path + "\\" + i, 'rb'))
+            elif i[-1] in video_type:
+                media.append(InputMediaVideo(full_path + "\\" + i, 'rb'))
+            elif i[-1] in audio_type:
+                pass
+            print("len media = ", len(media))
+            if len(media) != 0:
+                while len(media) > 10:
+                    submedia = media[0:10]
+                    media = media[10:]
+                    bot.send_media_group(message.chat.id, submedia)
+                    #bot.send_media_group(message.chat.id, media)
+                else:
+                    bot.send_media_group(message.chat.id, media)
 
 
 bot.polling(none_stop=True)
