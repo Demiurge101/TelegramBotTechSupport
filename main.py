@@ -283,70 +283,6 @@ def navigation(message):
     elif message.text.lower() == 'назад':
         bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
 
-def sendMedia(message, dirs, method):
-    if dirs is not None:
-        files = []
-        type_names = []
-        if method == 'son':
-            for i in dirs:
-                type_names.append(os.path.basename(i))
-                files.append(os.listdir(i))
-            dir = os.path.dirname(dirs[0])
-        else:
-            for i in dirs:
-                type_names.append(os.path.basename(i['dir']))
-                files.append(os.listdir(i['dir']))
-            dir = os.path.dirname(dirs[0]['dir'])
-        media = []
-        i = 0
-        while i < type_names.__len__():
-            if type_names[i] == "document":
-                media.clear()
-                for j in files[i]:
-                    s = f"{dir}/{type_names[i]}/{j}"
-                    media.append(types.InputMediaDocument(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
-            elif type_names[i] == "photo":
-                media.clear()
-                for j in files[i]:
-                    media.append(types.InputMediaPhoto(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
-            elif type_names[i] == "video":
-                media.clear()
-                for j in files[i]:
-                    media.append(types.InputMediaVideo(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
-            if len(media) != 0:
-                while len(media) > 10:
-                    submedia = media[0:10]
-                    media = media[10:]
-                    bot.send_media_group(message.chat.id, submedia)
-                    #bot.send_media_group(message.chat.id, media)
-                else:
-                    bot.send_media_group(message.chat.id, media)
-            i += 1
-
-
-def son_backup(message, overcount=0):
-    number = message.text
-    client_id = message.from_user.id
-    dir = "./son"
-    check_number = False
-    l_dirs = list(os.walk(dir))
-    for i in l_dirs:
-        if os.path.basename(i[0]) == number:
-            check_number = True
-            overcount = 0
-            dirs = []
-            for j in os.listdir(i[0]):
-                dirs.append(f"{i[0]}/{j}")
-            sendMedia(message, dirs, 'son')
-    if check_number == False:
-        if(message.text in {"/cancel", "/back", "Назад"}) or (overcount > 10):
-            if(overcount > 10):
-                bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
-            bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
-            return
-        overcount += 1
-        bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.")
-        bot.register_next_step_handler(message, son, overcount)
 
 def son(message, overcount=0):
     number = message.text
@@ -387,15 +323,17 @@ def sendFromFolder(message, location, subfolders=True):
                 print("SUBFOLDER")
                 sendFromFolder(message, full_path + "\\" + i)
         else:
-            media = {}
-            os.path.splitext(i)
-            if i[-1] in document_type:
-                media.append(InputMediaDocument(full_path + "\\" + i, 'rb'))
-            elif i[-1] in image_type:
-                media.append(InputMediaPhoto(full_path + "\\" + i, 'rb'))
-            elif i[-1] in video_type:
-                media.append(InputMediaVideo(full_path + "\\" + i, 'rb'))
-            elif i[-1] in audio_type:
+            media = []
+            file_type = os.path.splitext(i)
+            if file_type[-1] in document_type:
+                media.append(types.InputMediaDocument(open(full_path + "\\" + i, 'rb')))
+                print("Send: ", full_path + "\\" + i)
+            elif file_type[-1] in image_type:
+                media.append(types.InputMediaPhoto(open(full_path + "\\" + i, 'rb')))
+                print("Send: ", full_path + "\\" + i)
+            elif file_type[-1] in video_type:
+                media.append(types.InputMediaVideo(open(full_path + "\\" + i, 'rb')))
+            elif file_type[-1] in audio_type:
                 pass
             print("len media = ", len(media))
             if len(media) != 0:
