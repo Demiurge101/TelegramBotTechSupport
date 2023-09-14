@@ -346,15 +346,24 @@ def son(message, overcount=0):
     number = message.text
     client_id = message.from_user.id
     # SN.test(number, client_id)
+    if(message.text in {"/cancel", "/back", "Назад"}) or (overcount > 5):
+        if(overcount > 5):
+            bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
+        bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
+        return
     devices = SN.getDevices(number, client_id)
     stations = SN.getStations(number, client_id)
-    print("_______________________")
-    print("-stations")
-    for i in stations:
-        print(i)
-    print("-devices")
-    for i in devices:
-        print(i)
+    if(len(stations) == 0 and len(devices) == 0):
+        bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.")
+        bot.register_next_step_handler(message, son, overcount + 1)
+        return
+    overcount = 0
+    dirs = []
+
+    # for j in os.listdir(i[0]):
+    #     dirs.append(f"{i[0]}/{j}")
+    # sendMedia(message, dirs, 'son')
+
 
 
 bot.polling(none_stop=True)
