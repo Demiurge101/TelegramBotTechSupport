@@ -308,9 +308,8 @@ def son(message, overcount=0):
         sendFromFolder(message, device['location'])
 
     if(len(station) > 0):
-        print("station")
-        for k in station:
-            print(k)
+        # sendFromFolder(message, station['location'], False)
+        pass
 
 
 def sendFromFolder(message, location, subfolders=True):
