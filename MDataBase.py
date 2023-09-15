@@ -37,7 +37,7 @@ class Database:
         except Exception as e:
             print(e)
 
-    def commit(self, cmd, err="commit error"):
+    def _commit(self, cmd, err="commit error"):
         with self.connection.cursor() as cursor:
             try:
                 cursor.execute(cmd)
@@ -50,7 +50,7 @@ class Database:
                 return False
             return False
 
-    def fetchall(self, cmd, err="fetch error"):
+    def _fetchall(self, cmd, err="fetch error"):
          with self.connection.cursor() as cursor:
             try:
                 cursor.execute(cmd)
@@ -75,16 +75,16 @@ class Database:
 class DatabaseTS(Database):
     "Database class for TechSupport"
     def map_table(self):
-        return self.fetchall("select * from map")
+        return self._fetchall("select * from map")
         
     def set_key_text(self, key, text):
-        self.commit(f"insert into map(key_val,text_val) value(\"{key}\",\"{text}\");")
+        self._commit(f"insert into map(key_val,text_val) value(\"{key}\",\"{text}\");")
 
     def update_text(self, key, text):
-        self.commit(f"update map set text_val = \"{text}\" where key_val = \"{key}\"")
+        self._commit(f"update map set text_val = \"{text}\" where key_val = \"{key}\"")
         
     def delete_text(self, key):
-        self.commit(f"delete from map where key_val =\"{key}\"")
+        self._commit(f"delete from map where key_val =\"{key}\"")
 
     def exe_queryKey(self, key):
         with self.connection.cursor() as cursor:
@@ -96,7 +96,7 @@ class DatabaseTS(Database):
                 print(e)
 
     def is_content(self, key):
-        res = self.fetchall(f"select is_content from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
+        res = self._fetchall(f"select is_content from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
         for i in res:
             if i['is_content'] == True:
                 return True
@@ -105,7 +105,7 @@ class DatabaseTS(Database):
     def exe_queryPath(self, key):
         if not self.is_content(key):
             return None
-        return self.fetchall(f"select dir from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
+        return self._fetchall(f"select dir from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
 
 
 
@@ -115,18 +115,18 @@ class SonDB(Database):
     dblocation = "C:\\Users\\Gen\\Projects\\work\\TelegramBotTechSupport\\fileDB"
 
     def check_user(self, user_id):
-        res = self.fetchall(f"select * from users where user_id = {user_id}")
+        res = self._fetchall(f"select * from users where user_id = {user_id}")
         return True if len(res) == 1 else False
 
     def add_user(self, order_key, user_id, user_name):
-        res = self.fetchall(f"select id from clients where order_key = \"{order_key}\"")
+        res = self._fetchall(f"select id from clients where order_key = \"{order_key}\"")
         if len(res) == 1:
-            self.commit(f"insert into users(org_id, user_id, user_name) value({res[0]['id']}, {user_id}, \"{user_name}\")")
+            self._commit(f"insert into users(org_id, user_id, user_name) value({res[0]['id']}, {user_id}, \"{user_name}\")")
             return True
         return False
 
     def del_user(self, user_id):
-        self.commit(f"delete from users where user_id = {user_id}")
+        self._commit(f"delete from users where user_id = {user_id}")
                 
 
     def addStation(self, serial_id, org_name, mkcb, date, location, description=""):
@@ -134,10 +134,10 @@ class SonDB(Database):
         if org_id < 0:
             print("There is no organizations with this name!")
             return
-        if len(self.fetchall(f"select * from stations where serial_number = {serial_id}")) == 1:
+        if len(self._fetchall(f"select * from stations where serial_number = {serial_id}")) == 1:
             print("This station already exist!")
             return
-        self.commit(f"insert into stations(serial_number, org_id, mkcb, date_out, location, description_) \
+        self._commit(f"insert into stations(serial_number, org_id, mkcb, date_out, location, description_) \
             value({serial_id}, {org_id}, \"{mkcb}\", \"{date}\", \"{location}\", \"{description}\")")
 
     def addDevice(self, serial_id, station_id, org_name, name, mkcb, date, path, description):
@@ -145,39 +145,39 @@ class SonDB(Database):
         if org_id < 0:
             print("There is no organizations with this name!")
             return
-        if len(self.fetchall(f"select * from devices where serial_number = {serial_id}")) == 1:
+        if len(self._fetchall(f"select * from devices where serial_number = {serial_id}")) == 1:
             print("This device already exist!")
             return
-        self.commit(f"insert into devices(serial_number, station_number, org_id, device_name, mkcb, date_out, location, description_) \
+        self._commit(f"insert into devices(serial_number, station_number, org_id, device_name, mkcb, date_out, location, description_) \
             value({serial_id}, {station_id}, {org_id},  \"{name}\", \"{mkcb}\", \"{date}\", \"{path}\", \"{description}\")", \
             "insert")
 
     def getDevices(self, serial_number, client_id):
-        res = self.fetchall(f"select * from devices where serial_number = {serial_number}")
-        org_id = self.fetchall(f"select org_id from users where user_id ={client_id}")
+        res = self._fetchall(f"select * from devices where serial_number = {serial_number}")
+        org_id = self._fetchall(f"select org_id from users where user_id ={client_id}")
         if (len(res) == 1) and (len(org_id) == 1):
             if res[0]['org_id'] == int(org_id[0]['org_id']):
                 return res[0]
         return {}
 
     def getStations(self, serial_number, client_id):
-        res = self.fetchall(f"select * from stations where serial_number = {serial_number}")
-        org_id = self.fetchall(f"select org_id from users where user_id ={client_id}")
+        res = self._fetchall(f"select * from stations where serial_number = {serial_number}")
+        org_id = self._fetchall(f"select org_id from users where user_id ={client_id}")
         if (len(res) == 1) and (len(org_id) == 1):
             if res[0]['org_id'] == int(org_id[0]['org_id']):
                 return res[0]
-                # devices = self.fetchall(f"select * from devices where station_number = {res[0]['serial_number']}")
+                # devices = self._fetchall(f"select * from devices where station_number = {res[0]['serial_number']}")
                 # return devices
         return {}
 
     def deleteDevice(self, serial_number, tp="device"):
-        self.commit(f"delete from {tp}s where serial_number = {serial_number}", "delete <serial_number> error")
+        self._commit(f"delete from {tp}s where serial_number = {serial_number}", "delete <serial_number> error")
 
     def delStation(self, serial_number):
         deleteDevice(serial_number, "station")
 
     def getOrgIdByName(self, name):
-        res = self.fetchall(f"select id from clients where org = \"{name}\"")
+        res = self._fetchall(f"select id from clients where org = \"{name}\"")
         # print("org_id = ", res)
         if len(res) == 1:
             return res[0]['id']
@@ -186,9 +186,9 @@ class SonDB(Database):
 
     def test(self, serial_number, client_id):
         print(" For serial_number ", serial_number, "and client_id ", client_id)
-        stations = self.fetchall(f"select * from stations where serial_number = {serial_number}")
-        devices = self.fetchall(f"select * from devices where serial_number = {serial_number}")
-        org_id = self.fetchall(f"select org_id from users where user_id ={client_id}")
+        stations = self._fetchall(f"select * from stations where serial_number = {serial_number}")
+        devices = self._fetchall(f"select * from devices where serial_number = {serial_number}")
+        org_id = self._fetchall(f"select org_id from users where user_id ={client_id}")
         print()
         print(stations)
         print()
