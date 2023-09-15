@@ -316,6 +316,7 @@ def son(message, overcount=0):
         if loc[:1] == '.':
             loc = SN.dblocation + loc[1:]
         sendFromFolder(message, loc, False)
+    bot.register_next_step_handler(message, son, 0)
 
 
 
@@ -350,6 +351,7 @@ def sendFromFolder(message, location, subfolders=True):
                     #bot.send_media_group(message.chat.id, media)
                 else:
                     bot.send_media_group(message.chat.id, media)
+
 
 
 bot.polling(none_stop=True)
