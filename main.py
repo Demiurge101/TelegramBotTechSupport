@@ -321,7 +321,45 @@ def son(message, overcount=0):
         sendFromFolder(message, loc, False)
     bot.register_next_step_handler(message, son, 0)
 
-
+def sendMedia(message, dirs, method):
+    if dirs is not None:
+        files = []
+        type_names = []
+        if method == 'son':
+            for i in dirs:
+                type_names.append(os.path.basename(i))
+                files.append(os.listdir(i))
+            dir = os.path.dirname(dirs[0])
+        else:
+            for i in dirs:
+                type_names.append(os.path.basename(i['dir']))
+                files.append(os.listdir(i['dir']))
+            dir = os.path.dirname(dirs[0]['dir'])
+        media = []
+        i = 0
+        while i < type_names.__len__():
+            if type_names[i] == "document":
+                media.clear()
+                for j in files[i]:
+                    s = f"{dir}/{type_names[i]}/{j}"
+                    media.append(types.InputMediaDocument(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
+            elif type_names[i] == "photo":
+                media.clear()
+                for j in files[i]:
+                    media.append(types.InputMediaPhoto(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
+            elif type_names[i] == "video":
+                media.clear()
+                for j in files[i]:
+                    media.append(types.InputMediaVideo(open(f"{dir}/{type_names[i]}/{j}", 'rb')))
+            if len(media) != 0:
+                while len(media) > 10:
+                    submedia = media[0:10]
+                    media = media[10:]
+                    bot.send_media_group(message.chat.id, submedia)
+                    #bot.send_media_group(message.chat.id, media)
+                else:
+                    bot.send_media_group(message.chat.id, media)
+            i += 1
 
 def sendFromFolder(message, location, subfolders=True):
     print("sendFromFolder()")
