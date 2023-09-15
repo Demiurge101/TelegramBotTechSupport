@@ -30,9 +30,12 @@ class Database:
             print(ex)
 
     def exe_query(self, query):
-        with self.connection.cursor() as cursor:
-            cursor.execute(query)
-            self.connection.commit()
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(query)
+                self.connection.commit()
+        except Exception as e:
+            print(e)
 
     def commit(self, cmd, err="commit error"):
         with self.connection.cursor() as cursor:
@@ -72,22 +75,16 @@ class Database:
 class DatabaseTS(Database):
     "Database class for TechSupport"
     def map_table(self):
-        with self.connection.cursor() as cursor:
-            cursor.execute("select * from map")
-            rows = cursor.fetchall()
-            return rows
+        return self.fetchall("select * from map")
+        
     def set_key_text(self, key, text):
-        with self.connection.cursor() as cursor:
-            cursor.execute(f"insert into map(key_val,text_val) value(\"{key}\",\"{text}\");")
-            self.connection.commit()
+        self.commit(f"insert into map(key_val,text_val) value(\"{key}\",\"{text}\");")
+
     def update_text(self, key, text):
-        with self.connection.cursor() as cursor:
-            cursor.execute(f"update map set text_val = \"{text}\" where key_val = \"{key}\"")
-            self.connection.commit()
+        self.commit(f"update map set text_val = \"{text}\" where key_val = \"{key}\"")
+        
     def delete_text(self, key):
-        with self.connection.cursor() as cursor:
-            cursor.execute(f"delete from map where key_val =\"{key}\"")
-            self.connection.commit()
+        self.commit(f"delete from map where key_val =\"{key}\"")
 
     def exe_queryKey(self, key):
         with self.connection.cursor() as cursor:
@@ -99,20 +96,16 @@ class DatabaseTS(Database):
                 print(e)
 
     def is_content(self, key):
-        with self.connection.cursor() as cursor:
-            cursor.execute(f"select is_content from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
-            res = cursor.fetchall()
-            for i in res:
-                if i['is_content'] == True:
-                    return True
-            return False
+        res = self.fetchall(f"select is_content from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
+        for i in res:
+            if i['is_content'] == True:
+                return True
+        return False
+        
     def exe_queryPath(self, key):
-        with self.connection.cursor() as cursor:
-            if not self.is_content(key):
-                return None
-            cursor.execute(f"select dir from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
-            res = cursor.fetchall()
-            return res
+        if not self.is_content(key):
+            return None
+        return self.fetchall(f"select dir from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
 
 
 
