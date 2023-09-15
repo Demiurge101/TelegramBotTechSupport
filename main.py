@@ -117,6 +117,9 @@ def feedbackSendtext(message):
     if message.content_type == "text":
         bot.send_message(chat_id_Demiurge,f"User {message.from_user.username} ID {message.from_user.id}: {message.text}")
         bot.send_message(chat_id_Shippuden, f"User {message.from_user.username} ID {message.from_user.id}: {message.text}")
+        bot.send_message(chat_id_ITGenerator,f"User {message.from_user.username} ID {message.from_user.id}: {message.text}")
+        
+
     #bot.send_message(chat_id_Demiurge, message)
 
 @bot.message_handler(commands=['site', 'website'])
