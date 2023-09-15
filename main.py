@@ -305,12 +305,16 @@ def son(message, overcount=0):
     print(len(station))
     if(len(device) > 0):
         # sendMedia(message, device['location'], 'son')
-        sendFromFolder(message, device['location'])
+        loc = device['location']
+        if loc[:1] == '.':
+            loc = SN.dblocation + loc[1:]
+        sendFromFolder(message, loc)
 
     if(len(station) > 0):
-        print("station")
-        for k in station:
-            print(k)
+        loc = station['location']
+        if loc[:1] == '.':
+            loc = SN.dblocation + loc[1:]
+        sendFromFolder(message, loc, False)
 
 
 def sendFromFolder(message, location, subfolders=True):
