@@ -36,6 +36,7 @@ CREATE TABLE stations
     org_id INT(4) NOT NULL,
     mkcb varchar(20) not null,
     date_out date,
+    location varchar(255) not null,
     description_ varchar(50),
     CONSTRAINT pk_stations
         PRIMARY KEY(serial_number),
