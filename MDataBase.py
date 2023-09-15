@@ -129,13 +129,27 @@ class SonDB(Database):
         self.commit(f"delete from users where user_id = {user_id}")
                 
 
-    def addStation(self, serial_id, mkcb, date, description=""):
-        self.commit(f"insert into stations(serial_number, mkcb, date_out, description_) \
-            value({serial_id}, \"{mkcb}\", {date}, \"{description}\")")
+    def addStation(self, serial_id, org_name, mkcb, date, location, description=""):
+        org_id = self.getOrgIdByName(org_name) # org_id
+        if org_id < 0:
+            print("There is no organizations with this name!")
+            return
+        if len(self.fetchall(f"select * from stations where serial_number = {serial_id}")) == 1:
+            print("This station already exist!")
+            return
+        self.commit(f"insert into stations(serial_number, org_id, mkcb, date_out, location, description_) \
+            value({serial_id}, {org_id}, \"{mkcb}\", \"{date}\", \"{location}\", \"{description}\")")
 
-    def addDevice(self, serial_id, station_id, name, mkcb, date, path, description):
-        self.commit(f"insert into devices(serial_number, station_number, device_name, mkcb, date_out, location, description_) \
-            value({serial_id}, {station_id}, \"{name}\", \"{mkcb}\", {date}, \"{path}\", \"{description}\")", \
+    def addDevice(self, serial_id, station_id, org_name, name, mkcb, date, path, description):
+        org_id = self.getOrgIdByName(org_name) # org_id
+        if org_id < 0:
+            print("There is no organizations with this name!")
+            return
+        if len(self.fetchall(f"select * from devices where serial_number = {serial_id}")) == 1:
+            print("This device already exist!")
+            return
+        self.commit(f"insert into devices(serial_number, station_number, org_id, device_name, mkcb, date_out, location, description_) \
+            value({serial_id}, {station_id}, {org_id},  \"{name}\", \"{mkcb}\", \"{date}\", \"{path}\", \"{description}\")", \
             "insert")
 
     def getDevices(self, serial_number, client_id):
@@ -161,6 +175,14 @@ class SonDB(Database):
 
     def delStation(self, serial_number):
         deleteDevice(serial_number, "station")
+
+    def getOrgIdByName(self, name):
+        res = self.fetchall(f"select id from clients where org = \"{name}\"")
+        # print("org_id = ", res)
+        if len(res) == 1:
+            return res[0]['id']
+        else:
+            return -1
 
     def test(self, serial_number, client_id):
         print(" For serial_number ", serial_number, "and client_id ", client_id)

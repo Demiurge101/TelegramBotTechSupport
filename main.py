@@ -250,6 +250,7 @@ def project_map(message, *args):
 
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
+    print("buttons in messages here")
     if callback.data == 'delete':
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
     elif callback.data == 'edit':
