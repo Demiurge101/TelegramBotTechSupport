@@ -110,44 +110,6 @@ class DatabaseTS(Database):
 
 
 
-# class DatabaseAuthSon(Database):
-#     "Database class for authorization system one number"
-#     def check_user(self, user_id):
-#         with self.connection.cursor() as cursor:
-#             cursor.execute(f"select * from users where user_id = {user_id}")
-#             res = cursor.fetchall()
-#             return True if len(res) == 1 else False
-
-#     def add_user(self, order_key, user_id, user_name):
-#         with self.connection.cursor() as cursor:
-#             cursor.execute(f"select id from clients where order_key = \"{order_key}\"")
-#             res = cursor.fetchall()
-#             if len(res) == 1:
-#                 try:
-#                     cursor.execute(f"insert into users(org_id, user_id, user_name) value({res[0]['id']}, {user_id}, \"{user_name}\")")
-#                     self.connection.commit()
-#                     return True
-#                 except Exception as ex:
-#                     print("Add user error")
-#                     print(ex)
-#                     return False
-#             return False
-
-#     def del_user(self, user_id):
-#         with self.connection.cursor() as cursor:
-#             try:
-#                 cursor.execute(f"delete from users where user_id = {user_id}")
-#                 self.connection.commit()
-#                 return True
-#             except Exception as ex:
-#                 print("delete user error")
-#                 print(ex)
-#                 return False
-#             return False
-
-
-
-
 class SonDB(Database):
     """Database for SON"""
     dblocation = "C:\\Users\\Gen\\Projects\\work\\TelegramBotTechSupport\\fileDB"
