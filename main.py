@@ -66,6 +66,9 @@ markup_list_inline = (buttonway(["Ubiquiti", "TP-Link"], "Inline"),
                       buttonway(["ДНК","ДДИ", "ДУП", "РУД", "ДОП-М", "БЗУД", "ДТ"], "Inline"),
                     )
 
+
+is_sending = []
+
 @bot.message_handler(commands=['start'])
 def main(message):
     #bot.send_message(message.chat.id, '<b>Привет!</b>', parse_mode='html')
@@ -133,12 +136,8 @@ def site(message):
 def net(message):
     navigation(message)
 
-is_sending = []
 @bot.message_handler(commands=['books'])
 def books(message):
-    print("is sending: ")
-    for s in is_sending:
-        print("   ", s)
     if message.from_user.id in is_sending:
         return
     is_sending.append(message.from_user.id)
@@ -332,6 +331,9 @@ def son(message, overcount=0):
     bot.register_next_step_handler(message, son, 0)
 
 def sendMedia(message, dirs, method):
+    if message.from_user.id in is_sending:
+        return
+    is_sending.append(message.from_user.id)
     if dirs is not None:
         files = []
         type_names = []
@@ -370,8 +372,12 @@ def sendMedia(message, dirs, method):
                 else:
                     bot.send_media_group(message.chat.id, media)
             i += 1
+    is_sending.remove(message.from_user.id)
 
 def sendFromFolder(message, location, subfolders=True):
+    if message.from_user.id in is_sending:
+        return
+    is_sending.append(message.from_user.id)
     print("sendFromFolder()")
     full_path = os.path.abspath(location)
     l_dirs = os.listdir(full_path)
@@ -402,6 +408,7 @@ def sendFromFolder(message, location, subfolders=True):
                     #bot.send_media_group(message.chat.id, media)
                 else:
                     bot.send_media_group(message.chat.id, media)
+    is_sending.remove(message.from_user.id)
 
 
 
