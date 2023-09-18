@@ -395,4 +395,9 @@ def sendFromFolder(message, location, subfolders=True):
 
 
 
-bot.polling(none_stop=True)
+while (True):
+    try:
+        bot.polling(none_stop=True)
+    except Exception as e:
+        print(e)
+    print("Restart bot...")

@@ -43,6 +43,7 @@ CREATE TABLE stations
     CONSTRAINT FK_clients
         FOREIGN KEY(org_id)
             REFERENCES clients(id)
+        ON UPDATE CASCADE
 );
 
 CREATE TABLE devices
