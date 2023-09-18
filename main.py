@@ -378,13 +378,11 @@ def sendFromFolder(message, location, subfolders=True):
     if message.from_user.id in is_sending:
         return
     is_sending.append(message.from_user.id)
-    print("sendFromFolder()")
     full_path = os.path.abspath(location)
     l_dirs = os.listdir(full_path)
     for i in l_dirs:
         if os.path.isdir(full_path + "\\" + i):
             if subfolders:
-                print("SUBFOLDER")
                 sendFromFolder(message, full_path + "\\" + i)
         else:
             media = []
