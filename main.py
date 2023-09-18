@@ -133,12 +133,20 @@ def site(message):
 def net(message):
     navigation(message)
 
+is_sending = []
 @bot.message_handler(commands=['books'])
 def books(message):
+    print("is sending: ")
+    for s in is_sending:
+        print("   ", s)
+    if message.from_user.id in is_sending:
+        return
+    is_sending.append(message.from_user.id)
     text = DB.exe_queryKey("Материалы")
     dirs = DB.exe_queryPath("Материалы")
     bot.send_message(message.chat.id, text)
     sendMedia(message, dirs, 'ts')
+    is_sending.remove(message.from_user.id)
 
 @bot.message_handler(commands=['son'])
 def sysonenum(message):
@@ -253,13 +261,15 @@ def project_map(message, *args):
 
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
-    print("buttons in messages here")
-    if callback.data == 'delete':
+    # buttons in messages here
+    if callback.data == 'Назад':
+        bot.send_message(callback.message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
+    elif callback.data == 'delete':
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
     elif callback.data == 'edit':
         bot.edit_message_text('Edit text', callback.message.chat.id, callback.message.message_id)
-    bot.send_message(callback.message.chat.id, DB.exe_queryKey(callback.data))
-    sendMedia(callback.message, DB.exe_queryPath(callback.data), 'ts')
+        bot.send_message(callback.message.chat.id, DB.exe_queryKey(callback.data))
+        sendMedia(callback.message, DB.exe_queryPath(callback.data), 'ts')
 
 
 @bot.message_handler()
@@ -395,9 +405,4 @@ def sendFromFolder(message, location, subfolders=True):
 
 
 
-while (True):
-    try:
-        bot.polling(none_stop=True)
-    except Exception as e:
-        print(e)
-    print("Restart bot...")
+bot.polling(none_stop=True)

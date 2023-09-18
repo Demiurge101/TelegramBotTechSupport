@@ -4,7 +4,7 @@ import Config
 
 source_location = "\\\\falcon\\GTI\\Поставки"
 
-clients = {"ННГФ"}
+clients = {"ННГФ", "Новатэк"}
 
 
 source_location = os.path.abspath(source_location)
