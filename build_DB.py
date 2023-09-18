@@ -2,13 +2,12 @@ import os
 import MDataBase
 import Config
 
-source_location = "./fileDB"
-target_location = "./son"
+source_location = "\\\\falcon\\GTI\\Поставки"
 
+clients = {"ННГФ"}
 
 
 source_location = os.path.abspath(source_location)
-target_location = os.path.abspath(target_location)
 source_list = os.listdir(source_location)
 
 SN = MDataBase.SonDB("localhost", "root", Config.password, Config.bd_name_dispatcher_son)
@@ -16,6 +15,8 @@ SN.connect()
 
 for name in source_list:
 	print(name) # org_name
+	if (name in clients) == False:
+		continue
 	org_id = SN.getOrgIdByName(name) # org_id
 	if org_id < 0:
 		print("Нет организации с таким именем в базе данных. Добавьте организацию в БД и повторите попытку.")

@@ -112,7 +112,7 @@ class DatabaseTS(Database):
 
 class SonDB(Database):
     """Database for SON"""
-    dblocation = "C:\\Users\\Gen\\Projects\\work\\TelegramBotTechSupport\\fileDB"
+    dblocation = "\\\\falcon\\GTI\\Поставки"
 
     def check_user(self, user_id):
         res = self._fetchall(f"select * from users where user_id = {user_id}")
