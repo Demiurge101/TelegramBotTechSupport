@@ -276,7 +276,7 @@ def callback_message(callback):
 
 @bot.message_handler()
 def navigation(message):
-    text = ""
+    text = "ッ"
     if message.text.lower() == 'назад':
         menu_id = 0
     else:
@@ -302,10 +302,12 @@ def navigation(message):
                 titles_inline.append(elem['title'])
         if titles_reply:
             print("titles_reply")
-            titles_reply.append("Назад")
+            if menu_id > 0:
+                titles_reply.append("Назад")
             bot.send_message(message.chat.id, text, reply_markup=buttonway(titles_reply, "Reply"))
         if titles_inline:
-            print("titles_inline")
+            if menu_id > 0:
+                print("titles_inline")
             titles_inline.append("Назад")
             bot.send_message(message.chat.id, text, reply_markup=buttonway(titles_inline, "Inline"))
     # if message.text.lower() == 'проблемы с оборудованием кедр' or message.text == '/hardware':
