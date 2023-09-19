@@ -139,16 +139,18 @@ def site(message):
 def net(message):
     navigation(message)
 
+
+is_books = []
 @bot.message_handler(commands=['books'])
 def books(message):
-    if message.from_user.id in is_sending:
+    if message.from_user.id in is_books:
         return
-    is_sending.append(message.from_user.id)
+    is_books.append(message.from_user.id)
     text = DB.exe_queryKey("Материалы")
     dirs = DB.exe_queryPath("Материалы")
     bot.send_message(message.chat.id, text)
     sendMedia(message, dirs, 'ts')
-    is_sending.remove(message.from_user.id)
+    is_books.remove(message.from_user.id)
 
 @bot.message_handler(commands=['son'])
 def sysonenum(message):
