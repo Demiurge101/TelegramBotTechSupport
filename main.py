@@ -10,6 +10,9 @@ import os
 DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
 DB.connect()
 
+TSDB = MDataBase.TSDB("localhost", "root", Config.password, Config.bd_name_dispatcher_ts)
+TSDB.connect()
+
 SN = MDataBase.SonDB("localhost", "root", Config.password, Config.bd_name_dispatcher_son)
 SN.connect()
 
@@ -273,28 +276,60 @@ def callback_message(callback):
 
 @bot.message_handler()
 def navigation(message):
-    if message.text.lower() == 'проблемы с оборудованием кедр' or message.text == '/hardware':
-        bot.send_message(message.chat.id, DB.exe_queryKey('Кедр'),reply_markup=markup_list[1])
-    elif message.text.lower() == 'кабели' or message.text == '/cables':
-        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[2])
-    elif message.text.lower() == 'усо' or message.text == '/uso':
-        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[3])
-    elif message.text.lower() == 'пульт бурильщика' or message.text == '/pnd':
-        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[4])
-    elif message.text.lower() == 'датчики' or message.text == '/sensors':
-        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[5])
-    elif message.text.lower() == 'проблемы с сетью' or message.text == '/network':
-        bot.send_message(message.chat.id, DB.exe_queryKey('Сеть'), reply_markup=markup_list[2])
-    elif message.text.lower() == 'wifi точки' or message.text == '/wifi':
-        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[0])
-    elif message.text.lower() == 'ip телефоны и атс' or message.text == '/telephones':
-        bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[1])
-    elif message.text.lower() == 'проблемы с программами dcsoft' or message.text == '/software':
-        bot.send_message(message.chat.id, DB.exe_queryKey('DCSoft'), reply_markup=markup_list[3])
-    elif message.text.lower() == "система одного номера":
-        sysonenum(message)
-    elif message.text.lower() == 'назад':
-        bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
+    text = ""
+    if message.text.lower() == 'назад':
+        menu_id = 0
+    else:
+        menu_id = TSDB.getIdByText(message.text)
+    if menu_id < 0:
+        return
+    content = TSDB.getContent(menu_id)
+    if len(content):
+        if content['content_text']:
+            # bot.send_message(message.chat.id, content['content_text'])
+            text = content['content_text']
+        if content['location']:
+            print(content['location'])
+
+    menu_items = TSDB.getSubMenu(menu_id)
+    if len(menu_items):
+        titles_reply = []
+        titles_inline = []
+        for elem in menu_items:
+            if elem['title_type'] == 1: # Reply
+                titles_reply.append(elem['title'])
+            elif elem['title_type'] == 2: # Inline
+                titles_inline.append(elem['title'])
+        if titles_reply:
+            print("titles_reply")
+            titles_reply.append("Назад")
+            bot.send_message(message.chat.id, text, reply_markup=buttonway(titles_reply, "Reply"))
+        if titles_inline:
+            print("titles_inline")
+            titles_inline.append("Назад")
+            bot.send_message(message.chat.id, text, reply_markup=buttonway(titles_inline, "Inline"))
+    # if message.text.lower() == 'проблемы с оборудованием кедр' or message.text == '/hardware':
+    #     bot.send_message(message.chat.id, DB.exe_queryKey('Кедр'),reply_markup=markup_list[1])
+    # elif message.text.lower() == 'кабели' or message.text == '/cables':
+    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[2])
+    # elif message.text.lower() == 'усо' or message.text == '/uso':
+    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[3])
+    # elif message.text.lower() == 'пульт бурильщика' or message.text == '/pnd':
+    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[4])
+    # elif message.text.lower() == 'датчики' or message.text == '/sensors':
+    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[5])
+    # elif message.text.lower() == 'проблемы с сетью' or message.text == '/network':
+    #     bot.send_message(message.chat.id, DB.exe_queryKey('Сеть'), reply_markup=markup_list[2])
+    # elif message.text.lower() == 'wifi точки' or message.text == '/wifi':
+    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[0])
+    # elif message.text.lower() == 'ip телефоны и атс' or message.text == '/telephones':
+    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[1])
+    # elif message.text.lower() == 'проблемы с программами dcsoft' or message.text == '/software':
+    #     bot.send_message(message.chat.id, DB.exe_queryKey('DCSoft'), reply_markup=markup_list[3])
+    # elif message.text.lower() == "система одного номера":
+    #     sysonenum(message)
+    # elif message.text.lower() == 'назад':
+    #     bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
 
 
 def son(message, overcount=0):

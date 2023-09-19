@@ -200,7 +200,20 @@ class SonDB(Database):
 
 
 class TSDB(Database):
-    def getSubMenu(id_parent):
-        res = _fetchall(f"select * from titles where id_parent = {id_parent}")
-        for i in res:
-            print(i)
+    def getSubMenu(self, parent_id):
+        return self._fetchall(f"select * from titles where parent_id = {parent_id}")
+
+    def getContent(self, parent_id):
+        res = self._fetchall(f"select parent_id, content_text, location from contents where parent_id = {parent_id}")
+        if len(res) > 0:
+            return res[0]
+        else:
+            return {}
+
+    def getIdByText(self, text):
+        res = self._fetchall(f"select id from titles where title = \'{text}\'")
+        if(len(res) > 0):
+            return res[0]['id']
+        else:
+            return -1
+
