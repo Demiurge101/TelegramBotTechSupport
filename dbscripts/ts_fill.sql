@@ -53,5 +53,4 @@ insert into titles (parent_id, title, title_type) values (12, "Fanvil X4", 2);
 insert into titles (parent_id, title, title_type) values (12, "Yeastar S20", 2);
 insert into titles (parent_id, title, title_type) values (12, "Yeastar S50", 2);
 
-
-
+insert into titles (parent_id, title, title_type) values (4, "Log out", 1);

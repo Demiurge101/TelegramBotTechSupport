@@ -11,6 +11,7 @@ CREATE TABLE titles
   id INT(4) NOT NULL AUTO_INCREMENT UNIQUE,
     parent_id INT(4) NOT NULL,
     title varchar(50) NOT NULL,
+    command varchar(50) unique,
     title_type tinyint(1) NOT NULL,
     CONSTRAINT pk_points
     PRIMARY KEY(id)

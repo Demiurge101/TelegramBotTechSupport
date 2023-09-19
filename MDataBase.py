@@ -210,10 +210,57 @@ class TSDB(Database):
         else:
             return {}
 
-    def getIdByText(self, text):
+    def getTitle(self, id):
+        res = self._fetchall(f"select * from titles where id = {id}")
+        return res[0]
+
+    def getIdByTitle(self, text):
         res = self._fetchall(f"select id from titles where title = \'{text}\'")
         if(len(res) > 0):
             return res[0]['id']
         else:
             return -1
+
+    def getIdByCommand(self, text):
+        res = self._fetchall(f"select id from titles where command = \"{text}\"")
+        if len(res) > 0:
+            return res[0]['id']
+        else:
+            return -1
+
+    def getParentId(self, id):
+        res = self._fetchall(f"select parent_id from titles where id = {id}")
+        return res[0]['parent_id']
+
+    def addTitle(self, parent_id, title, title_type, command = None):
+        if self.getIdByCommand(command):
+            return "There is the same command."
+        mid = self._fetchall(f"select parent_id from titles where title = {title}")
+        if len(mid):
+            r = self.getSubMenu(mid[0]['parent_id'])
+            for i in r:
+                if i['text'] == title:
+                    return "There is the same title."
+        self._commit(f"insert into titles(parent_id, title, command, title_type) \
+            values({parent_id}, \"{title}\", \"{command}\", {title_type} )")
+        return "Done!"
+
+    def addContent(self, parent_id, content, location = None):
+        if len(self.getContent(parent_id)) > 0:
+            return f"Already exist with the same id({parent_id})"
+        self._commit(f"insert into contents(parent_id, content_text, location) \
+            values({parent_id}, \"{content_text}\", \"{location}\" )")
+        return "Done!"
+
+    def setTitleCommand(self, id, command):
+        if self.getTitle(id):
+            self._commit(f"update titles set command = \"{command}\" where id = \"{id}\" ")
+
+    def deleteTitle(self, id):
+        self._commit(f"delete from titles where id = {id}")
+
+    def deleteContent(self, parent_id):
+        self._commit(f"delete from contents where parent_id = {parent_id}")
+
+
 

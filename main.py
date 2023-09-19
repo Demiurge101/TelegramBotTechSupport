@@ -276,13 +276,19 @@ def callback_message(callback):
         sendMedia(callback.message, DB.exe_queryPath(callback.data), 'ts')
 
 
+
+
 @bot.message_handler()
 def navigation(message):
     text = "ッ"
+    menu_id = 0
     if message.text.lower() == 'назад':
         menu_id = 0
+    elif message.text.lower() == "система одного номера":
+        menu_id = TSDB.getIdByTitle(message.text)
+        sysonenum(message)
     else:
-        menu_id = TSDB.getIdByText(message.text)
+        menu_id = TSDB.getIdByTitle(message.text)
     if menu_id < 0:
         return
     content = TSDB.getContent(menu_id)
