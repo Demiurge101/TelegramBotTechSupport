@@ -6,11 +6,12 @@ USE TS_Dispatcher;
 
 
 
-CREATE TABLE points
+CREATE TABLE titles
 (
   id INT(4) NOT NULL AUTO_INCREMENT UNIQUE,
     parent_id INT(4) NOT NULL,
-    title varchar(50) NOT NULL
+    title varchar(50) NOT NULL,
+    type tinyint(1) NOT NULL,
     CONSTRAINT pk_points
     PRIMARY KEY(id)
 );
@@ -26,6 +27,6 @@ CREATE TABLE contents
 		PRIMARY KEY(id),
 	CONSTRAINT fk_contents
     FOREIGN KEY(parent_id)
-        REFERENCES points(id)
+        REFERENCES titles(id)
         ON UPDATE CASCADE
 );

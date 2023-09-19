@@ -196,3 +196,11 @@ class SonDB(Database):
         print()
         print(org_id)
         
+
+
+
+class TSDB(Database):
+    def getSubMenu(id_parent):
+        res = _fetchall(f"select * from titles where id_parent = {id_parent}")
+        for i in res:
+            print(i)
