@@ -42,3 +42,16 @@ insert into titles (parent_id, title, title_type) values (7, "ДТ", 2);
 
 insert into titles (parent_id, title, title_type) values (8, "Кабели датчиков ГТИ", 2);
 insert into titles (parent_id, title, title_type) values (8, "Магистральные кабели", 2);
+
+
+insert into titles (parent_id, title, title_type) values (9, "Ubiquiti", 2);
+insert into titles (parent_id, title, title_type) values (9, "TP-Link", 2);
+
+
+insert into titles (parent_id, title, title_type) values (12, "Fanvil X1", 2);
+insert into titles (parent_id, title, title_type) values (12, "Fanvil X4", 2);
+insert into titles (parent_id, title, title_type) values (12, "Yeastar S20", 2);
+insert into titles (parent_id, title, title_type) values (12, "Yeastar S50", 2);
+
+
+
