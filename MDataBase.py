@@ -1,4 +1,5 @@
 import pymysql
+from includes import *
 
 class Database:
     "Base class for Database"
@@ -201,7 +202,25 @@ class SonDB(Database):
 
 class TSDB(Database):
     def getSubMenu(self, parent_id):
-        return self._fetchall(f"select * from titles where parent_id = {parent_id}")
+        menu_items = self._fetchall(f"select * from titles where parent_id = {parent_id}")
+        if len(menu_items):
+            titles_reply = []
+            titles_inline = []
+            for elem in menu_items:
+                if elem['title_type'] == 1: # Reply
+                    titles_reply.append(elem['title'])
+                elif elem['title_type'] == 2: # Inline
+                    titles_inline.append(elem['title'])
+            if titles_reply:
+                print("titles_reply")
+                if parent_id > 0:
+                    titles_reply.append("Назад")
+                return buttonway(titles_reply, "Reply")
+            if titles_inline:
+                if parent_id > 0:
+                    print("titles_inline")
+                    titles_inline.append("Назад")
+                return buttonway(titles_inline, "Inline")
 
     def getContent(self, parent_id):
         res = self._fetchall(f"select parent_id, content_text, location from contents where parent_id = {parent_id}")
@@ -233,23 +252,31 @@ class TSDB(Database):
         return res[0]['parent_id']
 
     def addTitle(self, parent_id, title, title_type, command = None):
-        if self.getIdByCommand(command):
+        if command != None and self.getIdByCommand(command):
             return "There is the same command."
-        mid = self._fetchall(f"select parent_id from titles where title = {title}")
+        mid = self._fetchall(f"select parent_id from titles where title = \"{title}\"")
         if len(mid):
             r = self.getSubMenu(mid[0]['parent_id'])
             for i in r:
-                if i['text'] == title:
+                if i['title'] == title:
                     return "There is the same title."
-        self._commit(f"insert into titles(parent_id, title, command, title_type) \
-            values({parent_id}, \"{title}\", \"{command}\", {title_type} )")
+        if command:
+            self._commit(f"insert into titles(parent_id, title, command, title_type) \
+                values({parent_id}, \"{title}\", \"{command}\", {title_type} )")
+        else:
+            self._commit(f"insert into titles(parent_id, title, title_type) \
+                values({parent_id}, \"{title}\", {title_type} )")
         return "Done!"
 
     def addContent(self, parent_id, content, location = None):
         if len(self.getContent(parent_id)) > 0:
             return f"Already exist with the same id({parent_id})"
-        self._commit(f"insert into contents(parent_id, content_text, location) \
-            values({parent_id}, \"{content_text}\", \"{location}\" )")
+        if location:
+            self._commit(f"insert into contents(parent_id, content_text, location) \
+                values({parent_id}, \"{content}\", \"{location}\" )")
+        else:
+            self._commit(f"insert into contents(parent_id, content_text) \
+                values({parent_id}, \"{content}\" )")
         return "Done!"
 
     def setTitleCommand(self, id, command):

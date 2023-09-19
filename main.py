@@ -6,6 +6,8 @@ import Config
 import os
 
 
+# from includes import *
+
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
 DB.connect()
@@ -27,47 +29,10 @@ video_type = {".mp4"}
 audio_type = {".mp3"}
 
 
+start_text = "Добро пожаловать в бот технической поддержки ГеоФизМаш. Он предназначен для нахождения быстрых ответов, на самые распространённые проблемы. Для полного списка комманд введите /help"
+
 bot = telebot.TeleBot(Config.Token)
 
-def buttonway(list, button):
-    if button == "Reply":
-        markup = types.ReplyKeyboardMarkup()
-        i = 0
-        while i < len(list):
-            btn1 = types.KeyboardButton(list[i])
-            if i + 1 < len(list) and list[i + 1] != " ":
-                btn2 = types.KeyboardButton(list[i + 1])
-                markup.row(btn1, btn2)
-            else:
-                markup.row(btn1)
-            i += 2
-    elif button == "Inline":
-        markup = types.InlineKeyboardMarkup()
-        i = 0
-        while i < len(list):
-            btn1 = types.InlineKeyboardButton(list[i], callback_data=list[i])
-            if i + 1 < len(list) and list[i + 1] != " ":
-                btn2 = types.InlineKeyboardButton(list[i + 1], callback_data=list[i])
-                markup.row(btn1, btn2)
-            else:
-                markup.row(btn1)
-            i += 2
-    return markup
-
-markup_list = (buttonway(["Проблемы с оборудованием КЕДР", "Проблемы с сетью" ,"Проблемы с программами DCSoft", "Система одного номера"], "Reply") ,
-                   buttonway(["УСО", "Пульт бурильщика", "Датчики", "Кабели", "Назад"], "Reply") ,
-                   buttonway(["Wifi точки", "Камеры", "Ip адресса", "Ip телефоны и атс", "Назад"], "Reply")  ,
-                   buttonway(["DSServer", " ", "DSPlot", "DSDevice", "Назад"], "Reply"))
-
-son_main_menu = (buttonway(["Назад"], "Reply"))
-
-markup_list_inline = (buttonway(["Ubiquiti", "TP-Link"], "Inline"),
-                      buttonway(["Fanvil X4","Fanvil X1", "Yeastar S20", "Yeastar S50"], "Inline"),
-                      buttonway(["Кабели датчиков ГТИ","Магистральные Кабели"], "Inline"),
-                      buttonway(["УСО Exd PowerLine","УСО Exd WDSL", "УСО Exn WDSL"], "Inline"),
-                      buttonway(["ПНД Exd PowerLine","ПНД Exd WDSL", "ПНД Exn WDSL"], "Inline"),
-                      buttonway(["ДНК","ДДИ", "ДУП", "РУД", "ДОП-М", "БЗУД", "ДТ"], "Inline"),
-                    )
 
 
 is_sending = []
@@ -76,8 +41,8 @@ is_sending = []
 def main(message):
     #bot.send_message(message.chat.id, '<b>Привет!</b>', parse_mode='html')
 
-    text = DB.exe_queryKey("Старт")
-    bot.send_message(message.chat.id, text, reply_markup=markup_list[0])
+    text = start_text
+    bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(0))
     #bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}', reply_markup=markup)
     #bot.register_next_step_handler(message, on_click) Срабатывание следующей функции 
 
@@ -154,21 +119,25 @@ def books(message):
 
 @bot.message_handler(commands=['son'])
 def sysonenum(message):
-   # text = DB.exe_queryKey("Материалы")
-   # dirs = DB.exe_queryPath("Материалы")
+    if message.text == "Назад":
+        bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
+    if SN.check_user(message.from_user.id) == False:
+        bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=res)
+        bot.register_next_step_handler(message, adduser)
+        return
 
-   if SN.check_user(message.from_user.id) == False:
-    bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=son_main_menu)
-    bot.register_next_step_handler(message, adduser)
-    return
-
-   bot.send_message(message.chat.id, "Введите номер датчика", reply_markup=son_main_menu)
-   bot.register_next_step_handler(message, son)
+    idson = TSDB.getIdByTitle(message.text)
+    if idson < 0:
+        idson = TSDB.getIdByCommand(message.text)
+    res = TSDB.getSubMenu(idson)
+    bot.send_message(message.chat.id, "Введите номер датчика", reply_markup=res)
+    bot.register_next_step_handler(message, son)
 
 
 def adduser(message):
     if SN.add_user(message.text, message.from_user.id, message.from_user.username) == False:
         bot.send_message(message.chat.id, "Отказ!")
+        bot.register_next_step_handler(message, sysonenum)
         return
     else:
         bot.send_message(message.chat.id, "Введите номер датчика")
@@ -267,7 +236,7 @@ def project_map(message, *args):
 def callback_message(callback):
     # buttons in messages here
     if callback.data == 'Назад':
-        bot.send_message(callback.message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
+        bot.send_message(callback.message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
     elif callback.data == 'delete':
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
     elif callback.data == 'edit':
@@ -279,9 +248,8 @@ def callback_message(callback):
 
 
 @bot.message_handler()
-def navigation(message):
+def navigation(message, menu_id=0):
     text = "ッ"
-    menu_id = 0
     if message.text.lower() == 'назад':
         menu_id = 0
     elif message.text.lower() == "система одного номера":
@@ -299,25 +267,8 @@ def navigation(message):
         if content['location']:
             print(content['location'])
 
-    menu_items = TSDB.getSubMenu(menu_id)
-    if len(menu_items):
-        titles_reply = []
-        titles_inline = []
-        for elem in menu_items:
-            if elem['title_type'] == 1: # Reply
-                titles_reply.append(elem['title'])
-            elif elem['title_type'] == 2: # Inline
-                titles_inline.append(elem['title'])
-        if titles_reply:
-            print("titles_reply")
-            if menu_id > 0:
-                titles_reply.append("Назад")
-            bot.send_message(message.chat.id, text, reply_markup=buttonway(titles_reply, "Reply"))
-        if titles_inline:
-            if menu_id > 0:
-                print("titles_inline")
-            titles_inline.append("Назад")
-            bot.send_message(message.chat.id, text, reply_markup=buttonway(titles_inline, "Inline"))
+
+    bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
     # if message.text.lower() == 'проблемы с оборудованием кедр' or message.text == '/hardware':
     #     bot.send_message(message.chat.id, DB.exe_queryKey('Кедр'),reply_markup=markup_list[1])
     # elif message.text.lower() == 'кабели' or message.text == '/cables':
@@ -343,13 +294,19 @@ def navigation(message):
 
 
 def son(message, overcount=0):
+    print("son")
     number = message.text
     client_id = message.from_user.id
     # SN.test(number, client_id)
     if(message.text in {"/cancel", "/back", "Назад"}) or (overcount > 5):
         if(overcount > 5):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
-        bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
+        bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
+        return
+    elif message.text.lower() == "log out":
+        SN.del_user(client_id)
+        bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
+        bot.register_next_step_handler(message, sysonenum)
         return
     device = SN.getDevices(number, client_id)
     station = SN.getStations(number, client_id)
