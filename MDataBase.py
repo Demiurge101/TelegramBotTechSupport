@@ -1,4 +1,5 @@
 import pymysql
+import Config
 from includes import *
 
 class Database:
@@ -113,7 +114,7 @@ class DatabaseTS(Database):
 
 class SonDB(Database):
     """Database for SON"""
-    dblocation = "\\\\falcon\\GTI\\Поставки"
+    dblocation = Config.sonDBfiles
 
     def check_user(self, user_id):
         res = self._fetchall(f"select * from users where user_id = {user_id}")

@@ -2,9 +2,9 @@ import os
 import MDataBase
 import Config
 
-source_location = "\\\\falcon\\GTI\\Поставки"
+source_location = Config.sonDBfiles
 
-clients = {"ННГФ", "Новатэк"}
+clients = Config.clients
 
 
 source_location = os.path.abspath(source_location)

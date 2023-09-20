@@ -22,6 +22,9 @@ SN.connect()
 chat_id_Demiurge = Config.Demiurge
 chat_id_Shippuden = Config.Shippuden
 chat_id_ITGenerator = Config.ITGenerator
+chat_id_TheEyee = Config.TheEyee
+
+admins = Config.admins
 
 document_type = {".pdf", ".txt", ".bin", ""}
 image_type = {".img", ".png", ".bmp"}
@@ -54,22 +57,33 @@ def help(message):
 @bot.message_handler(content_types=['photo','video','voice','video_note','document'])
 def feedbackSend(message):
     if message.content_type == "photo":
-        bot.send_photo(chat_id_Demiurge,message.photo[0].file_id,f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-        bot.send_photo(chat_id_Shippuden,message.photo[0].file_id,f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+        for admin_chat in admins:
+            bot.send_photo(admin_chat, message.photo[0].file_id,f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+        # bot.send_photo(chat_id_Demiurge, message.photo[0].file_id,f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+        # bot.send_photo(chat_id_Shippuden,message.photo[0].file_id,f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
     elif message.content_type == "video":
-        bot.send_video(chat_id_Demiurge, message.video.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-        bot.send_video(chat_id_Shippuden, message.video.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+        for admin_chat in admins:
+            bot.send_video(admin_chat, message.video.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+        # bot.send_video(chat_id_Demiurge, message.video.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+        # bot.send_video(chat_id_Shippuden, message.video.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
     elif message.content_type == "video_note":
-        bot.send_video_note(chat_id_Demiurge, message.video_note.file_id)
-        bot.send_video_note(chat_id_Shippuden, message.video_note.file_id)
-        bot.send_message(chat_id_Demiurge,f"User {message.from_user.username} ID {message.from_user.id}")
-        bot.send_message(chat_id_Shippuden,f"User {message.from_user.username} ID {message.from_user.id}")
+        for admin_chat in admins:
+            bot.send_video_note(admin_chat, message.video_note.file_id)
+            bot.send_message(admin_chat,f"User {message.from_user.username} ID {message.from_user.id}")
+        # bot.send_video_note(chat_id_Demiurge, message.video_note.file_id)
+        # bot.send_video_note(chat_id_Shippuden, message.video_note.file_id)
+        # bot.send_message(chat_id_Demiurge,f"User {message.from_user.username} ID {message.from_user.id}")
+        # bot.send_message(chat_id_Shippuden,f"User {message.from_user.username} ID {message.from_user.id}")
     elif message.content_type == "voice":
-        bot.send_voice(chat_id_Demiurge,message.voice.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}")
-        bot.send_voice(chat_id_Shippuden,message.voice.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}")
+        for admin_chat in admins:
+            bot.send_voice(admin_chat, message.voice.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}")
+        # bot.send_voice(chat_id_Demiurge,message.voice.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}")
+        # bot.send_voice(chat_id_Shippuden,message.voice.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}")
     elif message.content_type == "document":
-        bot.send_document(chat_id_Demiurge, message.document.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-        bot.send_document(chat_id_Shippuden, message.document.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+        for admin_chat in admins:
+            bot.send_document(admin_chat, message.document.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+        # bot.send_document(chat_id_Demiurge, message.document.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+        # bot.send_document(chat_id_Shippuden, message.document.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
     #bot.send_message(chat_id_Demiurge, message)
 
 @bot.message_handler(commands=['mail'])
@@ -86,10 +100,10 @@ def feedback(message):
 
 def feedbackSendtext(message):
     if message.content_type == "text":
-        bot.send_message(chat_id_Demiurge,f"User {message.from_user.username} ID {message.from_user.id}: {message.text}")
-        bot.send_message(chat_id_Shippuden, f"User {message.from_user.username} ID {message.from_user.id}: {message.text}")
-        bot.send_message(chat_id_ITGenerator,f"User {message.from_user.username} ID {message.from_user.id}: {message.text}")
-        
+        text = f"User {message.from_user.username} ID {message.from_user.id}: {message.text}"
+        for i in admins:
+            bot.send_message(i, text)
+        bot.send_message(chat_id_TheEyee, text)
 
     #bot.send_message(chat_id_Demiurge, message)
 
@@ -149,16 +163,14 @@ def adduser(message, menu_id):
 
 @bot.message_handler(commands=['table'])
 def gettable(message):
-    if message.from_user.id == chat_id_Shippuden or message.from_user.id == chat_id_Demiurge\
-            or chat_id_ITGenerator:
+    if message.from_user.id in admins:
         table = DB.map_table()
         for row in table:
             bot.send_message(message.chat.id,f"{row['id']}\t {row['key_val']}  \n {row['text_val']}")
 
 @bot.message_handler(commands=['add', 'update', 'delete'])
 def add(message):
-    if message.from_user.id == chat_id_Shippuden or message.from_user.id == chat_id_Demiurge\
-            or chat_id_ITGenerator:
+    if message.from_user.id in admins:
         if message.text == "/update":
             bot.send_message(message.chat.id,"Введи ключ который у тебя уже есть для изменения соблюдая регистр и пробелы ")
         elif message.text == "/delete":
@@ -263,7 +275,9 @@ def navigation(message, menu_id=0):
     else:
         menu_id = TSDB.getIdByTitle(message.text)
     if menu_id < 0:
-        return
+        menu_id = TSDB.getIdByCommand(message.text)
+        if menu_id < 0:
+            return
     content = TSDB.getContent(menu_id)
     if len(content):
         if content['content_text']:
