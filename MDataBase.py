@@ -202,7 +202,7 @@ class SonDB(Database):
 
 class TSDB(Database):
     def getSubMenu(self, parent_id):
-        menu_items = self._fetchall(f"select * from titles where parent_id = {parent_id}")
+        menu_items = self._fetchall(f"select * from titles where parent_id = {parent_id}", f"getSubMenu({parent_id})")
         if len(menu_items):
             titles_reply = []
             titles_inline = []
@@ -223,38 +223,38 @@ class TSDB(Database):
                 return buttonway(titles_inline, "Inline")
 
     def getContent(self, parent_id):
-        res = self._fetchall(f"select parent_id, content_text, location from contents where parent_id = {parent_id}")
+        res = self._fetchall(f"select parent_id, content_text, location from contents where parent_id = {parent_id}", f"getContent{parent_id}")
         if len(res) > 0:
             return res[0]
         else:
             return {}
 
     def getTitle(self, id):
-        res = self._fetchall(f"select * from titles where id = {id}")
+        res = self._fetchall(f"select * from titles where id = {id}", f"getTitle({id})")
         return res[0]
 
     def getIdByTitle(self, text):
-        res = self._fetchall(f"select id from titles where title = \'{text}\'")
+        res = self._fetchall(f"select id from titles where title = \'{text}\'", f"getIdByTitle(\"{text}\")")
         if(len(res) > 0):
             return res[0]['id']
         else:
             return -1
 
     def getIdByCommand(self, text):
-        res = self._fetchall(f"select id from titles where command = \"{text}\"")
+        res = self._fetchall(f"select id from titles where command = \"{text}\"", f"getIdByCommand(\"{text}\")")
         if len(res) > 0:
             return res[0]['id']
         else:
             return -1
 
     def getParentId(self, id):
-        res = self._fetchall(f"select parent_id from titles where id = {id}")
+        res = self._fetchall(f"select parent_id from titles where id = {id}", f"getParentId({id})")
         return res[0]['parent_id']
 
     def addTitle(self, parent_id, title, title_type, command = None):
         if command != None and self.getIdByCommand(command):
             return "There is the same command."
-        mid = self._fetchall(f"select parent_id from titles where title = \"{title}\"")
+        mid = self._fetchall(f"select parent_id from titles where title = \"{title}\"", f"addTitle(), mid")
         if len(mid):
             r = self.getSubMenu(mid[0]['parent_id'])
             for i in r:

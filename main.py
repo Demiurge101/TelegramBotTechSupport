@@ -127,7 +127,6 @@ def sysonenum(message):
         idson = TSDB.getIdByCommand(message.text)
     res = TSDB.getSubMenu(idson)
     if SN.check_user(message.from_user.id) == False:
-        print("here it is")
         back_button = telebot.types.ReplyKeyboardMarkup(True)
         btn1 = types.KeyboardButton("Назад")
         back_button.row(btn1)
