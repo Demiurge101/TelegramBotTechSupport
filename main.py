@@ -282,7 +282,6 @@ def navigation(message, menu_id=0):
         if menu_id < 0:
             return
     content = TSDB.getContent(menu_id)
-    print("Content: ", content)
     if content:
         if content['content_text']:
             # bot.send_message(message.chat.id, content['content_text'])
