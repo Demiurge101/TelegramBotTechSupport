@@ -114,6 +114,7 @@ def books(message):
     text = DB.exe_queryKey("Материалы")
     dirs = DB.exe_queryPath("Материалы")
     bot.send_message(message.chat.id, text)
+    bot.send_message(message.chat.id, "Загрузка файлов...")
     sendMedia(message, dirs, 'ts')
     is_books.remove(message.from_user.id)
 
@@ -121,27 +122,31 @@ def books(message):
 def sysonenum(message):
     if message.text == "Назад":
         bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
-    if SN.check_user(message.from_user.id) == False:
-        bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=res)
-        bot.register_next_step_handler(message, adduser)
-        return
-
     idson = TSDB.getIdByTitle(message.text)
     if idson < 0:
         idson = TSDB.getIdByCommand(message.text)
     res = TSDB.getSubMenu(idson)
+    if SN.check_user(message.from_user.id) == False:
+        print("here it is")
+        back_button = telebot.types.ReplyKeyboardMarkup(True)
+        btn1 = types.KeyboardButton("Назад")
+        back_button.row(btn1)
+        bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=back_button)
+        bot.register_next_step_handler(message, adduser, idson)
+        return
+
     bot.send_message(message.chat.id, "Введите номер датчика", reply_markup=res)
-    bot.register_next_step_handler(message, son)
+    bot.register_next_step_handler(message, son, idson)
 
 
-def adduser(message):
+def adduser(message, menu_id):
     if SN.add_user(message.text, message.from_user.id, message.from_user.username) == False:
-        bot.send_message(message.chat.id, "Отказ!")
-        bot.register_next_step_handler(message, sysonenum)
+        bot.send_message(message.chat.id, "Отказ!", reply_markup=TSDB.getSubMenu(0))
+        bot.register_next_step_handler(message, navigation)
         return
     else:
-        bot.send_message(message.chat.id, "Введите номер датчика")
-        bot.register_next_step_handler(message, son)
+        bot.send_message(message.chat.id, "Введите номер датчика", reply_markup=TSDB.getSubMenu(menu_id))
+        bot.register_next_step_handler(message, son, menu_id)
 
 @bot.message_handler(commands=['table'])
 def gettable(message):
@@ -255,6 +260,7 @@ def navigation(message, menu_id=0):
     elif message.text.lower() == "система одного номера":
         menu_id = TSDB.getIdByTitle(message.text)
         sysonenum(message)
+        return
     else:
         menu_id = TSDB.getIdByTitle(message.text)
     if menu_id < 0:
@@ -293,7 +299,7 @@ def navigation(message, menu_id=0):
     #     bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
 
 
-def son(message, overcount=0):
+def son(message, menu_id=0, overcount=0):
     print("son")
     number = message.text
     client_id = message.from_user.id
@@ -302,17 +308,18 @@ def son(message, overcount=0):
         if(overcount > 5):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
         bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
+        bot.register_next_step_handler(message, navigation)
         return
     elif message.text.lower() == "log out":
         SN.del_user(client_id)
         bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
-        bot.register_next_step_handler(message, sysonenum)
+        bot.register_next_step_handler(message, navigation)
         return
     device = SN.getDevices(number, client_id)
     station = SN.getStations(number, client_id)
     if(len(station) == 0 and len(device) == 0):
-        bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.")
-        bot.register_next_step_handler(message, son, overcount + 1)
+        bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.", reply_markup=TSDB.getSubMenu(menu_id))
+        bot.register_next_step_handler(message, son, menu_id, overcount + 1)
         return
     overcount = 0
     print("--")
@@ -323,14 +330,16 @@ def son(message, overcount=0):
         loc = device['location']
         if loc[:1] == '.':
             loc = SN.dblocation + loc[1:]
+        bot.send_message(message.chat.id, "Загрузка файлов...", reply_markup=TSDB.getSubMenu(menu_id))
         sendFromFolder(message, loc)
 
     if(len(station) > 0):
         loc = station['location']
         if loc[:1] == '.':
             loc = SN.dblocation + loc[1:]
+        bot.send_message(message.chat.id, "Загрузка файлов...", reply_markup=TSDB.getSubMenu(menu_id))
         sendFromFolder(message, loc, False)
-    bot.register_next_step_handler(message, son, 0)
+    bot.register_next_step_handler(message, son, menu_id, 0)
 
 def sendMedia(message, dirs, method):
     if message.from_user.id in is_sending:
@@ -374,6 +383,7 @@ def sendMedia(message, dirs, method):
                 else:
                     bot.send_media_group(message.chat.id, media)
             i += 1
+    bot.send_message(message.chat.id, "Загрузка завершена.")
     is_sending.remove(message.from_user.id)
 
 def sendFromFolder(message, location, subfolders=True):
@@ -408,7 +418,9 @@ def sendFromFolder(message, location, subfolders=True):
                     #bot.send_media_group(message.chat.id, media)
                 else:
                     bot.send_media_group(message.chat.id, media)
+    bot.send_message(message.chat.id, "Загрузка завершена.")
     is_sending.remove(message.from_user.id)
+
 
 
 

@@ -212,13 +212,13 @@ class TSDB(Database):
                 elif elem['title_type'] == 2: # Inline
                     titles_inline.append(elem['title'])
             if titles_reply:
-                print("titles_reply")
+                # print("titles_reply")
                 if parent_id > 0:
                     titles_reply.append("Назад")
                 return buttonway(titles_reply, "Reply")
             if titles_inline:
                 if parent_id > 0:
-                    print("titles_inline")
+                    # print("titles_inline")
                     titles_inline.append("Назад")
                 return buttonway(titles_inline, "Inline")
 
