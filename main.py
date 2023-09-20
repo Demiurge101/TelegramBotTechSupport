@@ -423,4 +423,4 @@ def sendFromFolder(message, location, subfolders=True):
 
 
 
-bot.polling(none_stop=True)
+bot.polling(none_stop=True, timeout=50)
