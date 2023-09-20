@@ -274,10 +274,10 @@ class TSDB(Database):
             return f"Already exist with the same id({parent_id})"
         if location:
             self._commit(f"insert into contents(parent_id, content_text, location) \
-                values({parent_id}, \"{content}\", \"{location}\" )")
+                values({parent_id}, \"{content}\", \"{location}\" )", "addContent3")
         else:
             self._commit(f"insert into contents(parent_id, content_text) \
-                values({parent_id}, \"{content}\" )")
+                values({parent_id}, \"{content}\" )", "addContent2")
         return "Done!"
 
     def setTitleCommand(self, id, command):

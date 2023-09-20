@@ -252,6 +252,7 @@ def project_map(message, *args):
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
     # buttons in messages here
+    print(f"{callback.message.chat.id}({callback.message.from_user.username}): '{callback.message.text}'")
     if callback.data == 'Назад':
         bot.send_message(callback.message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
     elif callback.data == 'delete':
@@ -266,6 +267,7 @@ def callback_message(callback):
 
 @bot.message_handler()
 def navigation(message, menu_id=0):
+    print(f"{message.chat.id}({message.from_user.username}): '{message.text}'")
     text = "ッ"
     if message.text.lower() == 'назад':
         menu_id = 0
@@ -280,7 +282,8 @@ def navigation(message, menu_id=0):
         if menu_id < 0:
             return
     content = TSDB.getContent(menu_id)
-    if len(content):
+    print("Content: ", content)
+    if content:
         if content['content_text']:
             # bot.send_message(message.chat.id, content['content_text'])
             text = content['content_text']
