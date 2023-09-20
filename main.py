@@ -253,6 +253,12 @@ def project_map(message, *args):
 def callback_message(callback):
     # buttons in messages here
     print(f"{callback.message.chat.id}({callback.message.from_user.username}): '{callback.message.text}'")
+    if callback.message:
+        for row in callback.message.json['reply_markup']['inline_keyboard']:
+            if callback.data==row[0]['callback_data']:
+                for i in row:
+                    print("-", i['text'])
+                print(f'Текст на нажатой кнопке: {row[0]["text"]}')
     if callback.data == 'Назад':
         bot.send_message(callback.message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
     elif callback.data == 'delete':
