@@ -19,9 +19,10 @@ SN = MDataBase.SonDB("localhost", "root", Config.password, Config.bd_name_dispat
 SN.connect()
 
 # admins
-chat_id_Demiurge = Config.Demiurge
-chat_id_Shippuden = Config.Shippuden
-chat_id_ITGenerator = Config.ITGenerator
+# chat_id_Demiurge = Config.Demiurge
+# chat_id_Shippuden = Config.Shippuden
+# chat_id_ITGenerator = Config.ITGenerator
+# other
 chat_id_TheEyee = Config.TheEyee
 
 admins = Config.admins
