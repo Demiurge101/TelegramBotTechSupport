@@ -297,28 +297,7 @@ def navigation(message, menu_id=0):
         sysonenum(message)
         return
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
-    # if message.text.lower() == 'проблемы с оборудованием кедр' or message.text == '/hardware':
-    #     bot.send_message(message.chat.id, DB.exe_queryKey('Кедр'),reply_markup=markup_list[1])
-    # elif message.text.lower() == 'кабели' or message.text == '/cables':
-    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[2])
-    # elif message.text.lower() == 'усо' or message.text == '/uso':
-    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[3])
-    # elif message.text.lower() == 'пульт бурильщика' or message.text == '/pnd':
-    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[4])
-    # elif message.text.lower() == 'датчики' or message.text == '/sensors':
-    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[5])
-    # elif message.text.lower() == 'проблемы с сетью' or message.text == '/network':
-    #     bot.send_message(message.chat.id, DB.exe_queryKey('Сеть'), reply_markup=markup_list[2])
-    # elif message.text.lower() == 'wifi точки' or message.text == '/wifi':
-    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[0])
-    # elif message.text.lower() == 'ip телефоны и атс' or message.text == '/telephones':
-    #     bot.send_message(message.chat.id, f'Пусто', reply_markup=markup_list_inline[1])
-    # elif message.text.lower() == 'проблемы с программами dcsoft' or message.text == '/software':
-    #     bot.send_message(message.chat.id, DB.exe_queryKey('DCSoft'), reply_markup=markup_list[3])
-    # elif message.text.lower() == "система одного номера":
-    #     sysonenum(message)
-    # elif message.text.lower() == 'назад':
-    #     bot.send_message(message.chat.id, DB.exe_queryKey("Старт"), reply_markup=markup_list[0])
+
 
 
 def son(message, menu_id=0, overcount=0):
