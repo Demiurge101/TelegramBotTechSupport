@@ -273,6 +273,12 @@ def callback_message(callback):
 
 @bot.message_handler()
 def navigation(message, menu_id=0):
+    if len(message.text) > 100:
+        if message.chat.id == chat_id_TheEyee:
+            bot.send_message(message.chat.id, "Пекрати, Вадим!!!!!!!!!!")
+        else:
+            bot.send_message(message.chat.id, "Слишком длинное сообщение!", reply_markup=TSDB.getSubMenu(0))
+        return
     print(f"{message.chat.id}({message.from_user.username}): '{message.text}'")
     text = "シ"
     if message.text.lower() == 'назад':
