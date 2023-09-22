@@ -27,7 +27,7 @@ admins = Config.admins
 # other
 chat_id_TheEyee = Config.TheEyee
 
-document_type = {".pdf", ".txt", ".bin", ""}
+document_type = {".pdf", ".txt", ".bin", ".doc", ""}
 image_type = {".img", ".png", ".bmp"}
 video_type = {".mp4"}
 audio_type = {".mp3"}
@@ -446,4 +446,4 @@ def sendFromFolder(message, location, subfolders=True):
 
 
 
-bot.polling(none_stop=True, timeout=50)
+bot.polling(none_stop=True, timeout=100)
