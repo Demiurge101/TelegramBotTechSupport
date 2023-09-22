@@ -274,7 +274,7 @@ def callback_message(callback):
 @bot.message_handler()
 def navigation(message, menu_id=0):
     print(f"{message.chat.id}({message.from_user.username}): '{message.text}'")
-    text = "ッ"
+    text = "シ"
     if message.text.lower() == 'назад':
         menu_id = 0
     else:
