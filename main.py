@@ -277,10 +277,6 @@ def navigation(message, menu_id=0):
     text = "ッ"
     if message.text.lower() == 'назад':
         menu_id = 0
-    elif message.text.lower() == "система одного номера":
-        menu_id = TSDB.getIdByTitle(message.text)
-        sysonenum(message)
-        return
     else:
         menu_id = TSDB.getIdByTitle(message.text)
     if menu_id < 0:
@@ -292,10 +288,14 @@ def navigation(message, menu_id=0):
         if content['content_text']:
             # bot.send_message(message.chat.id, content['content_text'])
             text = content['content_text']
-        if content['location']:
+        if content['location'] != "" and content['location'] != None:
             print(content['location'])
-
-
+            sendFromFolder(message, content['location'], False)
+    if message.text.lower() == "система одного номера":
+        menu_id = TSDB.getIdByTitle(message.text)
+        bot.send_message(message.chat.id, text)
+        sysonenum(message)
+        return
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
     # if message.text.lower() == 'проблемы с оборудованием кедр' or message.text == '/hardware':
     #     bot.send_message(message.chat.id, DB.exe_queryKey('Кедр'),reply_markup=markup_list[1])
