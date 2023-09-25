@@ -1,5 +1,5 @@
 from telebot import types
-
+import datetime
 
 
 def buttonway(list, button):
@@ -42,3 +42,7 @@ markup_list_inline = (buttonway(["Ubiquiti", "TP-Link"], "Inline"),
                       buttonway(["ПНД Exd PowerLine","ПНД Exd WDSL", "ПНД Exn WDSL"], "Inline"),
                       buttonway(["ДНК","ДДИ", "ДУП", "РУД", "ДОП-М", "БЗУД", "ДТ"], "Inline"),
                     )
+
+
+def get_time():
+  return datetime.datetime.now().strftime("<%Y-%m-%d, %H:%M:%S>")

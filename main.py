@@ -4,10 +4,10 @@ import webbrowser
 import MDataBase
 import Config
 import os
+from includes import get_time
 
 
-# from includes import *
-
+print(get_time(), "Starting...")
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
 DB.connect()
@@ -252,7 +252,7 @@ def project_map(message, *args):
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
     # buttons in messages here
-    print(f"{callback.message.chat.id}({callback.message.from_user.username}): '{callback.message.text}'")
+    print(get_time(), f"{callback.message.chat.id}({callback.message.from_user.username}): '{callback.message.text}'")
     if callback.message:
         for row in callback.message.json['reply_markup']['inline_keyboard']:
             if callback.data==row[0]['callback_data']:
@@ -279,7 +279,7 @@ def navigation(message, menu_id=0):
         else:
             bot.send_message(message.chat.id, "Слишком длинное сообщение!", reply_markup=TSDB.getSubMenu(0))
         return
-    print(f"{message.chat.id}({message.from_user.username}): '{message.text}'")
+    print(get_time(), f"{message.chat.id}({message.from_user.username}): '{message.text}'")
     text = "シ"
     if message.text.lower() == 'назад':
         menu_id = 0
@@ -307,7 +307,6 @@ def navigation(message, menu_id=0):
 
 
 def son(message, menu_id=0, overcount=0):
-    print("son")
     number = message.text
     client_id = message.from_user.id
     # SN.test(number, client_id)
@@ -329,9 +328,6 @@ def son(message, menu_id=0, overcount=0):
         bot.register_next_step_handler(message, son, menu_id, overcount + 1)
         return
     overcount = 0
-    print("--")
-    print(len(device))
-    print(len(station))
     if(len(device) > 0):
         # sendMedia(message, device['location'], 'son')
         loc = device['location']
@@ -430,5 +426,11 @@ def sendFromFolder(message, location, subfolders=True):
 
 
 
+try:
+    print(get_time(), "Runned.")
+    bot.polling(none_stop=True, timeout=100)
+except Exception as e:
+    print(get_time())
+    raise e
 
-bot.polling(none_stop=True, timeout=100)
+print("END")
