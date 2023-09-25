@@ -45,4 +45,4 @@ markup_list_inline = (buttonway(["Ubiquiti", "TP-Link"], "Inline"),
 
 
 def get_time():
-  return datetime.datetime.now().strftime("<%Y-%m-%d, %H:%M:%S>")
+  return datetime.datetime.now().strftime("<%Y-%m-%d, %H:%M:%S.%f")[:-3]+">"
