@@ -430,7 +430,8 @@ try:
     print(get_time(), "Runned.")
     bot.polling(none_stop=True, timeout=100)
 except Exception as e:
-    print(get_time())
+    print(get_time(), "Exception raised.")
+    print(e)
     raise e
 
-print("END")
+print(get_time(), "END")
