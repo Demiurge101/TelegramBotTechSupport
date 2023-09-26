@@ -135,16 +135,18 @@ def books(message):
 
 @bot.message_handler(commands=['son'])
 def sysonenum(message):
+    print("sysonenum")
     if message.text == "Назад":
         bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
     idson = TSDB.getIdByTitle(message.text)
+    print("idson =", idson)
     if idson < 0:
         idson = TSDB.getIdByCommand(message.text)
     res = TSDB.getSubMenu(idson)
     if SN.check_user(message.from_user.id) == False:
-        back_button = telebot.types.ReplyKeyboardMarkup(True)
-        btn1 = types.KeyboardButton("Назад")
-        back_button.row(btn1)
+        # back_button = telebot.types.ReplyKeyboardMarkup(True)
+        # btn1 = types.KeyboardButton("Назад")
+        # back_button.row(btn1)
         bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=back_button)
         bot.register_next_step_handler(message, adduser, idson)
         return
@@ -293,6 +295,7 @@ def navigation(message, menu_id=0):
         if content['content_text']:
             # bot.send_message(message.chat.id, content['content_text'])
             text = content['content_text']
+            print(text)
         if content['location'] != "" and content['location'] != None:
             location = content['location']
             print(content['location'])

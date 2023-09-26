@@ -33,7 +33,10 @@ markup_list = (buttonway(["Проблемы с оборудованием КЕД
                    buttonway(["Wifi точки", "Камеры", "Ip адресса", "Ip телефоны и атс", "Назад"], "Reply")  ,
                    buttonway(["DSServer", " ", "DSPlot", "DSDevice", "Назад"], "Reply"))
 
-back_button = (buttonway(["Назад"], "Reply"))
+back_button = types.ReplyKeyboardMarkup(True)
+btn1 = types.KeyboardButton("Назад")
+back_button.row(btn1)
+# back_button = (buttonway(["Назад"], "Reply"))
 
 markup_list_inline = (buttonway(["Ubiquiti", "TP-Link"], "Inline"),
                       buttonway(["Fanvil X4","Fanvil X1", "Yeastar S20", "Yeastar S50"], "Inline"),

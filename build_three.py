@@ -6,7 +6,9 @@ root_location = Config.tsDBfiles
 content_file_type = ".cnt"
 
 
-TS = MDataBase.TSDB("localhost", "root", Config.password, Config.bd_name_dispatcher_ts)
+
+# TS = MDataBase.TSDB("localhost", "root", Config.password, Config.bd_name_dispatcher_ts)
+TS = MDataBase.TSDB("localhost", "root", Config.password, "TS_Dispatcher_test")
 TS.connect()
 
 
@@ -18,14 +20,19 @@ def makeNode(location, title = "", parent_id=0):
 		source_location = os.path.abspath(location + "\\" + title)
 	# print(source_location)
 	if os.path.isfile(source_location):
-		if source_location[:4] == content_file_type:
+		if source_location[-4:] == content_file_type:
 			f = open(source_location, 'r')
 			data = f.read()
 			f.close()
+			content = TS.getContent(parent_id)
+			if content:
+				TS.setContentText(parent_id, data)
+			else:
+				TS.addContent(parent_id, data)
 			print(data)
 		return
 	print(source_location)
-	title_id = -1
+	title_id = parent_id
 	if title != "":
 		title_id = TS.getIdByTitle(title)
 		if title_id >= 0:
