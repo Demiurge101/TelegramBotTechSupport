@@ -39,6 +39,9 @@ class Database:
         except Exception as e:
             print(e)
 
+    def _checkSlash(self, line):
+        return line.replace('\\', '\\\\')
+
     def _commit(self, cmd, err="commit error"):
         with self.connection.cursor() as cursor:
             try:
@@ -274,7 +277,7 @@ class TSDB(Database):
             return f"Already exist with the same id({parent_id})"
         if location:
             self._commit(f"insert into contents(parent_id, content_text, location) \
-                values({parent_id}, \"{content}\", \"{location}\" )", "addContent3")
+                values({parent_id}, \"{content}\", \"{self._checkSlash(location)}\" )", "addContent3")
         else:
             self._commit(f"insert into contents(parent_id, content_text) \
                 values({parent_id}, \"{content}\" )", "addContent2")
@@ -289,6 +292,17 @@ class TSDB(Database):
 
     def deleteContent(self, parent_id):
         self._commit(f"delete from contents where parent_id = {parent_id}")
+
+    def deleteContentById(self, id):
+        self._commit(f"delete from contents where id = {id}")
+
+    def setContentText(self, parent_id, text):
+        if self.getContent(parent_id):
+            self._commit(f"update contents set content_text = \"{text}\" where parent_id = \"{parent_id}\" ")
+
+    def setContentLocation(self, parent_id, location):
+        if self.getContent(parent_id):
+            self._commit(f"update contents set location = \"{self._checkSlash(location)}\" where parent_id = \"{parent_id}\" ")
 
 
 

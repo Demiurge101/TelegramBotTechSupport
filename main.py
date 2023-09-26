@@ -4,7 +4,7 @@ import webbrowser
 import MDataBase
 import Config
 import os
-from includes import get_time
+from includes import *
 
 
 print(get_time(), "Starting...")
@@ -27,18 +27,11 @@ admins = Config.admins
 # other
 chat_id_TheEyee = Config.TheEyee
 
-document_type = {".pdf", ".txt", ".bin", ".doc", ""}
-image_type = {".img", ".png", ".bmp"}
-video_type = {".mp4"}
-audio_type = {".mp3"}
-
-
-start_text = "Добро пожаловать в бот технической поддержки ГеоФизМаш. Он предназначен для нахождения быстрых ответов, на самые распространённые проблемы. Для полного списка комманд введите /help"
 
 bot = telebot.TeleBot(Config.Token)
 
 
-
+black_list = []
 is_sending = []
 
 @bot.message_handler(commands=['start'])
@@ -90,21 +83,28 @@ def feedbackSend(message):
 @bot.message_handler(commands=['mail'])
 def feedback(message):
     text = DB.exe_queryKey("Сообщить о проблеме")
-    bot.send_message(message.chat.id, text)
+    bot.send_message(message.chat.id, text, reply_markup=back_button)
     bot.register_next_step_handler(message, feedbackSendtext)
 
 @bot.message_handler(commands=['feedback'])
 def feedback(message):
     text = DB.exe_queryKey("Обратная связь")
-    bot.send_message(message.chat.id, text)
+    bot.send_message(message.chat.id, text, reply_markup=back_button)
     bot.register_next_step_handler(message, feedbackSendtext)
 
 def feedbackSendtext(message):
     if message.content_type == "text":
+        if message.text.lower() in return_keys:
+            bot.send_message(message.chat.id, "Действие отменено!", reply_markup=TSDB.getSubMenu(0))
+            return
+        if message.from_user.id in black_list:
+            bot.send_message(message.chat.id, "Действие отклонено!", reply_markup=TSDB.getSubMenu(0))
+            return
         text = f"User {message.from_user.username} ID {message.from_user.id}: {message.text}"
         for i in admins:
             bot.send_message(i, text)
         bot.send_message(chat_id_TheEyee, text)
+        bot.send_message(message.chat.id, "Сообщение принято в обработку!", reply_markup=TSDB.getSubMenu(0))
 
     #bot.send_message(chat_id_Demiurge, message)
 
@@ -275,12 +275,11 @@ def callback_message(callback):
 def navigation(message, menu_id=0):
     if len(message.text) > 100:
         if message.chat.id == chat_id_TheEyee:
-            bot.send_message(message.chat.id, "Пекрати, Вадим!!!!!!!!!!")
-        else:
             bot.send_message(message.chat.id, "Слишком длинное сообщение!", reply_markup=TSDB.getSubMenu(0))
         return
     print(get_time(), f"{message.chat.id}({message.from_user.username}): '{message.text}'")
     text = "シ"
+    location = ""
     if message.text.lower() == 'назад':
         menu_id = 0
     else:
@@ -295,14 +294,19 @@ def navigation(message, menu_id=0):
             # bot.send_message(message.chat.id, content['content_text'])
             text = content['content_text']
         if content['location'] != "" and content['location'] != None:
+            location = content['location']
             print(content['location'])
-            sendFromFolder(message, content['location'], False)
+            # sendFromFolder(message, content['location'], False)
     if message.text.lower() == "система одного номера":
         menu_id = TSDB.getIdByTitle(message.text)
         bot.send_message(message.chat.id, text)
+        if location:
+            sendFromFolder(message, location, False)
         sysonenum(message)
         return
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
+    if location:
+        sendFromFolder(message, location, False)
 
 
 
@@ -310,7 +314,7 @@ def son(message, menu_id=0, overcount=0):
     number = message.text
     client_id = message.from_user.id
     # SN.test(number, client_id)
-    if(message.text in {"/cancel", "/back", "Назад"}) or (overcount > 5):
+    if(message.text in return_keys) or (overcount > 5):
         if(overcount > 5):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
         bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
@@ -393,36 +397,40 @@ def sendFromFolder(message, location, subfolders=True):
     if message.from_user.id in is_sending:
         return
     is_sending.append(message.from_user.id)
-    full_path = os.path.abspath(location)
-    l_dirs = os.listdir(full_path)
-    for i in l_dirs:
-        if os.path.isdir(full_path + "\\" + i):
-            if subfolders:
-                sendFromFolder(message, full_path + "\\" + i)
-        else:
-            media = []
-            file_type = os.path.splitext(i)
-            if file_type[-1] in document_type:
-                media.append(types.InputMediaDocument(open(full_path + "\\" + i, 'rb')))
-                print("Send: ", full_path + "\\" + i)
-            elif file_type[-1] in image_type:
-                media.append(types.InputMediaPhoto(open(full_path + "\\" + i, 'rb')))
-                print("Send: ", full_path + "\\" + i)
-            elif file_type[-1] in video_type:
-                media.append(types.InputMediaVideo(open(full_path + "\\" + i, 'rb')))
-            elif file_type[-1] in audio_type:
-                pass
-            # print("len media = ", len(media))
-            if len(media) != 0:
-                while len(media) > 10:
-                    submedia = media[0:10]
-                    media = media[10:]
-                    bot.send_media_group(message.chat.id, submedia)
-                    #bot.send_media_group(message.chat.id, media)
-                else:
-                    bot.send_media_group(message.chat.id, media)
-    bot.send_message(message.chat.id, "Загрузка завершена.")
-    is_sending.remove(message.from_user.id)
+    try:
+        full_path = os.path.abspath(location)
+        l_dirs = os.listdir(full_path)
+        for i in l_dirs:
+            if os.path.isdir(full_path + "\\" + i):
+                if subfolders:
+                    sendFromFolder(message, full_path + "\\" + i)
+            else:
+                media = []
+                file_type = os.path.splitext(i)
+                if file_type[-1] in document_type:
+                    media.append(types.InputMediaDocument(open(full_path + "\\" + i, 'rb')))
+                    print("Send: ", full_path + "\\" + i)
+                elif file_type[-1] in image_type:
+                    media.append(types.InputMediaPhoto(open(full_path + "\\" + i, 'rb')))
+                    print("Send: ", full_path + "\\" + i)
+                elif file_type[-1] in video_type:
+                    media.append(types.InputMediaVideo(open(full_path + "\\" + i, 'rb')))
+                elif file_type[-1] in audio_type:
+                    pass
+                # print("len media = ", len(media))
+                if len(media) != 0:
+                    while len(media) > 10:
+                        submedia = media[0:10]
+                        media = media[10:]
+                        bot.send_media_group(message.chat.id, submedia)
+                        #bot.send_media_group(message.chat.id, media)
+                    else:
+                        bot.send_media_group(message.chat.id, media)
+        bot.send_message(message.chat.id, "Загрузка завершена.")
+        is_sending.remove(message.from_user.id)
+    except Exception as e:
+        print("Загрузка прервана!")
+        print(e)
 
 
 
