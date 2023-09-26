@@ -1,6 +1,7 @@
 import os
 import MDataBase
 import Config
+from includes import *
 
 root_location = Config.tsDBfiles
 content_file_type = ".cnt"
@@ -39,13 +40,20 @@ def makeNode(location, title = "", parent_id=0):
 			# update here
 			content = TS.getContent(title_id)
 			if content:
-				TS.setContentLocation(title_id, source_location)
+				if checkFiles(source_location):
+					TS.setContentLocation(title_id, source_location)
 			else:
-				TS.addContent(title_id, title, source_location)
+				if checkFiles(source_location):
+					TS.addContent(title_id, title, source_location)
+				else:
+					TS.addContent(title_id, title)
 		else:
 			TS.addTitle(parent_id, title, 1)
 			title_id = TS.getIdByTitle(title)
-			TS.addContent(title_id, title, source_location)
+			if checkFiles(source_location):
+				TS.addContent(title_id, title, source_location)
+			else:
+				TS.addContent(title_id, title)
 
 	source_list = os.listdir(source_location)
 	for i in source_list:
@@ -53,7 +61,20 @@ def makeNode(location, title = "", parent_id=0):
 
 
 
+def checkFiles(location):
+	source_location = os.path.abspath(location)
+	if os.path.isfile(source_location):
+		file_type = os.path.splitext(source_location)
+		if file_type[-1] in document_type or file_type[-1] in image_type or file_type[-1] in video_type or file_type[-1] in audio_type:
+			return True
+		else:
+			return False
 
+	source_list = os.listdir(source_location)
+	for i in source_list:
+		if checkFiles(source_location + "\\" + i):
+			return True
+	return False
 # root_location = os.path.abspath(location)
 # if os.path.isdir(root_location):
 # 	root_list = os.listdir(root_location)
