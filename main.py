@@ -34,6 +34,8 @@ bot = telebot.TeleBot(Config.Token)
 black_list = []
 is_sending = []
 
+menu_position = {}
+
 @bot.message_handler(commands=['start'])
 def main(message):
     #bot.send_message(message.chat.id, '<b>Привет!</b>', parse_mode='html')
@@ -275,14 +277,16 @@ def callback_message(callback):
 @bot.message_handler()
 def navigation(message, menu_id=0):
     if len(message.text) > 100:
-        if message.chat.id == chat_id_TheEyee:
-            bot.send_message(message.chat.id, "Слишком длинное сообщение!", reply_markup=TSDB.getSubMenu(0))
+        bot.send_message(message.chat.id, "Слишком длинное сообщение!")
         return
     print(get_time(), f"{message.chat.id}({message.from_user.username}): '{message.text}'")
     text = "シ"
     location = ""
     if message.text.lower() == 'назад':
-        menu_id = 0
+        if message.from_user.id in menu_position:
+            menu_id = TSDB.getParentId(menu_position[message.from_user.id])
+        else:
+            menu_id = 0
     else:
         menu_id = TSDB.getIdByTitle(message.text)
     if menu_id < 0:
@@ -306,8 +310,10 @@ def navigation(message, menu_id=0):
             bot.send_message(message.chat.id, "Загрузка файлов...")
             sendFromFolder(message, location, False)
             bot.send_message(message.chat.id, "Загрузка завершена.")
+        menu_position[message.from_user.id] = menu_id
         sysonenum(message)
         return
+    menu_position[message.from_user.id] = menu_id
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
     if location:
         bot.send_message(message.chat.id, "Загрузка файлов...")
@@ -323,11 +329,13 @@ def son(message, menu_id=0, overcount=0):
     if(message.text in return_keys) or (overcount > 5):
         if(overcount > 5):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
+        menu_position[message.from_user.id] = 0
         bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
         bot.register_next_step_handler(message, navigation)
         return
     elif message.text.lower() == "log out":
         SN.del_user(client_id)
+        menu_position[message.from_user.id] = 0
         bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
         bot.register_next_step_handler(message, navigation)
         return
