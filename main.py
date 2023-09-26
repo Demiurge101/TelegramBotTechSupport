@@ -131,15 +131,14 @@ def books(message):
     bot.send_message(message.chat.id, text)
     bot.send_message(message.chat.id, "Загрузка файлов...")
     sendMedia(message, dirs, 'ts')
+    bot.send_message(message.chat.id, "Загрузка завершена.")
     is_books.remove(message.from_user.id)
 
 @bot.message_handler(commands=['son'])
 def sysonenum(message):
-    print("sysonenum")
     if message.text == "Назад":
         bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
     idson = TSDB.getIdByTitle(message.text)
-    print("idson =", idson)
     if idson < 0:
         idson = TSDB.getIdByCommand(message.text)
     res = TSDB.getSubMenu(idson)
@@ -295,7 +294,7 @@ def navigation(message, menu_id=0):
         if content['content_text']:
             # bot.send_message(message.chat.id, content['content_text'])
             text = content['content_text']
-            print(text)
+            # print(text)
         if content['location'] != "" and content['location'] != None:
             location = content['location']
             print(content['location'])
@@ -304,12 +303,16 @@ def navigation(message, menu_id=0):
         menu_id = TSDB.getIdByTitle(message.text)
         bot.send_message(message.chat.id, text)
         if location:
+            bot.send_message(message.chat.id, "Загрузка файлов...")
             sendFromFolder(message, location, False)
+            bot.send_message(message.chat.id, "Загрузка завершена.")
         sysonenum(message)
         return
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
     if location:
+        bot.send_message(message.chat.id, "Загрузка файлов...")
         sendFromFolder(message, location, False)
+        bot.send_message(message.chat.id, "Загрузка завершена.")
 
 
 
@@ -342,6 +345,7 @@ def son(message, menu_id=0, overcount=0):
             loc = SN.dblocation + loc[1:]
         bot.send_message(message.chat.id, "Загрузка файлов...", reply_markup=TSDB.getSubMenu(menu_id))
         sendFromFolder(message, loc)
+        bot.send_message(message.chat.id, "Загрузка завершена.", reply_markup=TSDB.getSubMenu(menu_id))
 
     if(len(station) > 0):
         loc = station['location']
@@ -349,6 +353,7 @@ def son(message, menu_id=0, overcount=0):
             loc = SN.dblocation + loc[1:]
         bot.send_message(message.chat.id, "Загрузка файлов...", reply_markup=TSDB.getSubMenu(menu_id))
         sendFromFolder(message, loc, False)
+        bot.send_message(message.chat.id, "Загрузка завершена.", reply_markup=TSDB.getSubMenu(menu_id))
     bot.register_next_step_handler(message, son, menu_id, 0)
 
 def sendMedia(message, dirs, method):
@@ -393,7 +398,7 @@ def sendMedia(message, dirs, method):
                 else:
                     bot.send_media_group(message.chat.id, media)
             i += 1
-    bot.send_message(message.chat.id, "Загрузка завершена.")
+    # bot.send_message(message.chat.id, "Загрузка завершена.")
     is_sending.remove(message.from_user.id)
 
 def sendFromFolder(message, location, subfolders=True):
@@ -429,7 +434,7 @@ def sendFromFolder(message, location, subfolders=True):
                         #bot.send_media_group(message.chat.id, media)
                     else:
                         bot.send_media_group(message.chat.id, media)
-        bot.send_message(message.chat.id, "Загрузка завершена.")
+        # bot.send_message(message.chat.id, "Загрузка завершена.")
         is_sending.remove(message.from_user.id)
     except Exception as e:
         print("Загрузка прервана!")
