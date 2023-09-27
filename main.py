@@ -62,7 +62,19 @@ def drop_bot(message):
 
 @bot.message_handler(commands=['reborn'])
 def reset_live_countdown(message):
-    live_countdown = max_lives
+    if message.from_user.id in admins:
+        live_countdown = max_lives
+
+@bot.message_handler(commands=['status'])
+def get_drop_status(message):
+    print("status")
+    if message.from_user.id in admins:
+        text = f"live_countdown: <{live_countdown}>"
+        print(text)
+        pos = 0
+        if message.from_user.id in menu_position:
+            pos = menu_position[message.from_user.id]
+        bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(pos))
 
 
 @bot.message_handler(commands=['start'])
