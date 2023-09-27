@@ -21,7 +21,8 @@ def makeNode(location, title = "", parent_id=0):
 		source_location = os.path.abspath(location + "\\" + title)
 	# print(source_location)
 	if os.path.isfile(source_location):
-		if source_location[-4:] == content_file_type:
+		file_atr = os.path.splitext(title)
+		if file_atr[1] == content_file_type:
 			f = open(source_location, 'r')
 			data = f.read()
 			f.close()
@@ -31,6 +32,10 @@ def makeNode(location, title = "", parent_id=0):
 			else:
 				TS.addContent(parent_id, data)
 			print(data)
+			if file_atr[0].lower() == "none" or file_atr[0].lower() == "null":
+				TS.deleteTitleCommand(parent_id)
+			else:
+				TS.setTitleCommand(parent_id, f"/{file_atr[0]}")
 		return
 	print(source_location)
 	title_id = parent_id

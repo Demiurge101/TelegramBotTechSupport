@@ -290,6 +290,10 @@ class TSDB(Database):
     def deleteTitle(self, id):
         self._commit(f"delete from titles where id = {id}")
 
+    def deleteTitleCommand(self, id):
+        if self.getTitle(id):
+            self._commit(f"update titles set command = NULL where id = {id}")
+
     def deleteContent(self, parent_id):
         self._commit(f"delete from contents where parent_id = {parent_id}")
 
