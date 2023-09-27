@@ -456,6 +456,5 @@ try:
 except Exception as e:
     print(get_time(), "Exception raised.")
     print(e)
-    raise e
 
 print(get_time(), "END")
