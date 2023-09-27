@@ -205,6 +205,9 @@ class SonDB(Database):
 
 
 class TSDB(Database):
+
+    dblocation = Config.tsDBfiles
+
     def getSubMenu(self, parent_id):
         menu_items = self._fetchall(f"select * from titles where parent_id = {parent_id}", f"getSubMenu({parent_id})")
         if len(menu_items):
