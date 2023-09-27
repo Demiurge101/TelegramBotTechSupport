@@ -44,5 +44,5 @@
 
 
 Исправить:
-    Кнопка назад иногда срабатывает не с первого раза.
-    map parser
+    Back button doesn't work sometimes.
+    Bot failed sometimes.

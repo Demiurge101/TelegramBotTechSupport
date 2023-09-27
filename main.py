@@ -228,7 +228,7 @@ def project_map(message, *args):
         /mail - Сообщить о проблеме \r\n\
         /feedback - сообщение об ошибке или предложение по улучшению\r\n\
     "
-    bot.send_message(message.chat.id, text)
+    bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_position[message.from_user.id]))
 
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
