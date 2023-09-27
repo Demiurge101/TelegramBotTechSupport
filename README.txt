@@ -44,5 +44,4 @@
 
 
 Исправить:
-    Back button doesn't work sometimes.
-    Bot failed sometimes.
+    -

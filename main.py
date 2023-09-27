@@ -33,6 +33,12 @@ black_list = []
 is_sending = []
 
 menu_position = {}
+def get_pos(message):
+    if message.from_user.id in menu_position:
+        return menu_position[message.from_user.id]
+    else:
+        return 0
+
 
 max_lives = 1000
 live_countdown = max_lives
@@ -71,10 +77,7 @@ def get_drop_status(message):
     if message.from_user.id in admins:
         text = f"live_countdown: <{live_countdown}>"
         print(text)
-        pos = 0
-        if message.from_user.id in menu_position:
-            pos = menu_position[message.from_user.id]
-        bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(pos))
+        bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(get_pos(message)))
 
 
 @bot.message_handler(commands=['start'])
@@ -270,7 +273,7 @@ def project_map(message, *args):
         /mail - Сообщить о проблеме \r\n\
         /feedback - сообщение об ошибке или предложение по улучшению\r\n\
     "
-    bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_position[message.from_user.id]))
+    bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(get_pos(message)))
 
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
