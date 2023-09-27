@@ -203,52 +203,30 @@ def addtext(message, *args):
     elif args[1] == "/update":
         DB.update_text(args[0], text)
 
+def getStrMap(parent_id, pre=""):
+    titles = TSDB.getTitlesByParentId(parent_id)
+    res = ""
+    for title in titles:
+        cmd = ""
+        if title['command']:
+            cmd = f" ({title['command']})"
+
+        row = f"{pre}{title['title']}{cmd}"
+        table = getStrMap(title['id'], pre + '   ')
+        res += f"{row}\r\n{table}"
+    return res
+
 @bot.message_handler(commands=['map'])
 def project_map(message, *args):
     print("map")
-    text = "\
-    Проблемы с оборудованием КЕДР (/hardware)\r\n\
-        УСО (/uso)\r\n\
-            УСО Exd PowerLine (hole)\r\n\
-            УСО Exd WDSL (hole)\r\n\
-            УСО Exn WDSL (hole)\r\n\
-        Пульт бурильщика (/pnd)\r\n\
-            ПНД Exd PowerLine (hole)\r\n\
-            ПНД Exd WDSL (hole)\r\n\
-            ПНД Exn WDSL (hole)\r\n\
-        Датчики (/sensors)\r\n\
-            ДНК (hole)\r\n\
-            ДДИ (hole)\r\n\
-            ДУП (hole)\r\n\
-            РУД (hole)\r\n\
-            ДОП-М (hole)\r\n\
-            БЗУД (hole)\r\n\
-            ДТ (hole)\r\n\
-        Кабели (/cables)\r\n\
-            Кабели датчиков ГТИ (hole)\r\n\
-            Магистральные Кабели (hole)\r\n\
-    Проблемы с сетью (/network)\r\n\
-        Wifi точки (/wifi)\r\n\
-            Ubiquiti (hole)\r\n\
-            TP-Link (hole)\r\n\
-        Камеры (/camers) (hole)\r\n\
-        Ip адресса (/ip) (hole)\r\n\
-        Ip телефоны и атс (/telephones)\r\n\
-            Fanvil X1 (hole)\r\n\
-            Fanvil X4 (hole)\r\n\
-            Yeastar S20 (hole)\r\n\
-            Yeastar S50 (hole)\r\n\
-    Проблемы с программами DCSoft (/software)\r\n\
-        DSServer (/DSServer) (hole)\r\n\
-        DSPlot (/DSPlot) (hole)\r\n\
-        DSDevice (/DSDevice) (hole)\r\n\
+    text = getStrMap(0)
+    text += "\
         \r\n\
     /help\r\n\
         ...\r\n\
         /books - Обучающие материалы \r\n\
         /mail - Сообщить о проблеме \r\n\
         /feedback - сообщение об ошибке или предложение по улучшению\r\n\
-        /son - Система одного номера\r\n\
     "
     bot.send_message(message.chat.id, text)
 

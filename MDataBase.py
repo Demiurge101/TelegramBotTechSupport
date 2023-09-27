@@ -240,6 +240,9 @@ class TSDB(Database):
         res = self._fetchall(f"select * from titles where id = {id}", f"getTitle({id})")
         return res[0]
 
+    def getTitlesByParentId(self, id):
+        return self._fetchall(f"select * from titles where parent_id = {id}")
+
     def getIdByTitle(self, text):
         res = self._fetchall(f"select id from titles where title = \'{text}\'", f"getIdByTitle(\"{text}\")")
         if(len(res) > 0):
