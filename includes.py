@@ -1,5 +1,6 @@
 from telebot import types
 import datetime
+from time import sleep
 
 
 def buttonway(list, button):

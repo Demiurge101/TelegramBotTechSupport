@@ -5,18 +5,16 @@ import MDataBase
 import Config
 import os
 from includes import *
+import sys
 
 
-print(get_time(), "Starting...")
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
-DB.connect()
 
 TSDB = MDataBase.TSDB("localhost", "root", Config.password, Config.bd_name_dispatcher_ts)
-TSDB.connect()
 
 SN = MDataBase.SonDB("localhost", "root", Config.password, Config.bd_name_dispatcher_son)
-SN.connect()
+
 
 # admins
 admins = Config.admins
@@ -35,6 +33,37 @@ black_list = []
 is_sending = []
 
 menu_position = {}
+
+max_lives = 1000
+live_countdown = max_lives
+
+
+def start_bot():
+    try:
+        print(get_time(), "Starting...")
+        DB.connect()
+        TSDB.connect()
+        SN.connect()
+        print(get_time(), "Runned.")
+        bot.polling(none_stop=True, timeout=100)
+    except Exception as e:
+        print(get_time(), "Exception raised.")
+        print(e)
+
+
+@bot.message_handler(commands=['drop', 'stop'])
+def drop_bot(message):
+    if message.from_user.id in admins:
+        print(get_time(), f"Bot has dropped by {message.from_user.id}({message.from_user.username})")
+        live_countdown = 0
+        bot.stop_polling()
+        bot.stop_bot()
+        os._exit(0)
+
+@bot.message_handler(commands=['reborn'])
+def reset_live_countdown(message):
+    live_countdown = max_lives
+
 
 @bot.message_handler(commands=['start'])
 def main(message):
@@ -164,6 +193,7 @@ def adduser(message, menu_id):
     else:
         bot.send_message(message.chat.id, "Введите номер датчика", reply_markup=TSDB.getSubMenu(menu_id))
         bot.register_next_step_handler(message, son, menu_id)
+
 
 @bot.message_handler(commands=['table'])
 def gettable(message):
@@ -430,11 +460,11 @@ def sendFromFolder(message, location, subfolders=True):
 
 
 
-try:
-    print(get_time(), "Runned.")
-    bot.polling(none_stop=True, timeout=100)
-except Exception as e:
-    print(get_time(), "Exception raised.")
-    print(e)
+while True:
+    print(f"<<<{live_countdown}>>>")
+    start_bot()
+    if live_countdown < 1:
+        break
+    live_countdown -= 1
 
 print(get_time(), "END")
