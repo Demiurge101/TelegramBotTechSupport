@@ -307,18 +307,14 @@ def navigation(message, menu_id=0):
         menu_id = TSDB.getIdByTitle(message.text)
         bot.send_message(message.chat.id, text)
         if location:
-            bot.send_message(message.chat.id, "Загрузка файлов...")
-            sendFromFolder(message, location, False)
-            bot.send_message(message.chat.id, "Загрузка завершена.")
+            sendFrom(message, location, False)
         menu_position[message.from_user.id] = menu_id
         sysonenum(message)
         return
     menu_position[message.from_user.id] = menu_id
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
     if location:
-        bot.send_message(message.chat.id, "Загрузка файлов...")
-        sendFromFolder(message, location, False)
-        bot.send_message(message.chat.id, "Загрузка завершена.")
+        sendFrom(message, location, False)
 
 
 
@@ -351,18 +347,16 @@ def son(message, menu_id=0, overcount=0):
         loc = device['location']
         if loc[:1] == '.':
             loc = SN.dblocation + loc[1:]
-        bot.send_message(message.chat.id, "Загрузка файлов...", reply_markup=TSDB.getSubMenu(menu_id))
-        sendFromFolder(message, loc)
-        bot.send_message(message.chat.id, "Загрузка завершена.", reply_markup=TSDB.getSubMenu(menu_id))
+        sendFrom(message, loc, reply_markup=TSDB.getSubMenu(menu_id))
 
     if(len(station) > 0):
         loc = station['location']
         if loc[:1] == '.':
             loc = SN.dblocation + loc[1:]
-        bot.send_message(message.chat.id, "Загрузка файлов...", reply_markup=TSDB.getSubMenu(menu_id))
-        sendFromFolder(message, loc, False)
-        bot.send_message(message.chat.id, "Загрузка завершена.", reply_markup=TSDB.getSubMenu(menu_id))
+        sendFrom(message, loc, False, reply_markup=TSDB.getSubMenu(menu_id))
     bot.register_next_step_handler(message, son, menu_id, 0)
+
+
 
 def sendMedia(message, dirs, method):
     if message.from_user.id in is_sending:
@@ -409,44 +403,52 @@ def sendMedia(message, dirs, method):
     # bot.send_message(message.chat.id, "Загрузка завершена.")
     is_sending.remove(message.from_user.id)
 
-def sendFromFolder(message, location, subfolders=True):
+def sendFrom(message, location, subfolders=True, reply_markup=None):
     if message.from_user.id in is_sending:
-        return
-    is_sending.append(message.from_user.id)
+        bot.send_message(message.chat.id, "Подождите пока загрузятся все файлы.")
+    is_sending.append(message.chat.id)
+    bot.send_message(message.chat.id, "Загрузка файлов...")
     try:
-        full_path = os.path.abspath(location)
-        l_dirs = os.listdir(full_path)
-        for i in l_dirs:
-            if os.path.isdir(full_path + "\\" + i):
-                if subfolders:
-                    sendFromFolder(message, full_path + "\\" + i)
-            else:
-                media = []
-                file_type = os.path.splitext(i)
-                if file_type[-1] in document_type:
-                    media.append(types.InputMediaDocument(open(full_path + "\\" + i, 'rb')))
-                    print("Send: ", full_path + "\\" + i)
-                elif file_type[-1] in image_type:
-                    media.append(types.InputMediaPhoto(open(full_path + "\\" + i, 'rb')))
-                    print("Send: ", full_path + "\\" + i)
-                elif file_type[-1] in video_type:
-                    media.append(types.InputMediaVideo(open(full_path + "\\" + i, 'rb')))
-                elif file_type[-1] in audio_type:
-                    pass
-                # print("len media = ", len(media))
-                if len(media) != 0:
-                    while len(media) > 10:
-                        submedia = media[0:10]
-                        media = media[10:]
-                        bot.send_media_group(message.chat.id, submedia)
-                        #bot.send_media_group(message.chat.id, media)
-                    else:
-                        bot.send_media_group(message.chat.id, media)
-        # bot.send_message(message.chat.id, "Загрузка завершена.")
-        is_sending.remove(message.from_user.id)
+        sendFromFolder(message, location, subfolders)
     except Exception as e:
         print("Загрузка прервана!")
         print(e)
+    if reply_markup == None:
+        bot.send_message(message.chat.id, "Загрузка завершена.")
+    else:
+        bot.send_message(message.chat.id, "Загрузка завершена.", reply_markup)
+    is_sending.remove(message.chat.id)
+
+def sendFromFolder(message, location, subfolders=True):
+    full_path = os.path.abspath(location)
+    l_dirs = os.listdir(full_path)
+    for i in l_dirs:
+        if os.path.isdir(full_path + "\\" + i):
+            if subfolders:
+                sendFromFolder(message, full_path + "\\" + i)
+        else:
+            media = []
+            file_type = os.path.splitext(i)
+            if file_type[-1] in document_type:
+                media.append(types.InputMediaDocument(open(full_path + "\\" + i, 'rb')))
+                print("Send: ", full_path + "\\" + i)
+            elif file_type[-1] in image_type:
+                media.append(types.InputMediaPhoto(open(full_path + "\\" + i, 'rb')))
+                print("Send: ", full_path + "\\" + i)
+            elif file_type[-1] in video_type:
+                media.append(types.InputMediaVideo(open(full_path + "\\" + i, 'rb')))
+            elif file_type[-1] in audio_type:
+                pass
+            # print("len media = ", len(media))
+            if len(media) != 0:
+                while len(media) > 10:
+                    submedia = media[0:10]
+                    media = media[10:]
+                    bot.send_media_group(message.chat.id, submedia)
+                    #bot.send_media_group(message.chat.id, media)
+                else:
+                    bot.send_media_group(message.chat.id, media)
+
 
 
 
