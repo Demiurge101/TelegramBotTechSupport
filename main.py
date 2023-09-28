@@ -46,14 +46,14 @@ live_countdown = max_lives
 
 def start_bot():
     try:
-        print(get_time(), "Starting...")
+        print(yellow_text(get_time()), "Starting...")
         DB.connect()
         TSDB.connect()
         SN.connect()
-        print(get_time(), "Runned.")
+        print(yellow_text(get_time()), "Runned.")
         bot.polling(none_stop=True, timeout=100)
     except Exception as e:
-        print(get_time(), "Exception raised.")
+        print(yellow_text(get_time()), "Exception raised.")
         print(e)
 
 
@@ -278,7 +278,7 @@ def project_map(message, *args):
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
     # buttons in messages here
-    print(get_time(), f"{callback.message.chat.id}({callback.message.from_user.username}): '{callback.message.text}'")
+    print(yellow_text(get_time()), f"{callback.message.chat.id}({callback.message.from_user.username}): '{callback.message.text}'")
     if callback.message:
         for row in callback.message.json['reply_markup']['inline_keyboard']:
             if callback.data==row[0]['callback_data']:
@@ -302,7 +302,7 @@ def navigation(message, menu_id=0):
     if len(message.text) > 100:
         bot.send_message(message.chat.id, "Слишком длинное сообщение!")
         return
-    print(get_time(), f"{message.chat.id}({message.from_user.username}): '{message.text}'")
+    print(yellow_text(get_time()), f"{message.chat.id}({red_text(message.from_user.username)}): '{message.text}'")
     text = "シ"
     location = ""
     if message.text.lower() == 'назад':
@@ -482,4 +482,4 @@ while True:
         break
     live_countdown -= 1
 
-print(get_time(), "END")
+print(yellow_text(get_time()), "END")

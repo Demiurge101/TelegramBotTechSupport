@@ -1,6 +1,12 @@
 from telebot import types
 import datetime
 from time import sleep
+import colorama
+from colorama import Fore, Back, Style
+
+
+
+colorama.init()
 
 
 def buttonway(list, button):
@@ -59,3 +65,16 @@ start_text = "Добро пожаловать в бот технической �
 
 def get_time():
   return datetime.datetime.now().strftime("<%Y-%m-%d, %H:%M:%S.%f")[:-3]+">"
+
+
+def red_text(text):
+  return Fore.RED + text + Style.RESET_ALL
+
+def blue_text(text):
+  return Fore.BLUE + text + Style.RESET_ALL
+
+def green_text(text):
+  return Fore.GREEN + text + Style.RESET_ALL
+
+def yellow_text(text):
+  return Fore.YELLOW + text + Style.RESET_ALL
