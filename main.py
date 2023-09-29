@@ -80,7 +80,7 @@ def reset_live_countdown(message):
 def get_drop_status(message):
     print("status")
     if message.from_user.id in admins:
-        text = f"live_countdown: <{live_countdown}>"
+        text = f"live_countdown: <{live_countdown}>\r\nlen(menu_position) - {len(menu_position)}"
         print(text)
         bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(get_pos(message)))
 
@@ -202,7 +202,7 @@ def sysonenum(message):
         return
 
     bot.send_message(message.chat.id, "Введите номер датчика", reply_markup=res)
-    bot.register_next_step_handler(message, son, idson)
+    thread(bot.register_next_step_handler, (message, son, idson))
 
 
 def adduser(message, menu_id):
