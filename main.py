@@ -48,8 +48,11 @@ def start_bot():
     try:
         print(yellow_text(get_time()), "Starting...")
         DB.connect()
+        DB.set_time_out()
         TSDB.connect()
+        TSDB.set_time_out()
         SN.connect()
+        SN.set_time_out()
         print(yellow_text(get_time()), "Runned.")
         bot.polling(none_stop=True, timeout=100)
     except Exception as e:

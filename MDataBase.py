@@ -13,6 +13,12 @@ class Database:
         self.password = password
         self.db_name = db_name
 
+
+    def set_time_out(self, tm=28800):
+        self._commit(f"SET GLOBAL connect_timeout={tm}")
+        self._commit(f"SET GLOBAL interactive_timeout={tm}")
+        self._commit(f"SET GLOBAL wait_timeout={tm}")
+
     def __del__(self):
         self.close_connect()
 
