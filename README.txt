@@ -44,5 +44,4 @@
 
 
 Исправить:
-    make bot for maintenance
-    son doesn't send endload in thread
+    son doesn't add some users in DB
