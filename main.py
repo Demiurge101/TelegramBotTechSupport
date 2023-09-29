@@ -337,7 +337,8 @@ def navigation(message, menu_id=0):
         menu_position[message.from_user.id] = menu_id
         sysonenum(message)
         return
-    menu_position[message.from_user.id] = menu_id
+    if len(TSDB.getTitlesByParentId(menu_id)) > 0:
+        menu_position[message.from_user.id] = menu_id
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
     if location:
         sendFrom(message, location, False)
