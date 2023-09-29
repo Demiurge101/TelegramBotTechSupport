@@ -440,8 +440,11 @@ def sendFrom(message, location, subfolders=True, reply_markup=None):
     try:
         sendFromFolder(message, location, subfolders)
     except Exception as e:
-        print("Загрузка прервана!")
-        print(e)
+        # print("Загрузка прервана!")
+        bot.send_message(message.chat.id, "Загрузка прервана.")
+        if message.from_user.id in admins:
+            bot.send_message(message.chat.id, str(e))
+        # print(e)
     if reply_markup == None:
         bot.send_message(message.chat.id, "Загрузка завершена.")
     else:
@@ -460,10 +463,10 @@ def sendFromFolder(message, location, subfolders=True):
             file_type = os.path.splitext(i)
             if file_type[-1] in document_type:
                 media.append(types.InputMediaDocument(open(full_path + "\\" + i, 'rb')))
-                print("Send: ", full_path + "\\" + i)
+                # print("Send: ", full_path + "\\" + i)
             elif file_type[-1] in image_type:
                 media.append(types.InputMediaPhoto(open(full_path + "\\" + i, 'rb')))
-                print("Send: ", full_path + "\\" + i)
+                # print("Send: ", full_path + "\\" + i)
             elif file_type[-1] in video_type:
                 media.append(types.InputMediaVideo(open(full_path + "\\" + i, 'rb')))
             elif file_type[-1] in audio_type:
