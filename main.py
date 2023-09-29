@@ -42,7 +42,7 @@ def get_pos(message):
         return 0
 
 
-max_lives = 1000
+max_lives = 5000
 live_countdown = max_lives
 
 
