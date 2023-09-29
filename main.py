@@ -7,6 +7,8 @@ import os
 from includes import *
 import sys
 
+from threads import thread
+
 
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
@@ -333,7 +335,7 @@ def navigation(message, menu_id=0):
         menu_id = TSDB.getIdByTitle(message.text)
         bot.send_message(message.chat.id, text)
         if location:
-            sendFrom(message, location, False)
+            thread(sendFrom, (message, location, False))
         menu_position[message.from_user.id] = menu_id
         sysonenum(message)
         return
@@ -341,7 +343,7 @@ def navigation(message, menu_id=0):
         menu_position[message.from_user.id] = menu_id
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
     if location:
-        sendFrom(message, location, False)
+        thread(sendFrom, (message, location, False))
 
 
 
