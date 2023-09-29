@@ -8,8 +8,8 @@ content_file_type = ".cnt"
 
 
 
-# TS = MDataBase.TSDB("localhost", "root", Config.password, Config.bd_name_dispatcher_ts)
-TS = MDataBase.TSDB("localhost", "root", Config.password, "TS_Dispatcher_test")
+TS = MDataBase.TSDB("localhost", "root", Config.password, Config.bd_name_dispatcher_ts)
+# TS = MDataBase.TSDB("localhost", "root", Config.password, "TS_Dispatcher")
 TS.connect()
 
 
@@ -38,24 +38,25 @@ def makeNode(location, title = "", parent_id=0):
 				TS.setTitleCommand(parent_id, f"/{file_atr[0]}")
 		return
 	print(source_location)
+	have_files = checkFiles(source_location, False)
 	title_id = parent_id
 	if title != "":
 		title_id = TS.getIdByTitle(title)
-		if title_id >= 0:
+		if title_id >= 0: # if title exist
 			# update here
 			content = TS.getContent(title_id)
-			if content:
-				if checkFiles(source_location):
+			if content:   # if content exist
+				if have_files:
 					TS.setContentLocation(title_id, source_location)
-			else:
-				if checkFiles(source_location):
+			else:         # if content doesn't exist
+				if have_files:
 					TS.addContent(title_id, title, source_location)
 				else:
 					TS.addContent(title_id, title)
 		else:
 			TS.addTitle(parent_id, title, 1)
 			title_id = TS.getIdByTitle(title)
-			if checkFiles(source_location):
+			if have_files:
 				TS.addContent(title_id, title, source_location)
 			else:
 				TS.addContent(title_id, title)
@@ -66,7 +67,7 @@ def makeNode(location, title = "", parent_id=0):
 
 
 
-def checkFiles(location):
+def checkFiles(location, rec=True, is_first=True):
 	source_location = os.path.abspath(location)
 	if os.path.isfile(source_location):
 		file_type = os.path.splitext(source_location)
@@ -74,10 +75,11 @@ def checkFiles(location):
 			return True
 		else:
 			return False
-
+	if rec == False and is_first == False:
+		return False
 	source_list = os.listdir(source_location)
 	for i in source_list:
-		if checkFiles(source_location + "\\" + i):
+		if checkFiles(source_location + "\\" + i, rec, False):
 			return True
 	return False
 # root_location = os.path.abspath(location)
