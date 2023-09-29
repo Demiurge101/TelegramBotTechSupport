@@ -435,6 +435,7 @@ def sendMedia(message, dirs, method):
 def sendFrom(message, location, subfolders=True, reply_markup=None):
     if message.from_user.id in is_sending:
         bot.send_message(message.chat.id, "Подождите пока загрузятся все файлы.")
+        return
     is_sending.append(message.chat.id)
     bot.send_message(message.chat.id, "Загрузка файлов...")
     try:
