@@ -448,7 +448,7 @@ def sendFrom(message, location, subfolders=True, reply_markup=None):
     if reply_markup == None:
         bot.send_message(message.chat.id, "Загрузка завершена.")
     else:
-        bot.send_message(message.chat.id, "Загрузка завершена.", reply_markup)
+        bot.send_message(message.chat.id, "Загрузка завершена.", reply_markup=reply_markup)
     is_sending.remove(message.chat.id)
 
 def sendFromFolder(message, location, subfolders=True):
