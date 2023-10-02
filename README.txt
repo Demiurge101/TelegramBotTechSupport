@@ -45,3 +45,5 @@
 
 Исправить:
     son doesn't add some users in DB
+    db lost connection
+    db security is weak

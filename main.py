@@ -84,6 +84,15 @@ def get_drop_status(message):
         print(text)
         bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(get_pos(message)))
 
+@bot.message_handler(commands=['reconnect'])
+def reconnect_DB(message):
+    DB.connect()
+    DB.set_time_out()
+    TSDB.connect()
+    TSDB.set_time_out()
+    SN.connect()
+    SN.set_time_out()
+
 
 @bot.message_handler(commands=['start'])
 def main(message):
@@ -98,6 +107,9 @@ def main(message):
 def help(message):
     text = DB.exe_queryKey("Помощь")
     bot.send_message(message.chat.id, text)
+    if message.from_user.id in admins:
+        text = f"/status\r\n/reconnect - reconnect DB\r\n/drop - stop bot"
+        bot.send_message(message.chat.id, text)
 
 @bot.message_handler(content_types=['photo','video','voice','video_note','document'])
 def feedbackSend(message):
