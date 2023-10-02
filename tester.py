@@ -24,10 +24,7 @@ def press(c):
 	pyautogui.click(c[0], c[1], duration=1)
 
 def press_img(i):
-	if pyautogui.click(i, duration=1):
-		print("True")
-	else:
-		print("False")
+	pyautogui.click(i, duration=1)
 
 while True:
 	sleep(between_delay)
