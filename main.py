@@ -20,13 +20,11 @@ SN = MDataBase.SonDB("localhost", "root", Config.password, Config.bd_name_dispat
 
 # admins
 admins = Config.admins
-# chat_id_Demiurge = Config.Demiurge
-# chat_id_Shippuden = Config.Shippuden
-# chat_id_ITGenerator = Config.ITGenerator
 
 # other
 chat_id_TheEyee = Config.TheEyee
 
+DB_timeout = 2147483
 
 bot = telebot.TeleBot(Config.Token)
 
@@ -50,11 +48,11 @@ def start_bot():
     try:
         print(yellow_text(get_time()), "Starting...")
         DB.connect()
-        DB.set_time_out()
+        DB.set_time_out(DB_timeout)
         TSDB.connect()
-        TSDB.set_time_out()
+        TSDB.set_time_out(DB_timeout)
         SN.connect()
-        SN.set_time_out()
+        SN.set_time_out(DB_timeout)
         print(yellow_text(get_time()), "Runned.")
         bot.polling(none_stop=True, timeout=100)
     except Exception as e:
@@ -87,11 +85,11 @@ def get_drop_status(message):
 @bot.message_handler(commands=['reconnect'])
 def reconnect_DB(message):
     DB.connect()
-    DB.set_time_out()
+    DB.set_time_out(DB_timeout)
     TSDB.connect()
-    TSDB.set_time_out()
+    TSDB.set_time_out(DB_timeout)
     SN.connect()
-    SN.set_time_out()
+    SN.set_time_out(DB_timeout)
 
 
 @bot.message_handler(commands=['start'])
@@ -100,8 +98,6 @@ def main(message):
 
     text = start_text
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(0))
-    #bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}', reply_markup=markup)
-    #bot.register_next_step_handler(message, on_click) Срабатывание следующей функции 
 
 @bot.message_handler(commands=['help'])
 def help(message):
@@ -116,32 +112,19 @@ def feedbackSend(message):
     if message.content_type == "photo":
         for admin_chat in admins:
             bot.send_photo(admin_chat, message.photo[0].file_id,f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-        # bot.send_photo(chat_id_Demiurge, message.photo[0].file_id,f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-        # bot.send_photo(chat_id_Shippuden,message.photo[0].file_id,f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
     elif message.content_type == "video":
         for admin_chat in admins:
             bot.send_video(admin_chat, message.video.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-        # bot.send_video(chat_id_Demiurge, message.video.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-        # bot.send_video(chat_id_Shippuden, message.video.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
     elif message.content_type == "video_note":
         for admin_chat in admins:
             bot.send_video_note(admin_chat, message.video_note.file_id)
             bot.send_message(admin_chat,f"User {message.from_user.username} ID {message.from_user.id}")
-        # bot.send_video_note(chat_id_Demiurge, message.video_note.file_id)
-        # bot.send_video_note(chat_id_Shippuden, message.video_note.file_id)
-        # bot.send_message(chat_id_Demiurge,f"User {message.from_user.username} ID {message.from_user.id}")
-        # bot.send_message(chat_id_Shippuden,f"User {message.from_user.username} ID {message.from_user.id}")
     elif message.content_type == "voice":
         for admin_chat in admins:
             bot.send_voice(admin_chat, message.voice.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}")
-        # bot.send_voice(chat_id_Demiurge,message.voice.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}")
-        # bot.send_voice(chat_id_Shippuden,message.voice.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}")
     elif message.content_type == "document":
         for admin_chat in admins:
             bot.send_document(admin_chat, message.document.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-        # bot.send_document(chat_id_Demiurge, message.document.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-        # bot.send_document(chat_id_Shippuden, message.document.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
-    #bot.send_message(chat_id_Demiurge, message)
 
 @bot.message_handler(commands=['mail'])
 def feedback(message):
@@ -206,9 +189,6 @@ def sysonenum(message):
         idson = TSDB.getIdByCommand(message.text)
     res = TSDB.getSubMenu(idson)
     if SN.check_user(message.from_user.id) == False:
-        # back_button = telebot.types.ReplyKeyboardMarkup(True)
-        # btn1 = types.KeyboardButton("Назад")
-        # back_button.row(btn1)
         bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=back_button)
         bot.register_next_step_handler(message, adduser, idson)
         return
@@ -323,10 +303,12 @@ def navigation(message, menu_id=0):
     text = "シ"
     location = ""
     if message.text.lower() == 'назад':
+        print("Back")
         if message.from_user.id in menu_position:
             menu_id = TSDB.getParentId(menu_position[message.from_user.id])
         else:
             menu_id = 0
+        print("Back.")
     else:
         menu_id = TSDB.getIdByTitle(message.text)
     if menu_id < 0:
