@@ -350,13 +350,13 @@ def son(message, menu_id=0, overcount=0):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
         menu_position[message.from_user.id] = 0
         bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
-        bot.register_next_step_handler(message, navigation)
+        # bot.register_next_step_handler(message, navigation)
         return
     elif message.text.lower() == "log out":
         SN.del_user(client_id)
         menu_position[message.from_user.id] = 0
         bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
-        bot.register_next_step_handler(message, navigation)
+        # bot.register_next_step_handler(message, navigation)
         return
     device = SN.getDevices(number, client_id)
     station = SN.getStations(number, client_id)
