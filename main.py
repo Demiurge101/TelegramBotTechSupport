@@ -498,6 +498,7 @@ def sendFromFolder(message, location, subfolders=True):
 
 
 while True:
+    print()
     print(f"<<<{live_countdown}>>>")
     start_bot()
     if live_countdown < 1:

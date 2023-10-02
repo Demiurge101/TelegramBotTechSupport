@@ -48,14 +48,17 @@ class Database:
     def _checkSlash(self, line):
         return line.replace('\\', '\\\\')
 
+    def _checkQuote(self, line):
+        return line.replace('"', "'")
+
     def _commit(self, cmd, err="commit error"):
         with self.connection.cursor() as cursor:
             try:
-                cursor.execute(cmd)
+                cursor.execute(self._checkQuote(cmd))
                 self.connection.commit()
                 return True
             except Exception as ex:
-                print(cmd)
+                print(self._checkQuote(cmd))
                 print(err)
                 print(ex)
                 return False
@@ -64,10 +67,10 @@ class Database:
     def _fetchall(self, cmd, err="fetch error"):
          with self.connection.cursor() as cursor:
             try:
-                cursor.execute(cmd)
+                cursor.execute(self._checkQuote(cmd))
                 return cursor.fetchall()
             except Exception as ex:
-                print(cmd)
+                print(self._checkQuote(cmd))
                 print(err)
                 print(ex)
                 return {}
