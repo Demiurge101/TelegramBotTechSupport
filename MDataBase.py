@@ -128,10 +128,13 @@ class SonDB(Database):
         res = self._fetchall(f"select * from users where user_id = {user_id}")
         return True if len(res) == 1 else False
 
-    def add_user(self, order_key, user_id, user_name):
+    def add_user(self, order_key, user_id, user_name=None):
         res = self._fetchall(f"select id from clients where order_key = \"{order_key}\"")
         if len(res) == 1:
-            self._commit(f"insert into users(org_id, user_id, user_name) value({res[0]['id']}, {user_id}, \"{user_name}\")")
+            if user_name == None:
+                self._commit(f"insert into users(org_id, user_id) value({res[0]['id']}, {user_id})")
+            else:
+                self._commit(f"insert into users(org_id, user_id, user_name) value({res[0]['id']}, {user_id}, \"{user_name}\")")
             return True
         return False
 

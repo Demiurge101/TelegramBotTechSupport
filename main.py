@@ -65,7 +65,7 @@ def start_bot():
 @bot.message_handler(commands=['drop', 'stop'])
 def drop_bot(message):
     if message.from_user.id in admins:
-        print(get_time(), f"Bot has dropped by {message.from_user.id}({green_text(message.from_user.username)})")
+        print(get_time(), f"Bot has dropped by {message.from_user.id}({green_text(str(message.from_user.username))})")
         live_countdown = 0
         bot.stop_polling()
         bot.stop_bot()
@@ -113,20 +113,20 @@ def help(message):
 def feedbackSend(message):
     if message.content_type == "photo":
         for admin_chat in admins:
-            bot.send_photo(admin_chat, message.photo[0].file_id,f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+            bot.send_photo(admin_chat, message.photo[0].file_id,f"User {str(message.from_user.username)} ID {message.from_user.id}:{message.caption}")
     elif message.content_type == "video":
         for admin_chat in admins:
-            bot.send_video(admin_chat, message.video.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+            bot.send_video(admin_chat, message.video.file_id, caption=f"User {str(message.from_user.username)} ID {message.from_user.id}:{message.caption}")
     elif message.content_type == "video_note":
         for admin_chat in admins:
             bot.send_video_note(admin_chat, message.video_note.file_id)
-            bot.send_message(admin_chat,f"User {message.from_user.username} ID {message.from_user.id}")
+            bot.send_message(admin_chat,f"User {str(message.from_user.username)} ID {message.from_user.id}")
     elif message.content_type == "voice":
         for admin_chat in admins:
-            bot.send_voice(admin_chat, message.voice.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}")
+            bot.send_voice(admin_chat, message.voice.file_id, caption=f"User {str(message.from_user.username)} ID {message.from_user.id}")
     elif message.content_type == "document":
         for admin_chat in admins:
-            bot.send_document(admin_chat, message.document.file_id, caption=f"User {message.from_user.username} ID {message.from_user.id}:{message.caption}")
+            bot.send_document(admin_chat, message.document.file_id, caption=f"User {str(message.from_user.username)} ID {message.from_user.id}:{message.caption}")
 
 @bot.message_handler(commands=['mail'])
 def feedback(message):
@@ -148,7 +148,7 @@ def feedbackSendtext(message):
         if message.from_user.id in black_list:
             bot.send_message(message.chat.id, "Действие отклонено!", reply_markup=TSDB.getSubMenu(0))
             return
-        text = f"User {message.from_user.username} ID {message.from_user.id}: {message.text}"
+        text = f"User {str(message.from_user.username)} ID {message.from_user.id}: {message.text}"
         for i in admins:
             bot.send_message(i, text)
         bot.send_message(chat_id_TheEyee, text)
@@ -277,7 +277,7 @@ def project_map(message, *args):
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
     # buttons in messages here
-    print(yellow_text(get_time()), f"{callback.message.chat.id}({callback.message.from_user.username}): '{callback.message.text}'")
+    print(yellow_text(get_time()), f"{callback.message.chat.id}({str(callback.message.from_user.username)}): '{callback.message.text}'")
     if callback.message:
         for row in callback.message.json['reply_markup']['inline_keyboard']:
             if callback.data==row[0]['callback_data']:
@@ -296,12 +296,21 @@ def callback_message(callback):
 
 
 
-@bot.message_handler()
+@bot.message_handler(content_types='text')
 def navigation(message, menu_id=0):
+    print(f"navigation({message.text})")
+    if message.from_user.username == None:
+        print(red_text("username: None"))
+    if message.text == None:
+        print("message.text == None")
+        return
     if len(message.text) > 100:
         bot.send_message(message.chat.id, "Слишком длинное сообщение!")
         return
-    print(yellow_text(get_time()), f"{message.chat.id}({green_text(message.from_user.username)}): '{message.text}'")
+    try:
+        print(yellow_text(get_time()), f"{message.from_user.id}({green_text(str(message.from_user.username))}): '{message.text}'")
+    except Exception as e:
+        print(f"navigation({message.text})")
     text = "シ"
     location = ""
     if message.text.lower() == 'назад':

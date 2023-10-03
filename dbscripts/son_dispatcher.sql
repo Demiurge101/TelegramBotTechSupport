@@ -19,7 +19,7 @@ CREATE TABLE users
   id INT(4) NOT NULL AUTO_INCREMENT,
     org_id INT(4) NOT NULL,
     user_id bigint NOT NULL unique,
-    user_name varchar(32) not null,
+    user_name varchar(32),
     CONSTRAINT PK_users
     PRIMARY KEY(ID),
   CONSTRAINT FK_users
