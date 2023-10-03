@@ -1,11 +1,9 @@
 from telebot import types
 import datetime
 from time import sleep
+import os
 import colorama
 from colorama import Fore, Back, Style
-
-
-
 colorama.init()
 
 
@@ -78,3 +76,21 @@ def green_text(text):
 
 def yellow_text(text):
   return Fore.YELLOW + text + Style.RESET_ALL
+
+
+def get_access_to_path(path, user):
+  backup_storage_available = os.path.isdir(path)
+  if backup_storage_available:
+      print("Storage already connected.")
+      print(path)
+  else:
+      print(f"Connecting to {path}.")
+      password = input(f"{user}: ")
+      print ("\033[A                                                         \033[A")
+      mount_command = "net use /user:" + user + " " + path + " " + password
+      os.system(mount_command)
+      backup_storage_available = os.path.isdir(path)
+      if backup_storage_available:
+          print(f"Connection success.")
+      else:
+          print(f"Failed to find {path}.")

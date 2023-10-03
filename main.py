@@ -25,6 +25,8 @@ admins = Config.admins
 chat_id_TheEyee = Config.TheEyee
 
 DB_timeout = 2147483
+max_lives = 5000
+
 
 bot = telebot.TeleBot(Config.Token)
 
@@ -40,7 +42,7 @@ def get_pos(message):
         return 0
 
 
-max_lives = 5000
+
 live_countdown = max_lives
 
 
@@ -299,7 +301,7 @@ def navigation(message, menu_id=0):
     if len(message.text) > 100:
         bot.send_message(message.chat.id, "Слишком длинное сообщение!")
         return
-    print(yellow_text(get_time()), f"{message.chat.id}({red_text(message.from_user.username)}): '{message.text}'")
+    print(yellow_text(get_time()), f"{message.chat.id}({green_text(message.from_user.username)}): '{message.text}'")
     text = "シ"
     location = ""
     if message.text.lower() == 'назад':
@@ -481,7 +483,7 @@ def sendFromFolder(message, location, subfolders=True):
 
 while True:
     print()
-    print(f"<<<{live_countdown}>>>")
+    print(f"<<<{red_text(str(live_countdown))}>>>")
     start_bot()
     if live_countdown < 1:
         break
