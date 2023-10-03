@@ -101,13 +101,8 @@ class DatabaseTS(Database):
         self._commit(f"delete from map where key_val =\"{key}\"")
 
     def exe_queryKey(self, key):
-        with self.connection.cursor() as cursor:
-            try:
-                cursor.execute(f"select text_val from map where key_val = \"{key}\"")
-                res = cursor.fetchall()
-                return res[0]['text_val']
-            except Exception as e:
-                print(e)
+        res = self._fetchall(f"select text_val from map where key_val = \"{key}\"")
+        return res[0]['text_val']
 
     def is_content(self, key):
         res = self._fetchall(f"select is_content from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
@@ -127,6 +122,7 @@ class DatabaseTS(Database):
 class SonDB(Database):
     """Database for SON"""
     dblocation = Config.sonDBfiles
+    get_access_to_path(dblocation, Config.falcon_username)
 
     def check_user(self, user_id):
         res = self._fetchall(f"select * from users where user_id = {user_id}")
@@ -214,8 +210,8 @@ class SonDB(Database):
 
 
 class TSDB(Database):
-
     dblocation = Config.tsDBfiles
+    get_access_to_path(dblocation, Config.falcon_username)
 
     def getSubMenu(self, parent_id):
         menu_items = self._fetchall(f"select * from titles where parent_id = {parent_id}", f"getSubMenu({parent_id})")

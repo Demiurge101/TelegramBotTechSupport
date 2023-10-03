@@ -65,7 +65,7 @@ def start_bot():
 @bot.message_handler(commands=['drop', 'stop'])
 def drop_bot(message):
     if message.from_user.id in admins:
-        print(get_time(), f"Bot has dropped by {message.from_user.id}({message.from_user.username})")
+        print(get_time(), f"Bot has dropped by {message.from_user.id}({green_text(message.from_user.username)})")
         live_countdown = 0
         bot.stop_polling()
         bot.stop_bot()
