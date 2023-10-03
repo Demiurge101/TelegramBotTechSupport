@@ -338,7 +338,7 @@ def navigation(message, menu_id=0):
     if len(TSDB.getTitlesByParentId(menu_id)) > 0:
         menu_position[message.from_user.id] = menu_id
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
-    if location:
+    if location and message.text.lower() != 'назад':
         thread(sendFrom, (message, location, False))
 
 
