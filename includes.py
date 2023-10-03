@@ -52,7 +52,7 @@ markup_list_inline = (buttonway(["Ubiquiti", "TP-Link"], "Inline"),
                     )
 
 document_type = {".pdf", ".txt", ".bin", ".doc", ""}
-image_type = {".img", ".png", ".bmp"}
+image_type = {".img", ".png", ".bmp", ".jpg"}
 video_type = {".mp4"}
 audio_type = {".mp3"}
 

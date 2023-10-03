@@ -31,13 +31,13 @@ def makeNode(location, title = "", parent_id=0):
 				TS.setContentText(parent_id, data)
 			else:
 				TS.addContent(parent_id, data)
-			print(data)
+				print(data)
 			if file_atr[0].lower() == "none" or file_atr[0].lower() == "null":
 				TS.deleteTitleCommand(parent_id)
 			else:
 				TS.setTitleCommand(parent_id, f"/{file_atr[0]}")
 		return
-	print(source_location)
+	# print(source_location)
 	have_files = checkFiles(source_location, False)
 	title_id = parent_id
 	if title != "":
@@ -63,7 +63,10 @@ def makeNode(location, title = "", parent_id=0):
 
 	source_list = os.listdir(source_location)
 	for i in source_list:
-		makeNode(source_location, i, title_id)
+		try:
+			makeNode(source_location, i, title_id)
+		except Exception as e:
+			print(e)
 
 
 
@@ -88,4 +91,7 @@ def checkFiles(location, rec=True, is_first=True):
 # 	for i in root_list:
 # 		makeNode(root_location + "\\" + i)
 
-makeNode(root_location)
+try:
+	makeNode(root_location)
+except Exception as e:
+	print(e)
