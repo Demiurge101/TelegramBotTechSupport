@@ -7,7 +7,7 @@ import os
 from includes import *
 import sys
 
-from threads import thread
+# from threads import thread
 
 
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
@@ -73,6 +73,8 @@ def drop_bot(message):
 
 @bot.message_handler(commands=['reborn'])
 def reset_live_countdown(message):
+    if not message.from_user.id in admins:
+        return
     if message.from_user.id in admins:
         live_countdown = max_lives
 
@@ -86,6 +88,8 @@ def get_drop_status(message):
 
 @bot.message_handler(commands=['reconnect'])
 def reconnect_DB(message):
+    if not message.from_user.id in admins:
+        return
     DB.connect()
     DB.set_time_out(DB_timeout)
     TSDB.connect()
@@ -95,11 +99,17 @@ def reconnect_DB(message):
 
 @bot.message_handler(commands=['update_ts'])
 def update_ts(message):
+    if not message.from_user.id in admins:
+        return
+    print(get_time(), f"DB TS has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
     os.system("python.exe build_tree.py")
     reconnect_DB(message)
 
 @bot.message_handler(commands=['update_son'])
 def update_son(message):
+    if not message.from_user.id in admins:
+        return
+    print(get_time(), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
     os.system("python.exe build_DB.py")
     reconnect_DB(message)
 
@@ -210,7 +220,8 @@ def sysonenum(message):
         return
 
     bot.send_message(message.chat.id, "Введите номер датчика", reply_markup=res)
-    thread(bot.register_next_step_handler, (message, son, idson))
+    # thread(bot.register_next_step_handler, (message, son, idson))
+    bot.register_next_step_handler(message, son, idson)
 
 
 def adduser(message, menu_id):
@@ -356,7 +367,8 @@ def navigation(message, menu_id=0):
         menu_id = TSDB.getIdByTitle(message.text)
         bot.send_message(message.chat.id, text)
         if location:
-            thread(sendFrom, (message, location, False))
+            # thread(sendFrom, (message, location, False))
+            sendFrom(message, location, False)
         menu_position[message.from_user.id] = menu_id
         sysonenum(message)
         return
@@ -364,7 +376,8 @@ def navigation(message, menu_id=0):
         menu_position[message.from_user.id] = menu_id
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
     if location and message.text.lower() != 'назад':
-        thread(sendFrom, (message, location, False))
+        # thread(sendFrom, (message, location, False))
+        sendFrom(message, location, False)
 
 
 
