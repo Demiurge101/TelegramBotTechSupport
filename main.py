@@ -93,6 +93,16 @@ def reconnect_DB(message):
     SN.connect()
     SN.set_time_out(DB_timeout)
 
+@bot.message_handler(commands=['update_ts'])
+def update_ts(message):
+    os.system("python.exe build_tree.py")
+    reconnect_DB(message)
+
+@bot.message_handler(commands=['update_son'])
+def update_son(message):
+    os.system("python.exe build_DB.py")
+    reconnect_DB(message)
+
 
 @bot.message_handler(commands=['start'])
 def main(message):
@@ -106,7 +116,8 @@ def help(message):
     text = DB.exe_queryKey("Помощь")
     bot.send_message(message.chat.id, text)
     if message.from_user.id in admins:
-        text = f"For admins:\r\n /status\r\n /reconnect - reconnect DB\r\n /drop - stop bot"
+        text = f"For admins:\r\n /status\r\n /reconnect - reconnect DB\r\n /drop - stop bot\r\n\
+ /update_ts - обновить базу данных техподдержки\r\n /update_son - обновить базу данных системы одного номера"
         bot.send_message(message.chat.id, text)
 
 @bot.message_handler(content_types=['photo','video','voice','video_note','document'])
@@ -317,9 +328,13 @@ def navigation(message, menu_id=0):
     if message.text.lower() == 'назад':
         print("Back")
         if message.from_user.id in menu_position:
+            print("IN")
             menu_id = TSDB.getParentId(menu_position[message.from_user.id])
+            print("done")
         else:
+            print("NOT IN")
             menu_id = 0
+            print("done")
         print("Back.")
     else:
         menu_id = TSDB.getIdByTitle(message.text)
