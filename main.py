@@ -106,7 +106,7 @@ def help(message):
     text = DB.exe_queryKey("Помощь")
     bot.send_message(message.chat.id, text)
     if message.from_user.id in admins:
-        text = f"/status\r\n/reconnect - reconnect DB\r\n/drop - stop bot"
+        text = f"For admins:\r\n /status\r\n /reconnect - reconnect DB\r\n /drop - stop bot"
         bot.send_message(message.chat.id, text)
 
 @bot.message_handler(content_types=['photo','video','voice','video_note','document'])
@@ -149,6 +149,9 @@ def feedbackSendtext(message):
             bot.send_message(message.chat.id, "Действие отклонено!", reply_markup=TSDB.getSubMenu(0))
             return
         text = f"User {str(message.from_user.username)} ID {message.from_user.id}: {message.text}"
+        f = open("feedback.txt", 'w')
+        f.write(text)
+        f.close()
         for i in admins:
             bot.send_message(i, text)
         bot.send_message(chat_id_TheEyee, text)
@@ -299,10 +302,8 @@ def callback_message(callback):
 @bot.message_handler(content_types='text')
 def navigation(message, menu_id=0):
     print(f"navigation({message.text})")
-    if message.from_user.username == None:
-        print(red_text("username: None"))
     if message.text == None:
-        print("message.text == None")
+        print(red_text("message.text == None"))
         return
     if len(message.text) > 100:
         bot.send_message(message.chat.id, "Слишком длинное сообщение!")

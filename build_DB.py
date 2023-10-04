@@ -13,6 +13,9 @@ source_list = os.listdir(source_location)
 SN = MDataBase.SonDB("localhost", "root", Config.password, Config.bd_name_dispatcher_son)
 SN.connect()
 
+for client in Config.clients:
+	SN.addClient(client, Config.clients[client])
+
 for name in source_list:
 	print(name) # org_name
 	if (name in clients) == False:

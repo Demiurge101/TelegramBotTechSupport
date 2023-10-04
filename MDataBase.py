@@ -37,28 +37,22 @@ class Database:
             print(f"Connection refused {self.db_name}")
             print(ex)
 
-    def exe_query(self, query):
-        try:
-            with self.connection.cursor() as cursor:
-                cursor.execute(query)
-                self.connection.commit()
-        except Exception as e:
-            print(e)
 
     def _checkSlash(self, line):
         return line.replace('\\', '\\\\')
 
     def _checkQuote(self, line):
+        # return line.replace("'", '"')
         return line.replace('"', "'")
 
     def _commit(self, cmd, err="commit error"):
         with self.connection.cursor() as cursor:
             try:
-                cursor.execute(self._checkQuote(cmd))
+                cursor.execute(cmd)
                 self.connection.commit()
                 return True
             except Exception as ex:
-                print(self._checkQuote(cmd))
+                print(cmd)
                 print(err)
                 print(ex)
                 return False
@@ -141,6 +135,11 @@ class SonDB(Database):
     def del_user(self, user_id):
         self._commit(f"delete from users where user_id = {user_id}")
                 
+    def addClient(self, org, order_key):
+        if len(self._fetchall(f"select * from clients where org = \"{org}\""))>0:
+            self._commit(f"update clients set order_key =\"{order_key}\"")
+        else:
+            self._commit(f"insert into clients(org, order_key) value(\"{org}\", \"{order_key}\")")
 
     def addStation(self, serial_id, org_name, mkcb, date, location, description=""):
         org_id = self.getOrgIdByName(org_name) # org_id
@@ -316,7 +315,7 @@ class TSDB(Database):
 
     def setContentText(self, parent_id, text):
         if self.getContent(parent_id):
-            self._commit(f"update contents set content_text = \"{text}\" where parent_id = \"{parent_id}\" ")
+            self._commit(f"update contents set content_text = \"{self._checkQuote(text)}\" where parent_id = {parent_id} ")
 
     def setContentLocation(self, parent_id, location):
         if self.getContent(parent_id):
