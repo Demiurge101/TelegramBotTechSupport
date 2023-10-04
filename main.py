@@ -80,7 +80,7 @@ def reset_live_countdown(message):
 
 @bot.message_handler(commands=['status'])
 def get_drop_status(message):
-    print("status")
+    print(get_time(), f"STATUS {message.from_user.id} ({green_text(str(message.from_user.username))})")
     if message.from_user.id in admins:
         text = f"live_countdown: <{live_countdown}>\r\nlen(menu_position) - {len(menu_position)}"
         print(text)
