@@ -26,6 +26,8 @@ chat_id_TheEyee = Config.TheEyee
 
 DB_timeout = 2147483
 max_lives = 5000
+max_delay_between_errors = 60
+delay_between_errors = 1
 
 
 bot = telebot.TeleBot(Config.Token)
@@ -33,6 +35,8 @@ bot = telebot.TeleBot(Config.Token)
 
 black_list = []
 is_sending = []
+
+last_err = ""
 
 menu_position = {}
 def get_pos(message):
@@ -60,6 +64,11 @@ def start_bot():
     except Exception as e:
         print(yellow_text(get_time()), "Exception raised.")
         print(e)
+        if last_err == e:
+            if delay_between_errors < max_delay_between_errors:
+                delay_between_errors += 1
+        else:
+            delay_between_errors = 1
 
 
 @bot.message_handler(commands=['drop', 'stop'])
@@ -525,6 +534,7 @@ while True:
     start_bot()
     if live_countdown < 1:
         break
+    sleep(delay_between_errors)
     live_countdown -= 1
 
 print(yellow_text(get_time()), "END")
