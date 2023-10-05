@@ -323,7 +323,7 @@ def callback_message(callback):
 
 @bot.message_handler(content_types='text')
 def navigation(message, menu_id=0):
-    print(f"navigation({message.text})")
+    # print(f"navigation({message.text})")
     if message.text == None:
         print(red_text("message.text == None"))
         return
