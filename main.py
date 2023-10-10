@@ -33,6 +33,8 @@ delay_between_errors = 1
 bot = telebot.TeleBot(Config.Token)
 
 
+main_menu_id = 0
+
 black_list = []
 is_sending = []
 
@@ -43,11 +45,17 @@ def get_pos(message):
     if message.from_user.id in menu_position:
         return menu_position[message.from_user.id]
     else:
-        return 0
+        return -1
 
 
 
 live_countdown = max_lives
+
+
+def set_main_menu_id():
+    TSDB.init()
+    main_menu_id = TSDB.set_main_menu_id()
+    print(f"Main menu id: {main_menu_id}")
 
 
 def start_bot():
@@ -59,6 +67,7 @@ def start_bot():
         TSDB.set_time_out(DB_timeout)
         SN.connect()
         SN.set_time_out(DB_timeout)
+        set_main_menu_id()
         print(yellow_text(get_time()), "Runned.")
         bot.polling(none_stop=True, timeout=100)
     except Exception as e:
@@ -74,7 +83,7 @@ def start_bot():
 @bot.message_handler(commands=['drop', 'stop'])
 def drop_bot(message):
     if message.from_user.id in admins:
-        print(get_time(), f"Bot has dropped by {message.from_user.id}({green_text(str(message.from_user.username))})")
+        print(yellow_text(get_time()), f"Bot has dropped by {message.from_user.id}({green_text(str(message.from_user.username))})")
         live_countdown = 0
         bot.stop_polling()
         bot.stop_bot()
@@ -89,7 +98,7 @@ def reset_live_countdown(message):
 
 @bot.message_handler(commands=['status'])
 def get_drop_status(message):
-    print(get_time(), f"STATUS {message.from_user.id} ({green_text(str(message.from_user.username))})")
+    print(yellow_text(get_time()), f"STATUS {message.from_user.id} ({green_text(str(message.from_user.username))})")
     if message.from_user.id in admins:
         text = f"live_countdown: <{live_countdown}>\r\nlen(menu_position) - {len(menu_position)}"
         print(text)
@@ -105,12 +114,13 @@ def reconnect_DB(message):
     TSDB.set_time_out(DB_timeout)
     SN.connect()
     SN.set_time_out(DB_timeout)
+    set_main_menu_id()
 
 @bot.message_handler(commands=['update_ts'])
 def update_ts(message):
     if not message.from_user.id in admins:
         return
-    print(get_time(), f"DB TS has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
+    print(yellow_text(get_time()), f"DB TS has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
     os.system("python.exe build_tree.py")
     reconnect_DB(message)
 
@@ -118,7 +128,7 @@ def update_ts(message):
 def update_son(message):
     if not message.from_user.id in admins:
         return
-    print(get_time(), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
+    print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
     os.system("python.exe build_DB.py")
     reconnect_DB(message)
 
@@ -126,9 +136,7 @@ def update_son(message):
 @bot.message_handler(commands=['start'])
 def main(message):
     #bot.send_message(message.chat.id, '<b>Привет!</b>', parse_mode='html')
-
-    text = start_text
-    bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(0))
+    bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
 
 @bot.message_handler(commands=['help'])
 def help(message):
@@ -173,10 +181,10 @@ def feedback(message):
 def feedbackSendtext(message):
     if message.content_type == "text":
         if message.text.lower() in return_keys:
-            bot.send_message(message.chat.id, "Действие отменено!", reply_markup=TSDB.getSubMenu(0))
+            bot.send_message(message.chat.id, "Действие отменено!", reply_markup=TSDB.getSubMenu(main_menu_id))
             return
         if message.from_user.id in black_list:
-            bot.send_message(message.chat.id, "Действие отклонено!", reply_markup=TSDB.getSubMenu(0))
+            bot.send_message(message.chat.id, "Действие отклонено!", reply_markup=TSDB.getSubMenu(main_menu_id))
             return
         text = f"User {str(message.from_user.username)} ID {message.from_user.id}: {message.text}"
         f = open("feedback.txt", 'w')
@@ -185,7 +193,7 @@ def feedbackSendtext(message):
         for i in admins:
             bot.send_message(i, text)
         bot.send_message(chat_id_TheEyee, text)
-        bot.send_message(message.chat.id, "Сообщение принято в обработку!", reply_markup=TSDB.getSubMenu(0))
+        bot.send_message(message.chat.id, "Сообщение принято в обработку!", reply_markup=TSDB.getSubMenu(main_menu_id))
 
     #bot.send_message(chat_id_Demiurge, message)
 
@@ -218,7 +226,8 @@ def books(message):
 @bot.message_handler(commands=['son'])
 def sysonenum(message):
     if message.text == "Назад":
-        bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
+        main_menu_id = 1 # 
+        bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
     idson = TSDB.getIdByTitle(message.text)
     if idson < 0:
         idson = TSDB.getIdByCommand(message.text)
@@ -235,7 +244,7 @@ def sysonenum(message):
 
 def adduser(message, menu_id):
     if SN.add_user(message.text, message.from_user.id, message.from_user.username) == False:
-        bot.send_message(message.chat.id, "Отказ!", reply_markup=TSDB.getSubMenu(0))
+        bot.send_message(message.chat.id, "Отказ!", reply_markup=TSDB.getSubMenu())
         bot.register_next_step_handler(message, navigation)
         return
     else:
@@ -319,7 +328,7 @@ def callback_message(callback):
                     print("-", i['text'])
                 print(f'Текст на нажатой кнопке: {row[0]["text"]}')
     if callback.data == 'Назад':
-        bot.send_message(callback.message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
+        bot.send_message(callback.message.chat.id, TSDB.getContent(), reply_markup=TSDB.getSubMenu())
     elif callback.data == 'delete':
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
     elif callback.data == 'edit':
@@ -333,6 +342,8 @@ def callback_message(callback):
 @bot.message_handler(content_types='text')
 def navigation(message, menu_id=0):
     # print(f"navigation({message.text})")
+    if menu_id == 0:
+        menu_id = main_menu_id
     if message.text == None:
         print(red_text("message.text == None"))
         return
@@ -350,10 +361,12 @@ def navigation(message, menu_id=0):
         if message.from_user.id in menu_position:
             print("IN")
             menu_id = TSDB.getParentId(menu_position[message.from_user.id])
+            if menu_id <= main_menu_id:
+                menu_id = menu_position[message.from_user.id]
             print("done")
         else:
             print("NOT IN")
-            menu_id = 0
+            menu_id = main_menu_id
             print("done")
         print("Back.")
     else:
@@ -397,14 +410,14 @@ def son(message, menu_id=0, overcount=0):
     if(message.text in return_keys) or (overcount > 5):
         if(overcount > 5):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
-        menu_position[message.from_user.id] = 0
-        bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
+        menu_position[message.from_user.id] = main_menu_id
+        bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
         # bot.register_next_step_handler(message, navigation)
         return
     elif message.text.lower() == "log out":
         SN.del_user(client_id)
-        menu_position[message.from_user.id] = 0
-        bot.send_message(message.chat.id, start_text, reply_markup=TSDB.getSubMenu(0))
+        menu_position[message.from_user.id] = main_menu_id
+        bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
         # bot.register_next_step_handler(message, navigation)
         return
     device = SN.getDevices(number, client_id)

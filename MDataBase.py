@@ -215,7 +215,13 @@ class TSDB(Database):
     dblocation = Config.tsDBfiles
     get_access_to_path(dblocation, Config.falcon_username)
 
-    def getSubMenu(self, parent_id):
+    def init(self):
+        self.main_menu_id = 0
+
+
+    def getSubMenu(self, parent_id = -1):
+        if parent_id < 0:
+            parent_id = self.set_main_menu_id()
         menu_items = self._fetchall(f"select * from titles where parent_id = {parent_id}", f"getSubMenu({parent_id})")
         if len(menu_items):
             titles_reply = []
@@ -227,16 +233,18 @@ class TSDB(Database):
                     titles_inline.append(elem['title'])
             if titles_reply:
                 # print("titles_reply")
-                if parent_id > 0:
+                if parent_id > self.main_menu_id:
                     titles_reply.append("Назад")
                 return buttonway(titles_reply, "Reply")
             if titles_inline:
-                if parent_id > 0:
+                if parent_id > self.main_menu_id:
                     # print("titles_inline")
                     titles_inline.append("Назад")
                 return buttonway(titles_inline, "Inline")
 
-    def getContent(self, parent_id):
+    def getContent(self, parent_id = -1):
+        if parent_id < 0:
+            parent_id = self.main_menu_id
         res = self._fetchall(f"select parent_id, content_text, location from contents where parent_id = {parent_id}", f"getContent{parent_id}")
         if len(res) > 0:
             return res[0]
@@ -321,5 +329,8 @@ class TSDB(Database):
         if self.getContent(parent_id):
             self._commit(f"update contents set location = \"{self._checkSlash(location)}\" where parent_id = \"{parent_id}\" ")
 
-
-
+    def set_main_menu_id(self):
+        self.main_menu_id = self.getIdByTitle('0_main')
+        if self.main_menu_id < 0:
+            self.main_menu_id = 0
+        return self.main_menu_id
