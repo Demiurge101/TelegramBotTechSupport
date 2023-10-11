@@ -123,6 +123,7 @@ def update_ts(message):
     print(yellow_text(get_time()), f"DB TS has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
     os.system("python.exe build_tree.py")
     reconnect_DB(message)
+    bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
 
 @bot.message_handler(commands=['update_son'])
 def update_son(message):
@@ -131,6 +132,7 @@ def update_son(message):
     print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
     os.system("python.exe build_DB.py")
     reconnect_DB(message)
+    bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
 
 
 @bot.message_handler(commands=['start'])
@@ -138,14 +140,14 @@ def main(message):
     #bot.send_message(message.chat.id, '<b>Привет!</b>', parse_mode='html')
     bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
 
-@bot.message_handler(commands=['help'])
-def help(message):
-    text = DB.exe_queryKey("Помощь")
-    bot.send_message(message.chat.id, text)
-    if message.from_user.id in admins:
-        text = f"For admins:\r\n /status\r\n /reconnect - reconnect DB\r\n /drop - stop bot\r\n\
- /update_ts - обновить базу данных техподдержки\r\n /update_son - обновить базу данных системы одного номера"
-        bot.send_message(message.chat.id, text)
+# @bot.message_handler(commands=['help'])
+# def help(message):
+#     text = DB.exe_queryKey("Помощь")
+#     bot.send_message(message.chat.id, text)
+#     if message.from_user.id in admins:
+#         text = f"For admins:\r\n /status\r\n /reconnect - reconnect DB\r\n /drop - stop bot\r\n\
+#  /update_ts - обновить базу данных техподдержки\r\n /update_son - обновить базу данных системы одного номера"
+#         bot.send_message(message.chat.id, text)
 
 @bot.message_handler(content_types=['photo','video','voice','video_note','document'])
 def feedbackSend(message):
@@ -168,23 +170,29 @@ def feedbackSend(message):
 
 @bot.message_handler(commands=['mail'])
 def feedback(message):
-    text = DB.exe_queryKey("Сообщить о проблеме")
+    text = "mail"
+    t_id = TSDB.getIdByCommand(message.text)
+    if t_id:
+        text = TSDB.getContent(t_id)['content_text']
     bot.send_message(message.chat.id, text, reply_markup=back_button)
     bot.register_next_step_handler(message, feedbackSendtext)
 
 @bot.message_handler(commands=['feedback'])
 def feedback(message):
-    text = DB.exe_queryKey("Обратная связь")
+    text = "feedback"
+    t_id = TSDB.getIdByCommand(message.text)
+    if t_id:
+        text = TSDB.getContent(t_id)['content_text']
     bot.send_message(message.chat.id, text, reply_markup=back_button)
     bot.register_next_step_handler(message, feedbackSendtext)
 
 def feedbackSendtext(message):
     if message.content_type == "text":
         if message.text.lower() in return_keys:
-            bot.send_message(message.chat.id, "Действие отменено!", reply_markup=TSDB.getSubMenu(main_menu_id))
+            bot.send_message(message.chat.id, "Действие отменено!", reply_markup=TSDB.getSubMenu())
             return
         if message.from_user.id in black_list:
-            bot.send_message(message.chat.id, "Действие отклонено!", reply_markup=TSDB.getSubMenu(main_menu_id))
+            bot.send_message(message.chat.id, "Действие отклонено!", reply_markup=TSDB.getSubMenu())
             return
         text = f"User {str(message.from_user.username)} ID {message.from_user.id}: {message.text}"
         f = open("feedback.txt", 'w')
@@ -197,31 +205,31 @@ def feedbackSendtext(message):
 
     #bot.send_message(chat_id_Demiurge, message)
 
-@bot.message_handler(commands=['site', 'website'])
+@bot.message_handler(commands=['site'])
 def site(message):
     #bot.send_message(chat_id_Demiurge, message)
     webbrowser.open('https://gfm.ru/')
 
-@bot.message_handler(commands=['network', 'wifi', 'telephones',
-                               'hardware','cables',
-                               'software'])
-def net(message):
-    navigation(message)
+# @bot.message_handler(commands=['network', 'wifi', 'telephones',
+#                                'hardware','cables',
+#                                'software'])
+# def net(message):
+#     navigation(message)
 
 
-is_books = []
-@bot.message_handler(commands=['books'])
-def books(message):
-    if message.from_user.id in is_books:
-        return
-    is_books.append(message.from_user.id)
-    text = DB.exe_queryKey("Материалы")
-    dirs = DB.exe_queryPath("Материалы")
-    bot.send_message(message.chat.id, text)
-    bot.send_message(message.chat.id, "Загрузка файлов...")
-    sendMedia(message, dirs, 'ts')
-    bot.send_message(message.chat.id, "Загрузка завершена.")
-    is_books.remove(message.from_user.id)
+# is_books = []
+# @bot.message_handler(commands=['books'])
+# def books(message):
+#     if message.from_user.id in is_books:
+#         return
+#     is_books.append(message.from_user.id)
+#     text = DB.exe_queryKey("Материалы")
+#     dirs = DB.exe_queryPath("Материалы")
+#     bot.send_message(message.chat.id, text)
+#     bot.send_message(message.chat.id, "Загрузка файлов...")
+#     sendMedia(message, dirs, 'ts')
+#     bot.send_message(message.chat.id, "Загрузка завершена.")
+#     is_books.remove(message.from_user.id)
 
 @bot.message_handler(commands=['son'])
 def sysonenum(message):
@@ -252,43 +260,13 @@ def adduser(message, menu_id):
         bot.register_next_step_handler(message, son, menu_id)
 
 
-@bot.message_handler(commands=['table'])
-def gettable(message):
-    if message.from_user.id in admins:
-        table = DB.map_table()
-        for row in table:
-            bot.send_message(message.chat.id,f"{row['id']}\t {row['key_val']}  \n {row['text_val']}")
+# @bot.message_handler(commands=['table'])
+# def gettable(message):
+#     if message.from_user.id in admins:
+#         table = DB.map_table()
+#         for row in table:
+#             bot.send_message(message.chat.id,f"{row['id']}\t {row['key_val']}  \n {row['text_val']}")
 
-@bot.message_handler(commands=['add', 'update', 'delete'])
-def add(message):
-    if message.from_user.id in admins:
-        if message.text == "/update":
-            bot.send_message(message.chat.id,"Введи ключ который у тебя уже есть для изменения соблюдая регистр и пробелы ")
-        elif message.text == "/delete":
-            bot.send_message(message.chat.id, "Введи ключ который ты хочешь удалить соблюдая регистр и пробелы ")
-        elif message.text == "/add":
-            bot.send_message(message.chat.id, "Первым сообщением введи ключ. Ключи не должны повторятся!!! До 100 символов.")
-        bot.send_message(message.chat.id, "Введите назад или отмена для отмены действия ")
-        bot.register_next_step_handler(message, addkey, message.text)
-
-def addkey(message, *args):
-    if(message.text.lower() == 'назад' or message.text.lower() == 'отмена'):
-        bot.send_message(message.chat.id, "Действие отменено")
-    else:
-        method = args[0]
-        key = message.text
-        if method != '/delete':
-            bot.send_message(message.chat.id, "Теперь можешь вводи текст до 3000 символов. \\n это символ для переноса строки")
-        bot.register_next_step_handler(message, addtext, key, method)
-
-def addtext(message, *args):
-    text = message.text
-    if args[1] == "/add":
-        DB.set_key_text(args[0], text)
-    elif args[1] == "/delete":
-        DB.delete_text(args[0])
-    elif args[1] == "/update":
-        DB.update_text(args[0], text)
 
 def getStrMap(parent_id, pre=""):
     titles = TSDB.getTitlesByParentId(parent_id)
@@ -305,17 +283,13 @@ def getStrMap(parent_id, pre=""):
 
 @bot.message_handler(commands=['map'])
 def project_map(message, *args):
-    print("map")
+    print(yellow_text(get_time()), f"{message.from_user.id}({green_text(str(message.from_user.username))}): '{message.text}'")
     text = getStrMap(0)
-    text += "\
-        \r\n\
-    /help\r\n\
-        ...\r\n\
-        /books - Обучающие материалы \r\n\
-        /mail - Сообщить о проблеме \r\n\
-        /feedback - сообщение об ошибке или предложение по улучшению\r\n\
-    "
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(get_pos(message)))
+    if message.from_user.id in admins:
+        text = f"For admins:\r\n /status\r\n /reconnect - reconnect DB\r\n /drop - stop bot\r\n\
+ /update_ts - обновить базу данных техподдержки\r\n /update_son - обновить базу данных системы одного номера"
+        bot.send_message(message.chat.id, text)
 
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
