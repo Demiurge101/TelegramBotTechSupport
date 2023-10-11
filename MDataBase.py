@@ -332,5 +332,5 @@ class TSDB(Database):
     def set_main_menu_id(self):
         self.main_menu_id = self.getIdByTitle('0_main')
         if self.main_menu_id < 0:
-            self.main_menu_id = 0
+            self.main_menu_id = 1
         return self.main_menu_id

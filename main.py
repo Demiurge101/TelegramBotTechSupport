@@ -11,7 +11,7 @@ import sys
 
 
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
-DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
+# DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
 
 TSDB = MDataBase.TSDB("localhost", "root", Config.password, Config.bd_name_dispatcher_ts)
 
@@ -61,8 +61,8 @@ def set_main_menu_id():
 def start_bot():
     try:
         print(yellow_text(get_time()), "Starting...")
-        DB.connect()
-        DB.set_time_out(DB_timeout)
+        # DB.connect()
+        # DB.set_time_out(DB_timeout)
         TSDB.connect()
         TSDB.set_time_out(DB_timeout)
         SN.connect()
@@ -85,6 +85,7 @@ def drop_bot(message):
     if message.from_user.id in admins:
         print(yellow_text(get_time()), f"Bot has dropped by {message.from_user.id}({green_text(str(message.from_user.username))})")
         live_countdown = 0
+        bot.send_message(message.chat.id, "Bot has ruined!")
         bot.stop_polling()
         bot.stop_bot()
         os._exit(0)
@@ -95,6 +96,7 @@ def reset_live_countdown(message):
         return
     if message.from_user.id in admins:
         live_countdown = max_lives
+    bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
 
 @bot.message_handler(commands=['status'])
 def get_drop_status(message):
@@ -108,13 +110,14 @@ def get_drop_status(message):
 def reconnect_DB(message):
     if not message.from_user.id in admins:
         return
-    DB.connect()
-    DB.set_time_out(DB_timeout)
+    # DB.connect()
+    # DB.set_time_out(DB_timeout)
     TSDB.connect()
     TSDB.set_time_out(DB_timeout)
     SN.connect()
     SN.set_time_out(DB_timeout)
     set_main_menu_id()
+    bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
 
 @bot.message_handler(commands=['update_ts'])
 def update_ts(message):
@@ -123,7 +126,6 @@ def update_ts(message):
     print(yellow_text(get_time()), f"DB TS has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
     os.system("python.exe build_tree.py")
     reconnect_DB(message)
-    bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
 
 @bot.message_handler(commands=['update_son'])
 def update_son(message):
@@ -132,7 +134,6 @@ def update_son(message):
     print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
     os.system("python.exe build_DB.py")
     reconnect_DB(message)
-    bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
 
 
 @bot.message_handler(commands=['start'])
@@ -150,32 +151,37 @@ def main(message):
 #         bot.send_message(message.chat.id, text)
 
 @bot.message_handler(content_types=['photo','video','voice','video_note','document'])
-def feedbackSend(message):
+def content_send(message, chat_id):
+    caption = f"From user {str(message.from_user.username)} (id: {message.from_user.id})"
+    if message.caption:
+        caption += f": {message.caption}"
     if message.content_type == "photo":
-        for admin_chat in admins:
-            bot.send_photo(admin_chat, message.photo[0].file_id,f"User {str(message.from_user.username)} ID {message.from_user.id}:{message.caption}")
+        bot.send_photo(chat_id, message.photo[0].file_id, caption)
     elif message.content_type == "video":
-        for admin_chat in admins:
-            bot.send_video(admin_chat, message.video.file_id, caption=f"User {str(message.from_user.username)} ID {message.from_user.id}:{message.caption}")
+        bot.send_video(chat_id, message.video.file_id, caption=caption)
     elif message.content_type == "video_note":
-        for admin_chat in admins:
-            bot.send_video_note(admin_chat, message.video_note.file_id)
-            bot.send_message(admin_chat,f"User {str(message.from_user.username)} ID {message.from_user.id}")
+        bot.send_video_note(chat_id, message.video_note.file_id)
+        bot.send_message(chat_id, caption)
     elif message.content_type == "voice":
-        for admin_chat in admins:
-            bot.send_voice(admin_chat, message.voice.file_id, caption=f"User {str(message.from_user.username)} ID {message.from_user.id}")
+        bot.send_voice(chat_id, message.voice.file_id, caption=caption)
     elif message.content_type == "document":
-        for admin_chat in admins:
-            bot.send_document(admin_chat, message.document.file_id, caption=f"User {str(message.from_user.username)} ID {message.from_user.id}:{message.caption}")
+        bot.send_document(chat_id, message.document.file_id, caption=caption)
 
 @bot.message_handler(commands=['mail'])
-def feedback(message):
+def mail(message):
     text = "mail"
     t_id = TSDB.getIdByCommand(message.text)
     if t_id:
         text = TSDB.getContent(t_id)['content_text']
     bot.send_message(message.chat.id, text, reply_markup=back_button)
-    bot.register_next_step_handler(message, feedbackSendtext)
+    bot.register_next_step_handler(message, feedbackHandler)
+
+def mailHandler(message):
+    print(message.content_type)
+    if message.content_type == "sticker":
+        print("sending")
+        bot.send_sticker(Config.ITGenerator, message.sticker.file_id)
+    bot.send_message(message.chat.id, "Ok!", reply_markup=TSDB.getSubMenu(get_pos(message)))
 
 @bot.message_handler(commands=['feedback'])
 def feedback(message):
@@ -184,15 +190,15 @@ def feedback(message):
     if t_id:
         text = TSDB.getContent(t_id)['content_text']
     bot.send_message(message.chat.id, text, reply_markup=back_button)
-    bot.register_next_step_handler(message, feedbackSendtext)
+    bot.register_next_step_handler(message, feedbackHandler)
 
-def feedbackSendtext(message):
+def feedbackHandler(message):
+    if message.from_user.id in black_list:
+        bot.send_message(message.chat.id, "Действие отклонено!", reply_markup=TSDB.getSubMenu())
+        return
     if message.content_type == "text":
         if message.text.lower() in return_keys:
             bot.send_message(message.chat.id, "Действие отменено!", reply_markup=TSDB.getSubMenu())
-            return
-        if message.from_user.id in black_list:
-            bot.send_message(message.chat.id, "Действие отклонено!", reply_markup=TSDB.getSubMenu())
             return
         text = f"User {str(message.from_user.username)} ID {message.from_user.id}: {message.text}"
         f = open("feedback.txt", 'w')
@@ -201,9 +207,22 @@ def feedbackSendtext(message):
         for i in admins:
             bot.send_message(i, text)
         bot.send_message(chat_id_TheEyee, text)
-        bot.send_message(message.chat.id, "Сообщение принято в обработку!", reply_markup=TSDB.getSubMenu(main_menu_id))
-
+        bot.send_message(message.chat.id, "Сообщение принято в обработку!", reply_markup=TSDB.getSubMenu(get_pos(message)))
+    else:
+        for admin_chat in admins:
+            content_send(message, admin_chat)
+        # content_send(message, Config.ITGenerator)
+        bot.send_message(message.chat.id, "Принято в обработку!", reply_markup=TSDB.getSubMenu(get_pos(message)))
     #bot.send_message(chat_id_Demiurge, message)
+
+    if message.content_type == "sticker":
+        bot.send_message(chat_id_TheEyee, f"Вадим тут стицкер как ты хотел from user {str(message.from_user.username)} ID {message.from_user.id}", reply_markup=TSDB.getSubMenu(get_pos(message)))
+        # bot.send_message(chat_id_TheEyee, 'стицкер', reply_markup=TSDB.getSubMenu(get_pos(message)))
+        bot.send_sticker(chat_id_TheEyee, message.sticker.file_id)
+
+        bot.send_message(Config.ITGenerator, f"From user {str(message.from_user.username)} ID {message.from_user.id}", reply_markup=TSDB.getSubMenu(get_pos(message)))
+        bot.send_sticker(Config.ITGenerator, message.sticker.file_id)
+        
 
 @bot.message_handler(commands=['site'])
 def site(message):
