@@ -33,7 +33,7 @@ delay_between_errors = 1
 bot = telebot.TeleBot(Config.Token)
 
 
-main_menu_id = 1
+main_menu_id = 0
 
 black_list = []
 is_sending = []
@@ -42,6 +42,7 @@ last_err = ""
 
 menu_position = {}
 def get_pos(message):
+    global menu_position
     if message.from_user.id in menu_position:
         return menu_position[message.from_user.id]
     else:
@@ -53,6 +54,7 @@ live_countdown = max_lives
 
 
 def set_main_menu_id():
+    global main_menu_id
     TSDB.init()
     main_menu_id = TSDB.set_main_menu_id()
     print(f"Main menu id: {main_menu_id}")
@@ -60,6 +62,8 @@ def set_main_menu_id():
 
 def start_bot():
     try:
+        global delay_between_errors
+        global max_delay_between_errors
         print(yellow_text(get_time()), "Starting...")
         # DB.connect()
         # DB.set_time_out(DB_timeout)
@@ -82,7 +86,7 @@ def start_bot():
 
 @bot.message_handler(commands=['drop', 'stop'])
 def drop_bot(message):
-    if message.from_user.id in admins:
+    if message.from_user.id == Config.ITGenerator:
         print(yellow_text(get_time()), f"Bot has dropped by {message.from_user.id}({green_text(str(message.from_user.username))})")
         live_countdown = 0
         bot.send_message(message.chat.id, "Bot has ruined!")
@@ -92,11 +96,11 @@ def drop_bot(message):
 
 @bot.message_handler(commands=['reborn'])
 def reset_live_countdown(message):
-    if not message.from_user.id in admins:
-        return
+    global live_countdown
+    global max_lives
     if message.from_user.id in admins:
         live_countdown = max_lives
-    bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
+        bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
 
 @bot.message_handler(commands=['status'])
 def get_drop_status(message):
@@ -252,6 +256,7 @@ def site(message):
 
 @bot.message_handler(commands=['son'])
 def sysonenum(message):
+    global main_menu_id
     if message.text == "Назад":
         main_menu_id = 1 # 
         bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
@@ -306,7 +311,7 @@ def project_map(message, *args):
     text = getStrMap(0)
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(get_pos(message)))
     if message.from_user.id in admins:
-        text = f"For admins:\r\n /status\r\n /reconnect - reconnect DB\r\n /drop - stop bot\r\n\
+        text = f"For admins:\r\n /status\r\n /reborn\r\n/reconnect - reconnect DB\r\n /drop - stop bot\r\n\
  /update_ts - обновить базу данных техподдержки\r\n /update_son - обновить базу данных системы одного номера"
         bot.send_message(message.chat.id, text)
 
@@ -334,6 +339,8 @@ def callback_message(callback):
 
 @bot.message_handler(content_types='text')
 def navigation(message, menu_id=0):
+    global main_menu_id
+    global menu_position
     # print(f"navigation({message.text})")
     if menu_id == 0:
         menu_id = main_menu_id
@@ -398,6 +405,8 @@ def navigation(message, menu_id=0):
 
 
 def son(message, menu_id=0, overcount=0):
+    global main_menu_id
+    global menu_position
     number = message.text
     client_id = message.from_user.id
     # SN.test(number, client_id)
@@ -541,6 +550,7 @@ while True:
     start_bot()
     if live_countdown < 1:
         break
+    print(f"Sleep {delay_between_errors}s")
     sleep(delay_between_errors)
     live_countdown -= 1
 

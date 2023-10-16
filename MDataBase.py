@@ -80,35 +80,35 @@ class Database:
 
 
 
-class DatabaseTS(Database):
-    "Database class for TechSupport"
-    def map_table(self):
-        return self._fetchall("select * from map")
+# class DatabaseTS(Database):
+#     "Database class for TechSupport"
+#     def map_table(self):
+#         return self._fetchall("select * from map")
         
-    def set_key_text(self, key, text):
-        self._commit(f"insert into map(key_val,text_val) value(\"{key}\",\"{text}\");")
+#     def set_key_text(self, key, text):
+#         self._commit(f"insert into map(key_val,text_val) value(\"{key}\",\"{text}\");")
 
-    def update_text(self, key, text):
-        self._commit(f"update map set text_val = \"{text}\" where key_val = \"{key}\"")
+#     def update_text(self, key, text):
+#         self._commit(f"update map set text_val = \"{text}\" where key_val = \"{key}\"")
         
-    def delete_text(self, key):
-        self._commit(f"delete from map where key_val =\"{key}\"")
+#     def delete_text(self, key):
+#         self._commit(f"delete from map where key_val =\"{key}\"")
 
-    def exe_queryKey(self, key):
-        res = self._fetchall(f"select text_val from map where key_val = \"{key}\"")
-        return res[0]['text_val']
+#     def exe_queryKey(self, key):
+#         res = self._fetchall(f"select text_val from map where key_val = \"{key}\"")
+#         return res[0]['text_val']
 
-    def is_content(self, key):
-        res = self._fetchall(f"select is_content from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
-        for i in res:
-            if i['is_content'] == True:
-                return True
-        return False
+#     def is_content(self, key):
+#         res = self._fetchall(f"select is_content from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
+#         for i in res:
+#             if i['is_content'] == True:
+#                 return True
+#         return False
         
-    def exe_queryPath(self, key):
-        if not self.is_content(key):
-            return None
-        return self._fetchall(f"select dir from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
+#     def exe_queryPath(self, key):
+#         if not self.is_content(key):
+#             return None
+#         return self._fetchall(f"select dir from pathdir, map where pathdir.id_map = map.id and map.key_val = \"{key}\"")
 
 
 
