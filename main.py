@@ -33,7 +33,7 @@ delay_between_errors = 1
 bot = telebot.TeleBot(Config.Token)
 
 
-main_menu_id = 0
+main_menu_id = -1
 
 black_list = []
 is_sending = []
@@ -362,7 +362,7 @@ def navigation(message, menu_id=0):
             print("IN")
             print("position: ", menu_position[message.from_user.id])
             menu_id = TSDB.getParentId(menu_position[message.from_user.id])
-            if menu_id <= main_menu_id:
+            if menu_id < main_menu_id:
                 menu_id = menu_position[message.from_user.id]
             print("done")
         else:
