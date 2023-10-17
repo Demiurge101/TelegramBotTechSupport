@@ -99,9 +99,10 @@ def drop_bot(message):
 def reset_live_countdown(message):
     global live_countdown
     global max_lives
-    bot = telebot.TeleBot(Config.MyToken)
-    thr = Threads()
     if message.from_user.id in admins:
+        bot = telebot.TeleBot(Config.MyToken)
+        thr = Threads()
+        is_sending = []
         live_countdown = max_lives
         bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
 
@@ -513,22 +514,19 @@ def sendFrom(message, location, subfolders=True, reply_markup=None):
             bot.send_message(message.chat.id, "Подождите пока загрузятся все файлы.")
             return
         is_sending.append(message.chat.id)
-        bot.send_message(message.chat.id, "Загрузка файлов...")
+    bot.send_message(message.chat.id, "Загрузка файлов...")
     try:
         sendFromFolder(message, location, subfolders)
     except Exception as e:
         # print("Загрузка прервана!")
-        with thr.rlock():
-            bot.send_message(message.chat.id, "Загрузка прервана.")
-            if message.from_user.id in admins:
-                bot.send_message(message.chat.id, str(e))
+        bot.send_message(message.chat.id, "Загрузка прервана.")
+        if message.from_user.id in admins:
+            bot.send_message(message.chat.id, str(e))
         # print(e)
     if reply_markup == None:
-        with thr.rlock():
-            bot.send_message(message.chat.id, "Загрузка завершена.")
+        bot.send_message(message.chat.id, "Загрузка завершена.")
     else:
-        with thr.rlock():
-            bot.send_message(message.chat.id, "Загрузка завершена.", reply_markup=reply_markup)
+        bot.send_message(message.chat.id, "Загрузка завершена.", reply_markup=reply_markup)
     with thr.rlock():
         is_sending.remove(message.chat.id)
 
@@ -557,12 +555,10 @@ def sendFromFolder(message, location, subfolders=True):
                 while len(media) > 10:
                     submedia = media[0:10]
                     media = media[10:]
-                    with thr.rlock():
-                        bot.send_media_group(message.chat.id, submedia)
+                    bot.send_media_group(message.chat.id, submedia)
                     #bot.send_media_group(message.chat.id, media)
                 else:
-                    with thr.rlock():
-                        bot.send_media_group(message.chat.id, media)
+                    bot.send_media_group(message.chat.id, media)
 
 
 

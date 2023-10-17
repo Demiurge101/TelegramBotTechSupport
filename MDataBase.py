@@ -12,6 +12,7 @@ class Database:
         self.user = user
         self.password = password
         self.db_name = db_name
+        self.__status = 1
 
 
     def set_time_out(self, tm=28800):
@@ -53,7 +54,7 @@ class Database:
                 return True
             except Exception as ex:
                 print(cmd)
-                print(err)
+                print(red_text("Error:"), err)
                 print(ex)
                 return False
             return False
@@ -64,11 +65,17 @@ class Database:
                 cursor.execute(self._checkQuote(cmd))
                 return cursor.fetchall()
             except Exception as ex:
+                print(red_text("Error:"), err)
                 print(self._checkQuote(cmd))
-                print(err)
                 print(ex)
+                self.__status = 0
+                self.heal()
                 return {}
             return {}
+
+    def heal(self):
+        if self.__status != 1:
+            self.connect()
 
     def close_connect(self):
         self.connection.close()
@@ -260,6 +267,8 @@ class TSDB(Database):
 
     def getIdByTitle(self, text):
         res = self._fetchall(f"select id from titles where title = \'{text}\'", f"getIdByTitle(\"{text}\")")
+        print("have RES")
+        print(res)
         if(len(res) > 0):
             return res[0]['id']
         else:
