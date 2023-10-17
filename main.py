@@ -7,7 +7,7 @@ import os
 from includes import *
 import sys
 
-# from threads import thread
+from threads import Threads
 
 
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
@@ -30,7 +30,8 @@ max_delay_between_errors = 60
 delay_between_errors = 1
 
 
-bot = telebot.TeleBot(Config.Token)
+bot = telebot.TeleBot(Config.MyToken)
+thr = Threads()
 
 
 main_menu_id = -1
@@ -98,6 +99,8 @@ def drop_bot(message):
 def reset_live_countdown(message):
     global live_countdown
     global max_lives
+    bot = telebot.TeleBot(Config.MyToken)
+    thr = Threads()
     if message.from_user.id in admins:
         live_countdown = max_lives
         bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
@@ -138,6 +141,17 @@ def update_son(message):
     print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
     os.system("python.exe build_DB.py")
     reconnect_DB(message)
+
+
+@bot.message_handler(commands=['info'])
+def info(message):
+    # thr.run(info_test, (message.chat.id,))
+    thr.show()
+
+def info_test(ch):
+    for i in range(50):
+        bot.send_message(ch, f"TEST {i}")
+
 
 
 @bot.message_handler(commands=['start'])
@@ -391,7 +405,8 @@ def navigation(message, menu_id=0):
         bot.send_message(message.chat.id, text)
         if location:
             # thread(sendFrom, (message, location, False))
-            sendFrom(message, location, False)
+            thr.run(sendFrom, (message, location, False))
+            # sendFrom(message, location, False)
         menu_position[message.from_user.id] = menu_id
         sysonenum(message)
         return
@@ -400,7 +415,8 @@ def navigation(message, menu_id=0):
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
     if location and message.text.lower() != 'назад':
         # thread(sendFrom, (message, location, False))
-        sendFrom(message, location, False)
+        thr.run(sendFrom, (message, location, False))
+        # sendFrom(message, location, False)
 
 
 
@@ -492,24 +508,29 @@ def sendMedia(message, dirs, method):
     is_sending.remove(message.from_user.id)
 
 def sendFrom(message, location, subfolders=True, reply_markup=None):
-    if message.from_user.id in is_sending:
-        bot.send_message(message.chat.id, "Подождите пока загрузятся все файлы.")
-        return
-    is_sending.append(message.chat.id)
-    bot.send_message(message.chat.id, "Загрузка файлов...")
+    with thr.rlock():
+        if message.from_user.id in is_sending:
+            bot.send_message(message.chat.id, "Подождите пока загрузятся все файлы.")
+            return
+        is_sending.append(message.chat.id)
+        bot.send_message(message.chat.id, "Загрузка файлов...")
     try:
         sendFromFolder(message, location, subfolders)
     except Exception as e:
         # print("Загрузка прервана!")
-        bot.send_message(message.chat.id, "Загрузка прервана.")
-        if message.from_user.id in admins:
-            bot.send_message(message.chat.id, str(e))
+        with thr.rlock():
+            bot.send_message(message.chat.id, "Загрузка прервана.")
+            if message.from_user.id in admins:
+                bot.send_message(message.chat.id, str(e))
         # print(e)
     if reply_markup == None:
-        bot.send_message(message.chat.id, "Загрузка завершена.")
+        with thr.rlock():
+            bot.send_message(message.chat.id, "Загрузка завершена.")
     else:
-        bot.send_message(message.chat.id, "Загрузка завершена.", reply_markup=reply_markup)
-    is_sending.remove(message.chat.id)
+        with thr.rlock():
+            bot.send_message(message.chat.id, "Загрузка завершена.", reply_markup=reply_markup)
+    with thr.rlock():
+        is_sending.remove(message.chat.id)
 
 def sendFromFolder(message, location, subfolders=True):
     full_path = os.path.abspath(location)
@@ -536,10 +557,12 @@ def sendFromFolder(message, location, subfolders=True):
                 while len(media) > 10:
                     submedia = media[0:10]
                     media = media[10:]
-                    bot.send_media_group(message.chat.id, submedia)
+                    with thr.rlock():
+                        bot.send_media_group(message.chat.id, submedia)
                     #bot.send_media_group(message.chat.id, media)
                 else:
-                    bot.send_media_group(message.chat.id, media)
+                    with thr.rlock():
+                        bot.send_media_group(message.chat.id, media)
 
 
 
