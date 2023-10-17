@@ -96,15 +96,21 @@ def drop_bot(message):
         os._exit(0)
 
 @bot.message_handler(commands=['reborn'])
-def reset_live_countdown(message):
+def reborn(message):
+    if message.from_user.id in admins:
+        reset_live_countdown()
+        bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
+
+
+def reset_live_countdown():
     global live_countdown
     global max_lives
-    if message.from_user.id in admins:
-        bot = telebot.TeleBot(Config.MyToken)
-        thr = Threads()
+    global is_sending
+    # bot = telebot.TeleBot(Config.MyToken)
+    # thr = Threads()
+    with thr.rlock():
         is_sending = []
         live_countdown = max_lives
-        bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
 
 @bot.message_handler(commands=['status'])
 def get_drop_status(message):
@@ -146,12 +152,8 @@ def update_son(message):
 
 @bot.message_handler(commands=['info'])
 def info(message):
-    # thr.run(info_test, (message.chat.id,))
     thr.show()
 
-def info_test(ch):
-    for i in range(50):
-        bot.send_message(ch, f"TEST {i}")
 
 
 
@@ -452,13 +454,15 @@ def son(message, menu_id=0, overcount=0):
         loc = device['location']
         if loc[:1] == '.':
             loc = SN.dblocation + loc[1:]
-        sendFrom(message, loc, reply_markup=TSDB.getSubMenu(menu_id))
+        thr.run(sendFrom, (message, loc, True, TSDB.getSubMenu(menu_id)))
+        # sendFrom(message, loc, reply_markup=TSDB.getSubMenu(menu_id))
 
     if(len(station) > 0):
         loc = station['location']
         if loc[:1] == '.':
             loc = SN.dblocation + loc[1:]
-        sendFrom(message, loc, False, reply_markup=TSDB.getSubMenu(menu_id))
+        thr.run(sendFrom, (message, loc, False, TSDB.getSubMenu(menu_id)))
+        # sendFrom(message, loc, False, reply_markup=TSDB.getSubMenu(menu_id))
     bot.register_next_step_handler(message, son, menu_id, 0)
 
 

@@ -33,6 +33,7 @@ class Database:
                 database=self.db_name,
                 cursorclass=pymysql.cursors.DictCursor
             )
+            self.__status = 1
             print(f"success {self.db_name}")
         except Exception as ex:
             print(f"Connection refused {self.db_name}")
@@ -56,6 +57,8 @@ class Database:
                 print(cmd)
                 print(red_text("Error:"), err)
                 print(ex)
+                self.__status = 0
+                self.heal()
                 return False
             return False
 
@@ -76,6 +79,7 @@ class Database:
     def heal(self):
         if self.__status != 1:
             self.connect()
+        return self.__status == 1
 
     def close_connect(self):
         self.connection.close()
