@@ -97,6 +97,7 @@ def drop_bot(message):
 
 @bot.message_handler(commands=['reborn'])
 def reborn(message):
+    print(yellow_text(get_time()), f"reborn {message.from_user.id} ({green_text(str(message.from_user.username))})")
     if message.from_user.id in admins:
         reset_live_countdown()
         bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
@@ -122,6 +123,7 @@ def get_drop_status(message):
 
 @bot.message_handler(commands=['reconnect'])
 def reconnect_DB(message):
+    print(yellow_text(get_time()), f"reconnect {message.from_user.id} ({green_text(str(message.from_user.username))})")
     if not message.from_user.id in admins:
         return
     # DB.connect()
@@ -152,6 +154,7 @@ def update_son(message):
 
 @bot.message_handler(commands=['info'])
 def info(message):
+    print(yellow_text(get_time()), f"INFO {message.from_user.id} ({green_text(str(message.from_user.username))})")
     thr.show()
 
 
