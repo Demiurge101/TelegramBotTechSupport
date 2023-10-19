@@ -30,7 +30,7 @@ max_delay_between_errors = 60
 delay_between_errors = 1
 
 
-bot = telebot.TeleBot(Config.MyToken)
+bot = telebot.TeleBot(Config.Token)
 thr = Threads()
 
 
