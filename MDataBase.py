@@ -127,7 +127,7 @@ class Database:
 class SonDB(Database):
     """Database for SON"""
     dblocation = Config.sonDBfiles
-    get_access_to_path(dblocation, Config.falcon_username)
+    get_access_to_path(dblocation)
 
     def check_user(self, user_id):
         res = self._fetchall(f"select * from users where user_id = {user_id}")
@@ -224,7 +224,7 @@ class SonDB(Database):
 
 class TSDB(Database):
     dblocation = Config.tsDBfiles
-    get_access_to_path(dblocation, Config.falcon_username)
+    get_access_to_path(dblocation)
 
     def init(self):
         self.main_menu_id = 0

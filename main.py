@@ -451,30 +451,34 @@ def son(message, menu_id=0, overcount=0):
         bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
         # bot.register_next_step_handler(message, navigation)
         return
-    device = SN.getDevices(number, client_id)
-    station = SN.getStations(number, client_id)
-    if(len(station) == 0 and len(device) == 0):
-        m = TSDB.getSubMenu(menu_id)
-        if not m:
-            m = back_button
-        bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.", reply_markup=m)
-        bot.register_next_step_handler(message, son, menu_id, overcount + 1)
-        return
-    overcount = 0
-    if(len(device) > 0):
-        # sendMedia(message, device['location'], 'son')
-        loc = device['location']
-        if loc[:1] == '.':
-            loc = SN.dblocation + loc[1:]
-        thr.run(sendFrom, (message, loc, True, TSDB.getSubMenu(menu_id)))
-        # sendFrom(message, loc, reply_markup=TSDB.getSubMenu(menu_id))
+    parsed_type = son.parse_type(message.text)
+    if parsed_type == 'number':
+        device = SN.getDevices(number, client_id)
+        station = SN.getStations(number, client_id)
+        if(len(station) == 0 and len(device) == 0):
+            m = TSDB.getSubMenu(menu_id)
+            if not m:
+                m = back_button
+            bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.", reply_markup=m)
+            bot.register_next_step_handler(message, son, menu_id, overcount + 1)
+            return
+        overcount = 0
+        if(len(device) > 0):
+            # sendMedia(message, device['location'], 'son')
+            loc = device['location']
+            if loc[:1] == '.':
+                loc = SN.dblocation + loc[1:]
+            thr.run(sendFrom, (message, loc, True, TSDB.getSubMenu(menu_id)))
+            # sendFrom(message, loc, reply_markup=TSDB.getSubMenu(menu_id))
 
-    if(len(station) > 0):
-        loc = station['location']
-        if loc[:1] == '.':
-            loc = SN.dblocation + loc[1:]
-        thr.run(sendFrom, (message, loc, False, TSDB.getSubMenu(menu_id)))
-        # sendFrom(message, loc, False, reply_markup=TSDB.getSubMenu(menu_id))
+        if(len(station) > 0):
+            loc = station['location']
+            if loc[:1] == '.':
+                loc = SN.dblocation + loc[1:]
+            thr.run(sendFrom, (message, loc, False, TSDB.getSubMenu(menu_id)))
+            # sendFrom(message, loc, False, reply_markup=TSDB.getSubMenu(menu_id))
+    else:
+        bot.send_message(message.chat.id, "Неизвестный номер", reply_markup = back_button)
     bot.register_next_step_handler(message, son, menu_id, 0)
 
 
