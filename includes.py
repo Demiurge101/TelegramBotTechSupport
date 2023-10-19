@@ -5,6 +5,7 @@ import os
 import colorama
 from colorama import Fore, Back, Style
 colorama.init()
+from getpass import getpass
 
 
 def buttonway(list, button):
@@ -76,14 +77,16 @@ def yellow_text(text):
   return Fore.YELLOW + text + Style.RESET_ALL
 
 
-def get_access_to_path(path, user):
+def get_access_to_path(path, user = ""):
   backup_storage_available = os.path.isdir(path)
   if backup_storage_available:
       print("Storage already connected.")
       print(path)
   else:
       print(f"Connecting to {path}.")
-      password = input(f"{user}: ")
+      if not user:
+        user = input("User: ")
+      password = getpass("Password: ")
       print ("\033[A                                                         \033[A")
       mount_command = "net use /user:" + user + " " + path + " " + password
       os.system(mount_command)

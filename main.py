@@ -3,11 +3,11 @@ from telebot import types
 import webbrowser
 import MDataBase
 import Config
-import os
 from includes import *
 import sys
 
 from threads import Threads
+from son import *
 
 
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
@@ -436,6 +436,8 @@ def son(message, menu_id=0, overcount=0):
     number = message.text
     client_id = message.from_user.id
     # SN.test(number, client_id)
+    son = Son()
+    print("Parsed:", son.parse_type(message.text.lower()))
     if(message.text in return_keys) or (overcount > 5):
         if(overcount > 5):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
