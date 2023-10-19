@@ -284,6 +284,9 @@ def sysonenum(message):
     if idson < 0:
         idson = TSDB.getIdByCommand(message.text)
     res = TSDB.getSubMenu(idson)
+    print("M:", res)
+    if not res:
+        res = back_button
     # check login
     # if SN.check_user(message.from_user.id) == False:
     #     bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=back_button)
@@ -449,7 +452,10 @@ def son(message, menu_id=0, overcount=0):
     device = SN.getDevices(number, client_id)
     station = SN.getStations(number, client_id)
     if(len(station) == 0 and len(device) == 0):
-        bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.", reply_markup=TSDB.getSubMenu(menu_id))
+        m = TSDB.getSubMenu(menu_id)
+        if not m:
+            m = back_button
+        bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.", reply_markup=m)
         bot.register_next_step_handler(message, son, menu_id, overcount + 1)
         return
     overcount = 0
