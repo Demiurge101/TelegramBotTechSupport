@@ -284,10 +284,11 @@ def sysonenum(message):
     if idson < 0:
         idson = TSDB.getIdByCommand(message.text)
     res = TSDB.getSubMenu(idson)
-    if SN.check_user(message.from_user.id) == False:
-        bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=back_button)
-        bot.register_next_step_handler(message, adduser, idson)
-        return
+    # check login
+    # if SN.check_user(message.from_user.id) == False:
+    #     bot.send_message(message.chat.id, "Введите код доступа (номер договора)", reply_markup=back_button)
+    #     bot.register_next_step_handler(message, adduser, idson)
+    #     return
 
     bot.send_message(message.chat.id, "Введите номер датчика", reply_markup=res)
     # thread(bot.register_next_step_handler, (message, son, idson))
