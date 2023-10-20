@@ -38,6 +38,9 @@ class SonController():
 		self.__serial_codes = {'пс' : "Паспорт (ПС)", 'ао' : "Акт опрессовки (АО)",
 		 'пк' : "Протокол калибровки (ПК)", 'пп' : "Протокол поверки (ПП)"}
 
+	def getLocation(self):
+		return self.__mkcb_location
+
 	def __getNumber(self, user_id, tn=0):
 		if user_id in self.__users:
 			return self.__users[user_id][tn]
@@ -45,10 +48,10 @@ class SonController():
 			return ""
 
 	def getDecimalNumber(self, user_id):
-		self.__getNumber(user_id, 1)
+		return self.__getNumber(user_id, 1)
 
 	def getSerialNumber(self, user_id):
-		self.__getNumber(user_id, 0)
+		return self.__getNumber(user_id, 0)
 
 	def getType(self, user_id):
 		if user_id in self.__users:
@@ -126,7 +129,7 @@ class SonController():
 				result.append(self.__serial_codes[code])
 		return result
 
-	def getCodesMenu(self, user_id, location='', mkcb=''):
+	def getCodes(self, user_id, location='', mkcb=''):
 		if not user_id in self.__users:
 			return [son_text['wrong_number']]
 		result = []

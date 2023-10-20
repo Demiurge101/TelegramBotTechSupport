@@ -95,3 +95,20 @@ def get_access_to_path(path, user = ""):
           print(f"Connection success.")
       else:
           print(f"Failed to find {path}.")
+
+
+def checkFiles(location, rec=True, is_first=True):
+  source_location = os.path.abspath(location)
+  if os.path.isfile(source_location):
+    file_type = os.path.splitext(source_location)
+    if file_type[-1] in document_type or file_type[-1] in image_type or file_type[-1] in video_type or file_type[-1] in audio_type:
+      return True
+    else:
+      return False
+  if rec == False and is_first == False:
+    return False
+  source_list = os.listdir(source_location)
+  for i in source_list:
+    if checkFiles(source_location + "\\" + i, rec, False):
+      return True
+  return False

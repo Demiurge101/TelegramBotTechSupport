@@ -491,11 +491,36 @@ def son(message, menu_id=0, overcount=0):
     elif parsed_type == 'mkcb':
         son_controller.deleteSerialNumber(message.from_user.id)
     if parsed_type in ['mkcb', 'number']:
-        sub_menu = son_controller.getCodesMenu(message.from_user.id)
-    elif parsed_type in ['d_code', 's_code']:
-        pass
+        sub_menu = son_controller.getCodes(message.from_user.id)
+        res = '-'
+        if sub_menu:
+            res = f"{son_text['you_can_get_docs']}\r\n"
+            for code in sub_menu:
+                res += f"{code}\r\n"
+            res += son_text['enter_code_for_download']
+        else:
+            res = son_text['wrong_number']
+        bot.send_message(message.chat.id, res, reply_markup=back_button)
+    elif parsed_type == 'd_code':
+        d_number = son_controller.getDecimalNumber(message.from_user.id)
+        lct = f"{son_controller.getLocation()}\\{d_number}\\{message.text} {d_number}"
+        if checkFiles(lct):
+            thr.run(sendFrom, (message, lct, True, TSDB.getSubMenu(menu_id)))
+        else:
+            bot.send_message(message.chat.id, "Нет файлов", reply_markup = back_button)
+    elif parsed_type == 's_code':
+        lct = f"{loc}\\{message.text} {son_controller.getSerialNumber(message.from_user.id)}"
+        if checkFiles(lct):
+            thr.run(sendFrom, (message, lct, True, TSDB.getSubMenu(menu_id)))
+        else:
+            bot.send_message(message.chat.id, "Нет файлов", reply_markup = back_button)
     else:
-        bot.send_message(message.chat.id, son_text['wrong_number'], reply_markup = back_button)
+        response_text = "unknown"
+        if son_controller.getType(message.from_user.id):
+            response_text = son_text['wrong_code']
+        else:
+            response_text = son_text['wrong_number']
+        bot.send_message(message.chat.id, response_text, reply_markup = back_button)
     bot.register_next_step_handler(message, son, menu_id, 0)
 
 
