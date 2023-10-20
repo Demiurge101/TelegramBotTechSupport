@@ -6,7 +6,7 @@ sn = SonController()
 
 
 # unit 1
-u1 = Unit(1)
+u1 = Unit(1, "output")
 
 sn.setNumber(123456, '12345678')
 sn.setNumber(123457, 'fw')
@@ -38,7 +38,7 @@ sn.setNumber(3, '11223344')
 
 
 sn.deleteSerialNumber(1)
-u2 = Unit(2)
+u2 = Unit(2, "add and delete")
 u2.test(sn.getSerialNumber(1), "")
 u2.test(sn.getDecimalNumber(1), "")
 u2.test(sn.getType(1), "")
