@@ -29,8 +29,12 @@ max_lives = 5000
 max_delay_between_errors = 60
 delay_between_errors = 1
 
+token = Config.MyToken
+for i in sys.argv:
+    if i == "-prod":
+        token = Config.Token
 
-bot = telebot.TeleBot(Config.Token)
+bot = telebot.TeleBot(token)
 thr = Threads()
 
 
