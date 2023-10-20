@@ -59,6 +59,8 @@ class SonController():
 				return 'number'
 			elif self.__users[user_id][1]:
 				return 'mkcb'
+			else:
+				return ""
 		else:
 			return ""
 
@@ -66,6 +68,7 @@ class SonController():
 		self.__users[user_id][0] = ""
 
 	def setNumber(self, user_id, number):
+		number = str(number)
 		parsed_type = self.parseType(number)
 		if user_id in self.__users:
 			if parsed_type == 'mkcb':
