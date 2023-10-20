@@ -437,7 +437,7 @@ def son(message, menu_id=0, overcount=0):
     client_id = message.from_user.id
     # SN.test(number, client_id)
     son_controller = SonController()
-    print("Parsed:", son_controller.parse_type(message.text.lower()))
+    # print("Parsed:", son_controller.parse_type(message.text.lower()))
     if(message.text in return_keys) or (overcount > 5):
         if(overcount > 5):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
@@ -451,7 +451,10 @@ def son(message, menu_id=0, overcount=0):
         bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
         # bot.register_next_step_handler(message, navigation)
         return
-    parsed_type = son_controller.parse_type(message.text)
+    # parsed_type = son_controller.parseType(message.text)
+    parsed_type = son_controller.setNumber(message.from_user.id, message.text)
+    # parsed_type = son_controller.getType(message.from_user.id)
+    print(f"Parsed: {parsed_type}")
     if parsed_type == 'number':
         device = SN.getDevices(number, client_id)
         station = SN.getStations(number, client_id)
@@ -477,6 +480,8 @@ def son(message, menu_id=0, overcount=0):
                 loc = SN.dblocation + loc[1:]
             thr.run(sendFrom, (message, loc, False, TSDB.getSubMenu(menu_id)))
             # sendFrom(message, loc, False, reply_markup=TSDB.getSubMenu(menu_id))
+    elif parsed_type == 'mkcb':
+        pass
     else:
         bot.send_message(message.chat.id, "Неизвестный номер", reply_markup = back_button)
     bot.register_next_step_handler(message, son, menu_id, 0)
