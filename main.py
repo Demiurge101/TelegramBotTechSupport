@@ -436,8 +436,8 @@ def son(message, menu_id=0, overcount=0):
     number = message.text
     client_id = message.from_user.id
     # SN.test(number, client_id)
-    son = Son()
-    print("Parsed:", son.parse_type(message.text.lower()))
+    son_controller = SonController()
+    print("Parsed:", son_controller.parse_type(message.text.lower()))
     if(message.text in return_keys) or (overcount > 5):
         if(overcount > 5):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
@@ -451,7 +451,7 @@ def son(message, menu_id=0, overcount=0):
         bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
         # bot.register_next_step_handler(message, navigation)
         return
-    parsed_type = son.parse_type(message.text)
+    parsed_type = son_controller.parse_type(message.text)
     if parsed_type == 'number':
         device = SN.getDevices(number, client_id)
         station = SN.getStations(number, client_id)
