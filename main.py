@@ -36,6 +36,7 @@ for i in sys.argv:
 
 bot = telebot.TeleBot(token)
 thr = Threads()
+son_controller = SonController()
 
 
 main_menu_id = -1
@@ -288,7 +289,7 @@ def sysonenum(message):
     if idson < 0:
         idson = TSDB.getIdByCommand(message.text)
     res = TSDB.getSubMenu(idson)
-    print("M:", res)
+    # print("M:", res)
     if not res:
         res = back_button
     # check login
@@ -297,7 +298,7 @@ def sysonenum(message):
     #     bot.register_next_step_handler(message, adduser, idson)
     #     return
 
-    bot.send_message(message.chat.id, "Введите номер датчика", reply_markup=res)
+    bot.send_message(message.chat.id, son_text['begin'], reply_markup=res)
     # thread(bot.register_next_step_handler, (message, son, idson))
     bot.register_next_step_handler(message, son, idson)
 
@@ -308,7 +309,7 @@ def adduser(message, menu_id):
         bot.register_next_step_handler(message, navigation)
         return
     else:
-        bot.send_message(message.chat.id, "Введите номер датчика", reply_markup=TSDB.getSubMenu(menu_id))
+        bot.send_message(message.chat.id, son_text['begin'], reply_markup=TSDB.getSubMenu(menu_id))
         bot.register_next_step_handler(message, son, menu_id)
 
 
@@ -440,7 +441,6 @@ def son(message, menu_id=0, overcount=0):
     number = message.text
     client_id = message.from_user.id
     # SN.test(number, client_id)
-    son_controller = SonController()
     # print("Parsed:", son_controller.parse_type(message.text.lower()))
     if(message.text in return_keys) or (overcount > 5):
         if(overcount > 5):
@@ -466,28 +466,36 @@ def son(message, menu_id=0, overcount=0):
             m = TSDB.getSubMenu(menu_id)
             if not m:
                 m = back_button
-            bot.send_message(message.chat.id, "Неизвестный номер. Введите корректный номер.", reply_markup=m)
+            bot.send_message(message.chat.id, son_text['wrong_number'], reply_markup=m)
             bot.register_next_step_handler(message, son, menu_id, overcount + 1)
             return
         overcount = 0
         if(len(device) > 0):
             # sendMedia(message, device['location'], 'son')
             loc = device['location']
+            # decimal_number = device['mkcb']
+            son_controller.setNumber(device['mkcb'])
             if loc[:1] == '.':
                 loc = SN.dblocation + loc[1:]
-            thr.run(sendFrom, (message, loc, True, TSDB.getSubMenu(menu_id)))
+            thr.run(sendFrom, (message, loc, False, TSDB.getSubMenu(menu_id)))
             # sendFrom(message, loc, reply_markup=TSDB.getSubMenu(menu_id))
 
         if(len(station) > 0):
             loc = station['location']
+            # decimal_number = station['mkcb']
+            son_controller.setNumber(station['mkcb'])
             if loc[:1] == '.':
                 loc = SN.dblocation + loc[1:]
             thr.run(sendFrom, (message, loc, False, TSDB.getSubMenu(menu_id)))
             # sendFrom(message, loc, False, reply_markup=TSDB.getSubMenu(menu_id))
     elif parsed_type == 'mkcb':
+        son_controller.deleteSerialNumber(message.from_user.id)
+    if parsed_type in ['mkcb', 'number']:
+        sub_menu = son_controller.getCodesMenu(message.from_user.id)
+    elif parsed_type in ['d_code', 's_code']:
         pass
     else:
-        bot.send_message(message.chat.id, "Неизвестный номер", reply_markup = back_button)
+        bot.send_message(message.chat.id, son_text['wrong_number'], reply_markup = back_button)
     bot.register_next_step_handler(message, son, menu_id, 0)
 
 
