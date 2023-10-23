@@ -1,14 +1,15 @@
 import os
 from Config import mkcb_location
-from includes import get_access_to_path
+from includes import get_access_to_path, checkFiles
 
 
-son_text = {'begin':"Введите заводской номер изделия (номер в формате «300хххххххх»)\
- или децимальный номер изделия (номер после \"МКЦБ.\" в формате «хххххх.ххх» либо «хххххх.ххх-хх»). \r\n\
-При вводе децимального номера Вам будут доступны только общие документы на конкретный класс изделий\
- (руководства, прошивки, схемы, сборочные чертежи  и др.), при вводе заводского номера Вам будут дополнительно\
-  доступны скан-копии с печатями и подписями индивидуальных документов на конкретное изделие (паспорта, акты\
-   опрессовки, акты калибровки и др.).",
+son_text = {'begin':"Введите <b>заводской</b> номер изделия (номер в формате «<b><u>300хххххххх</u></b>»)\
+ или <b>децимальный</b> номер изделия (номер после \"<u><b>МКЦБ.</b></u>\" в формате <u>«<b>хххххх.ххх</b>» либо\
+  «<b>хххххх.ххх-хх</b>»</u>). \r\n\
+<i>При вводе <b>децимального</b> номера Вам будут доступны только <b>общие</b> документы на конкретный <b>класс изделий</b>\
+ (руководства, прошивки, схемы, сборочные чертежи  и др.), при вводе <b>заводского</b> номера Вам будут дополнительно\
+  доступны скан-копии с печатями и подписями <b>индивидуальных</b> документов на <b>конкретное</b> изделие (паспорта, акты\
+   опрессовки, акты калибровки и др.).</i>",
 
    'wrong_number':"По указанному номеру изделий не найдено. Введите другой заводской или децимальный номер\
     изделия или нажмите кнопку «Назад», чтобы вернуться в корневое меню.",
@@ -30,6 +31,7 @@ class SonController():
 	def __init__(self):
 		self.__mkcb_location = mkcb_location
 		self.__users = {}
+		self.__locations = {}
 		get_access_to_path(self.__mkcb_location)
 		self.__decimal_codes = {'сб' : "Сборочный чертёж (СБ)", 'сп' : "Спецификация (СП)",
 		 'э' : "Схемы электрические (Э)", 'fw' : "Прошивка и инструкция по прошивке (FW)",
@@ -40,6 +42,19 @@ class SonController():
 
 	def getLocation(self):
 		return self.__mkcb_location
+
+	def setUserLocation(self, user_id, location=''):
+		if location:
+			self.__locations[user_id] = location
+
+	def getUserLocation(self, user_id):
+		if user_id in self.__locations:
+			return self.__locations[user_id]
+		return ''
+
+	def deleteUserLocation(self, user_id):
+		if user_id in self.__locations:
+			del self.__locations[user_id]
 
 	def __getNumber(self, user_id, tn=0):
 		if user_id in self.__users:
@@ -65,7 +80,8 @@ class SonController():
 			return ""
 
 	def deleteSerialNumber(self, user_id):
-		self.__users[user_id][0] = ""
+		if user_id in self.__users:
+			self.__users[user_id][0] = ""
 
 	def setNumber(self, user_id, number):
 		print(number)
@@ -86,6 +102,10 @@ class SonController():
 
 	def addUser(self, user_id, device="", mkcb=""):
 		self.__users[user_id] = [device, mkcb]
+
+	def deleteUser(self, user_id):
+		if user_id in self.__users:
+			del self.__users[user_id]
 
 	def parseType(self, number):
 		number = number.lower()
@@ -110,34 +130,44 @@ class SonController():
 	def __getDecimalCodes(self, location=''):
 		result = []
 		if not os.path.isdir(location):
-			return [son_text['wrong_number']]
+			return []
 		full_path = os.path.abspath(location)
 		l_dirs = os.listdir(full_path)
 		for fld in l_dirs:
 			index = fld.find(' ')
 			code = fld[:index].lower()
 			if code in self.__decimal_codes:
-				result.append(self.__decimal_codes[code])
+				if checkFiles(full_path + '\\' + fld):
+					result.append(self.__decimal_codes[code])
 		return result
 
 	def __getSerialCodes(self, location=''):
 		result = []
 		if not os.path.isdir(location):
-			return [son_text['wrong_number']]
+			return []
 		full_path = os.path.abspath(location)
 		l_dirs = os.listdir(full_path)
 		for fld in l_dirs:
 			index = fld.find(' ')
 			code = fld[:index].lower()
 			if code in self.__serial_codes:
-				result.append(self.__serial_codes[code])
+				if checkFiles(full_path + '\\' + fld):
+					result.append(self.__serial_codes[code])
 		return result
 
 	def getCodes(self, user_id, location='', mkcb=''):
+		print('location: ', location)
+		print("Users:")
+		print(self.__users)
+		print('.')
 		if not user_id in self.__users:
+			print("user not in")
 			return [son_text['wrong_number']]
 		result = []
 		if self.getSerialNumber(user_id):
+			if not location:
+				if user_id in self.__locations:
+					location = self.__locations[user_id]
 			result += self.__getSerialCodes(location)
 		if self.getDecimalNumber(user_id):
 			result += self.__getDecimalCodes(self.__mkcb_location + '\\' + self.getDecimalNumber(user_id))

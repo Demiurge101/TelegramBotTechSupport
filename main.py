@@ -160,7 +160,8 @@ def update_son(message):
 @bot.message_handler(commands=['info'])
 def info(message):
     print(yellow_text(get_time()), f"INFO {message.from_user.id} ({green_text(str(message.from_user.username))})")
-    thr.show()
+    # thr.show()
+    bot.send_message(message.chat.id, '<b><i>Какой-то текст...</i></b>', parse_mode='HTML')
 
 
 
@@ -168,7 +169,7 @@ def info(message):
 @bot.message_handler(commands=['start'])
 def main(message):
     #bot.send_message(message.chat.id, '<b>Привет!</b>', parse_mode='html')
-    bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
+    bot.send_message(message.chat.id, TSDB.getContent()['content_text'], parse_mode='HTML', reply_markup=TSDB.getSubMenu())
 
 # @bot.message_handler(commands=['help'])
 # def help(message):
@@ -202,7 +203,7 @@ def mail(message):
     t_id = TSDB.getIdByCommand(message.text)
     if t_id:
         text = TSDB.getContent(t_id)['content_text']
-    bot.send_message(message.chat.id, text, reply_markup=back_button)
+    bot.send_message(message.chat.id, text, parse_mode='HTML', reply_markup=back_button)
     bot.register_next_step_handler(message, feedbackHandler)
 
 def mailHandler(message):
@@ -218,7 +219,7 @@ def feedback(message):
     t_id = TSDB.getIdByCommand(message.text)
     if t_id:
         text = TSDB.getContent(t_id)['content_text']
-    bot.send_message(message.chat.id, text, reply_markup=back_button)
+    bot.send_message(message.chat.id, text, parse_mode='HTML', reply_markup=back_button)
     bot.register_next_step_handler(message, feedbackHandler)
 
 def feedbackHandler(message):
@@ -284,7 +285,7 @@ def sysonenum(message):
     global main_menu_id
     if message.text == "Назад":
         main_menu_id = 1 # 
-        bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
+        bot.send_message(message.chat.id, TSDB.getContent()['content_text'], parse_mode='HTML', reply_markup=TSDB.getSubMenu())
     idson = TSDB.getIdByTitle(message.text)
     if idson < 0:
         idson = TSDB.getIdByCommand(message.text)
@@ -298,7 +299,7 @@ def sysonenum(message):
     #     bot.register_next_step_handler(message, adduser, idson)
     #     return
 
-    bot.send_message(message.chat.id, son_text['begin'], reply_markup=res)
+    bot.send_message(message.chat.id, son_text['begin'], parse_mode='HTML', reply_markup=res)
     # thread(bot.register_next_step_handler, (message, son, idson))
     bot.register_next_step_handler(message, son, idson)
 
@@ -309,7 +310,7 @@ def adduser(message, menu_id):
         bot.register_next_step_handler(message, navigation)
         return
     else:
-        bot.send_message(message.chat.id, son_text['begin'], reply_markup=TSDB.getSubMenu(menu_id))
+        bot.send_message(message.chat.id, son_text['begin'], parse_mode='HTML', reply_markup=TSDB.getSubMenu(menu_id))
         bot.register_next_step_handler(message, son, menu_id)
 
 
@@ -417,7 +418,7 @@ def navigation(message, menu_id=0):
             # sendFromFolder(message, content['location'], False)
     if message.text.lower() == "система одного номера":
         menu_id = TSDB.getIdByTitle(message.text)
-        bot.send_message(message.chat.id, text)
+        bot.send_message(message.chat.id, text, parse_mode='HTML')
         if location:
             # thread(sendFrom, (message, location, False))
             thr.run(sendFrom, (message, location, False))
@@ -427,7 +428,7 @@ def navigation(message, menu_id=0):
         return
     if len(TSDB.getTitlesByParentId(menu_id)) > 0:
         menu_position[message.from_user.id] = menu_id
-    bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(menu_id))
+    bot.send_message(message.chat.id, text, parse_mode='HTML', reply_markup=TSDB.getSubMenu(menu_id))
     if location and message.text.lower() != 'назад':
         # thread(sendFrom, (message, location, False))
         thr.run(sendFrom, (message, location, False))
@@ -446,16 +447,21 @@ def son(message, menu_id=0, overcount=0):
         if(overcount > 5):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
         menu_position[message.from_user.id] = main_menu_id
-        bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
+        bot.send_message(message.chat.id, TSDB.getContent()['content_text'], parse_mode='HTML', reply_markup=TSDB.getSubMenu())
         # bot.register_next_step_handler(message, navigation)
+        son_controller.deleteUser(message.from_user.id)
+        son_controller.deleteUserLocation(message.from_user.id)
         return
     elif message.text.lower() == "log out":
         SN.del_user(client_id)
         menu_position[message.from_user.id] = main_menu_id
-        bot.send_message(message.chat.id, TSDB.getContent()['content_text'], reply_markup=TSDB.getSubMenu())
+        bot.send_message(message.chat.id, TSDB.getContent()['content_text'], parse_mode='HTML', reply_markup=TSDB.getSubMenu())
         # bot.register_next_step_handler(message, navigation)
+        son_controller.deleteUser(message.from_user.id)
+        son_controller.deleteUserLocation(message.from_user.id)
         return
     # parsed_type = son_controller.parseType(message.text)
+    codes_location = son_controller.getLocation()
     parsed_type = son_controller.setNumber(message.from_user.id, message.text)
     # parsed_type = son_controller.getType(message.from_user.id)
     print(f"Parsed: {parsed_type}")
@@ -463,35 +469,45 @@ def son(message, menu_id=0, overcount=0):
         device = SN.getDevices(number, client_id)
         station = SN.getStations(number, client_id)
         if(len(station) == 0 and len(device) == 0):
+            print("emty mark")
             m = TSDB.getSubMenu(menu_id)
             if not m:
                 m = back_button
-            bot.send_message(message.chat.id, son_text['wrong_number'], reply_markup=m)
+            bot.send_message(message.chat.id, son_text['wrong_number'], parse_mode='HTML', reply_markup=m)
             bot.register_next_step_handler(message, son, menu_id, overcount + 1)
             return
         overcount = 0
         if(len(device) > 0):
+            print('device')
             # sendMedia(message, device['location'], 'son')
             loc = device['location']
             # decimal_number = device['mkcb']
-            son_controller.setNumber(device['mkcb'])
+            son_controller.setNumber(message.from_user.id, device['mkcb'][5:])
             if loc[:1] == '.':
                 loc = SN.dblocation + loc[1:]
-            thr.run(sendFrom, (message, loc, False, TSDB.getSubMenu(menu_id)))
+            codes_location = loc
+            son_controller.setUserLocation(message.from_user.id, loc)
+            if checkFiles(loc, False):
+                thr.run(sendFrom, (message, loc, False, TSDB.getSubMenu(menu_id)))
             # sendFrom(message, loc, reply_markup=TSDB.getSubMenu(menu_id))
 
         if(len(station) > 0):
+            print('station')
             loc = station['location']
             # decimal_number = station['mkcb']
-            son_controller.setNumber(station['mkcb'])
+            son_controller.setNumber(message.from_user.id, station['mkcb'][5:])
             if loc[:1] == '.':
                 loc = SN.dblocation + loc[1:]
-            thr.run(sendFrom, (message, loc, False, TSDB.getSubMenu(menu_id)))
+            codes_location = loc
+            son_controller.setUserLocation(message.from_user.id, loc)
+            if checkFiles(loc, False):
+                thr.run(sendFrom, (message, loc, False, TSDB.getSubMenu(menu_id)))
             # sendFrom(message, loc, False, reply_markup=TSDB.getSubMenu(menu_id))
     elif parsed_type == 'mkcb':
         son_controller.deleteSerialNumber(message.from_user.id)
     if parsed_type in ['mkcb', 'number']:
-        sub_menu = son_controller.getCodes(message.from_user.id)
+        sub_menu = son_controller.getCodes(message.from_user.id, codes_location)
+        print("sub_menu:", sub_menu)
         res = '-'
         if sub_menu:
             res = f"{son_text['you_can_get_docs']}\r\n"
@@ -500,27 +516,34 @@ def son(message, menu_id=0, overcount=0):
             res += son_text['enter_code_for_download']
         else:
             res = son_text['wrong_number']
-        bot.send_message(message.chat.id, res, reply_markup=back_button)
+        bot.send_message(message.chat.id, res, parse_mode='HTML', reply_markup=back_button)
     elif parsed_type == 'd_code':
-        d_number = son_controller.getDecimalNumber(message.from_user.id)
-        lct = f"{son_controller.getLocation()}\\{d_number}\\{message.text} {d_number}"
-        if checkFiles(lct):
-            thr.run(sendFrom, (message, lct, True, TSDB.getSubMenu(menu_id)))
+        if son_controller.getType(message.from_user.id):
+            d_number = son_controller.getDecimalNumber(message.from_user.id)
+            lct = f"{son_controller.getLocation()}\\{d_number}\\{message.text} {d_number}"
+            if checkFiles(lct):
+                thr.run(sendFrom, (message, lct, True, TSDB.getSubMenu(menu_id)))
+            else:
+                bot.send_message(message.chat.id, son_text['wrong_code'], parse_mode='HTML', reply_markup = back_button)
         else:
-            bot.send_message(message.chat.id, "Нет файлов", reply_markup = back_button)
+            bot.send_message(message.chat.id, son_text['wrong_number'], parse_mode='HTML', reply_markup = back_button)
     elif parsed_type == 's_code':
-        lct = f"{loc}\\{message.text} {son_controller.getSerialNumber(message.from_user.id)}"
-        if checkFiles(lct):
-            thr.run(sendFrom, (message, lct, True, TSDB.getSubMenu(menu_id)))
+        if son_controller.getUserLocation(message.from_user.id):
+            lct = f"{son_controller.getUserLocation(message.from_user.id)}\\{message.text} {son_controller.getSerialNumber(message.from_user.id)}"
+            if checkFiles(lct):
+                thr.run(sendFrom, (message, lct, True, TSDB.getSubMenu(menu_id)))
+            else:
+                bot.send_message(message.chat.id, son_text['wrong_code'], parse_mode='HTML', reply_markup = back_button)
+                # bot.send_message(message.chat.id, "Нет файлов", reply_markup = back_button)
         else:
-            bot.send_message(message.chat.id, "Нет файлов", reply_markup = back_button)
+            bot.send_message(message.chat.id, son_text['wrong_number'], parse_mode='HTML', reply_markup = back_button)
     else:
         response_text = "unknown"
         if son_controller.getType(message.from_user.id):
             response_text = son_text['wrong_code']
         else:
             response_text = son_text['wrong_number']
-        bot.send_message(message.chat.id, response_text, reply_markup = back_button)
+        bot.send_message(message.chat.id, response_text, parse_mode='HTML', reply_markup = back_button)
     bot.register_next_step_handler(message, son, menu_id, 0)
 
 

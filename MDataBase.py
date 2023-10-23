@@ -177,20 +177,23 @@ class SonDB(Database):
 
     def getDevices(self, serial_number, client_id):
         res = self._fetchall(f"select * from devices where serial_number = {serial_number}")
-        org_id = self._fetchall(f"select org_id from users where user_id ={client_id}")
-        if (len(res) == 1) and (len(org_id) == 1):
-            if res[0]['org_id'] == int(org_id[0]['org_id']):
-                return res[0]
+        # org_id = self._fetchall(f"select org_id from users where user_id ={client_id}")
+        # if (len(res) == 1) and (len(org_id) == 1):
+            # if res[0]['org_id'] == int(org_id[0]['org_id']):
+                # return res[0]
+        if len(res):
+            return res[0]
         return {}
 
     def getStations(self, serial_number, client_id):
         res = self._fetchall(f"select * from stations where serial_number = {serial_number}")
-        org_id = self._fetchall(f"select org_id from users where user_id ={client_id}")
-        if (len(res) == 1) and (len(org_id) == 1):
-            if res[0]['org_id'] == int(org_id[0]['org_id']):
-                return res[0]
-                # devices = self._fetchall(f"select * from devices where station_number = {res[0]['serial_number']}")
-                # return devices
+        # org_id = self._fetchall(f"select org_id from users where user_id ={client_id}")
+        # if (len(res) == 1) and (len(org_id) == 1):
+        #     if res[0]['org_id'] == int(org_id[0]['org_id']):
+        #         return res[0]
+        if len(res):
+            return res[0]
+
         return {}
 
     def deleteDevice(self, serial_number, tp="device"):
