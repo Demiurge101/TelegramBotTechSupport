@@ -68,6 +68,7 @@ class SonController():
 		self.__users[user_id][0] = ""
 
 	def setNumber(self, user_id, number):
+		print(number)
 		number = str(number)
 		parsed_type = self.parseType(number)
 		if user_id in self.__users:
