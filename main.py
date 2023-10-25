@@ -510,10 +510,10 @@ def son(message, menu_id=0, overcount=0):
         print("sub_menu:", sub_menu)
         res = '-'
         if sub_menu:
-            res = f"{son_text['you_can_get_docs']}\r\n"
+            res = f"{son_text['you_can_get_docs']}\r\n\r\n"
             for code in sub_menu:
                 res += f"{code}\r\n"
-            res += son_text['enter_code_for_download']
+            res += f"\r\n{son_text['enter_code_for_download']}"
         else:
             res = son_text['wrong_number']
         bot.send_message(message.chat.id, res, parse_mode='HTML', reply_markup=back_button)
