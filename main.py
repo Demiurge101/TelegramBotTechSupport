@@ -7,8 +7,8 @@ from includes import *
 import sys
 
 from threads import Threads
+from process import Process
 from son import *
-
 
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 # DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
@@ -630,6 +630,12 @@ def sendFromFolder(message, location, subfolders=True):
             if file_type[-1] in document_type:
                 media.append(types.InputMediaDocument(open(full_path + "\\" + i, 'rb')))
                 # print("Send: ", full_path + "\\" + i)
+            elif file_type[-1] == '.lnk':
+                sp = getLinkSource(f"{full_path}\\{i}")
+                if os.path.isdir(sp):
+                    sendFromFolder(message, sp)
+                else:
+                    media.append(types.InputMediaDocument(open(sp, 'rb')))
             elif file_type[-1] in image_type:
                 media.append(types.InputMediaPhoto(open(full_path + "\\" + i, 'rb')))
                 # print("Send: ", full_path + "\\" + i)

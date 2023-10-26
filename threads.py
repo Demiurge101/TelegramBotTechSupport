@@ -37,7 +37,7 @@ class Threads():
 		return self.__rlock
 
 	def run(self, func, args):
-		th = threading.Thread(target=func, args=args)
+		th = threading.Thread(target=func, args=args, daemon=False)
 		self.__threads.append(th)
 		th.start()
 		

@@ -6,7 +6,7 @@ import colorama
 from colorama import Fore, Back, Style
 colorama.init()
 from getpass import getpass
-
+import subprocess
 
 def buttonway(list, button):
     if button == "Reply":
@@ -115,3 +115,33 @@ def checkFiles(location, rec=True, is_first=True):
   except Exception as e:
     print(f"Error: checkFiles({location}, {rec}, {is_first}) = {e}")
   return False
+
+
+def check_symbols(ch):
+  if ch > 127 and ch < 176:
+    return ch + 912
+  elif ch > 223 and ch < 240:
+    return ch + 864
+  elif ch == 240:
+    return 1025
+  elif ch == 241:
+    return 1105
+  return ch
+
+def getLinkSource(link_path) -> (str):
+    """
+    Get the target & args of a Windows shortcut (.lnk)
+    :param link_path: The Path or string-path to the shortcut, e.g. "C:\\Users\\Public\\Desktop\\My Shortcut.lnk"
+    :return: A tuple of the target and arguments, e.g. ("C:\\Program Files\\My Program.exe", "--my-arg")
+    """
+    # get_target implementation by hannes, https://gist.github.com/Winand/997ed38269e899eb561991a0c663fa49
+    ps_command = \
+        "$WSShell = New-Object -ComObject Wscript.Shell;" \
+        "$Shortcut = $WSShell.CreateShortcut(\"" + str(link_path) + "\"); " \
+        "Write-Host $Shortcut.TargetPath ';' $shortcut.Arguments "
+    output = subprocess.run(["powershell.exe", ps_command], capture_output=True)
+    raw = ''
+    for i in output.stdout:
+      raw += chr(check_symbols(i))
+    launch_path, args = [x.strip() for x in raw.split(';', 1)]
+    return launch_path
