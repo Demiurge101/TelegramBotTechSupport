@@ -68,8 +68,6 @@ def set_main_menu_id():
 
 def start_bot():
     try:
-        global delay_between_errors
-        global max_delay_between_errors
         print(yellow_text(get_time()), "Starting...")
         # DB.connect()
         # DB.set_time_out(DB_timeout)
@@ -81,12 +79,16 @@ def start_bot():
         print(yellow_text(get_time()), "Runned.")
         bot.polling(none_stop=True, timeout=100)
     except Exception as e:
+        global last_err
+        global delay_between_errors
+        global max_delay_between_errors
         print(yellow_text(get_time()), "Exception raised.")
         print(e)
-        if last_err == e:
+        if str(e).find(last_err) > -1:
             if delay_between_errors < max_delay_between_errors:
                 delay_between_errors += 1
         else:
+            last_err = str(e)[:int(len(str(e))/3)]
             delay_between_errors = 1
 
 
