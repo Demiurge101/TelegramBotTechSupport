@@ -13,8 +13,8 @@ from son import *
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 # DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
 
+print('init...')
 TSDB = MDataBase.TSDB("localhost", "root", Config.password, Config.bd_name_dispatcher_ts)
-
 SN = MDataBase.SonDB("localhost", "root", Config.password, Config.bd_name_dispatcher_son)
 
 
@@ -33,9 +33,13 @@ token = Config.MyToken
 for i in sys.argv:
     if i == "-prod":
         token = Config.Token
+        print('Production')
 
+print('bot init...')
 bot = telebot.TeleBot(token)
+print('threads init...')
 thr = Threads()
+print('son_controller init...')
 son_controller = SonController()
 
 
