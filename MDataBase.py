@@ -1,6 +1,9 @@
-import pymysql
 import Config
 from includes import *
+if operating_system == 'windows':
+    import pymysql
+elif operating_system == 'linux':
+    import mysqldb
 
 class Database:
     "Base class for Database"

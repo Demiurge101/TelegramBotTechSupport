@@ -104,7 +104,7 @@ def get_access_to_path(path, user = ""):
         mount_command = "net use /user:" + user + " " + path + " " + password
         os.system(mount_command)
       elif operating_system == 'linux':
-        mount_command = ''
+        mount_command = f'sudo mount.cifs {path}, /home/ad/share -o user={user}'
         os.system(mount_command)
       backup_storage_available = os.path.isdir(path)
       if backup_storage_available:
