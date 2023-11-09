@@ -10,7 +10,7 @@ clients = Config.clients
 source_location = os.path.abspath(source_location)
 source_list = os.listdir(source_location)
 
-SN = MDataBase.SonDB(db_host, db_login, Config.password, Config.bd_name_dispatcher_son)
+SN = MDataBase.SonDB(Config.db_host, Config.db_login, Config.password, Config.bd_name_dispatcher_son)
 SN.connect()
 
 for client in Config.clients:
