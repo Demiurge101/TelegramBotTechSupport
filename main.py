@@ -14,8 +14,8 @@ from son import *
 # DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
 
 print('init...')
-TSDB = MDataBase.TSDB("localhost", Config.login, Config.password, Config.bd_name_dispatcher_ts)
-SN = MDataBase.SonDB("localhost", Config.login, Config.password, Config.bd_name_dispatcher_son)
+TSDB = MDataBase.TSDB(host=Config.db_host, user=Config.db_login, password=Config.db_password, db_name=Config.db_name_dispatcher_ts)
+SN = MDataBase.SonDB(host=Config.db_host, user=Config.db_login, password=Config.db_password, db_name=Config.db_name_dispatcher_son)
 
 
 # admins
