@@ -8,7 +8,7 @@ content_file_type = ".cnt"
 
 
 
-TS = MDataBase.TSDB(Config.db_host, Config.db_login, Config.db_password, Config.bd_name_dispatcher_ts)
+TS = MDataBase.TSDB(Config.db_host, Config.db_login, Config.db_password, Config.db_name_dispatcher_ts)
 # TS = MDataBase.TSDB("localhost", "root", Config.password, "TS_Dispatcher")
 TS.connect()
 
