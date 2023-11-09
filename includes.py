@@ -18,6 +18,8 @@ elif platform == "darwin":
 elif platform == "win32":
   operating_system = 'windows'
 
+print(f"OS: {operating_system}")
+
 def buttonway(list, button):
     if button == "Reply":
         markup = types.ReplyKeyboardMarkup()
@@ -98,8 +100,12 @@ def get_access_to_path(path, user = ""):
         user = input("User: ")
       password = getpass("Password: ")
       print ("\033[A                                                         \033[A")
-      mount_command = "net use /user:" + user + " " + path + " " + password
-      os.system(mount_command)
+      if operating_system == 'windows':
+        mount_command = "net use /user:" + user + " " + path + " " + password
+        os.system(mount_command)
+      elif operating_system == 'linux':
+        mount_command = ''
+        os.system(mount_command)
       backup_storage_available = os.path.isdir(path)
       if backup_storage_available:
           print(f"Connection success.")
