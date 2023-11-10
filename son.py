@@ -132,7 +132,7 @@ class SonController():
 			code = fld[:index].lower()
 			if code in self.__decimal_codes:
 				# print(f"--code: {code}")
-				if checkFiles(full_path + '\\' + fld):
+				if checkFiles(full_path + '/' + fld):
 					# print('append')
 					result.append(self.__decimal_codes[code])
 		return result
@@ -147,7 +147,7 @@ class SonController():
 			index = fld.find(' ')
 			code = fld[:index].lower()
 			if code in self.__serial_codes:
-				if checkFiles(full_path + '\\' + fld):
+				if checkFiles(full_path + '/' + fld):
 					result.append(self.__serial_codes[code])
 		return result
 
@@ -167,7 +167,7 @@ class SonController():
 					location = self.__locations[user_id]
 			result += self.__getSerialCodes(location)
 		if self.getDecimalNumber(user_id):
-			# result += self.__getDecimalCodes(self.__mkcb_location + '\\' + self.getDecimalNumber(user_id))
+			# result += self.__getDecimalCodes(self.__mkcb_location + '/' + self.getDecimalNumber(user_id))
 			result += self.__getDecimalCodes(mkcb_location)
 		return result
 
