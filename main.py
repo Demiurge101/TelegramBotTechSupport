@@ -528,7 +528,7 @@ def son(message, menu_id=0, overcount=0):
             d_number = son_controller.getDecimalNumber(message.from_user.id)
             lct = f"{son_controller.getLocation()}/{d_number}/{message.text} {d_number}"
             if checkFiles(lct):
-                thr.run(sendFrom, (message, lct, True, TSDB.getSubMenu(menu_id), son_text['another_code_or_number']))
+                thr.run(sendFrom, (message, lct, True, back_button, son_text['another_code_or_number']))
             else:
                 bot.send_message(message.chat.id, son_text['wrong_code'], parse_mode='HTML', reply_markup = back_button)
         else:
@@ -537,7 +537,7 @@ def son(message, menu_id=0, overcount=0):
         if son_controller.getUserLocation(message.from_user.id):
             lct = f"{son_controller.getUserLocation(message.from_user.id)}/{message.text} {son_controller.getSerialNumber(message.from_user.id)}"
             if checkFiles(lct):
-                thr.run(sendFrom, (message, lct, True, TSDB.getSubMenu(menu_id), son_text['another_code_or_number']))
+                thr.run(sendFrom, (message, lct, True, back_button, son_text['another_code_or_number']))
             else:
                 bot.send_message(message.chat.id, son_text['wrong_code'], parse_mode='HTML', reply_markup = back_button)
                 # bot.send_message(message.chat.id, "Нет файлов", reply_markup = back_button)
