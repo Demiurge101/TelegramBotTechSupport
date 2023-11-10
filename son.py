@@ -120,15 +120,20 @@ class SonController():
 
 	def __getDecimalCodes(self, location=''):
 		result = []
+		# print('__getDecimalCodes()')
 		if not os.path.isdir(location):
 			return []
+		# print('is dir')
 		full_path = os.path.abspath(location)
 		l_dirs = os.listdir(full_path)
+		# print('search...')
 		for fld in l_dirs:
 			index = fld.find(' ')
 			code = fld[:index].lower()
 			if code in self.__decimal_codes:
+				# print(f"--code: {code}")
 				if checkFiles(full_path + '\\' + fld):
+					# print('append')
 					result.append(self.__decimal_codes[code])
 		return result
 
@@ -146,13 +151,14 @@ class SonController():
 					result.append(self.__serial_codes[code])
 		return result
 
-	def getCodes(self, user_id, location='', mkcb=''):
-		print('location: ', location)
-		print("Users:")
-		print(self.__users)
-		print('.')
+	def getCodes(self, user_id, location='', mkcb_location=''):
+		# print('location: ', location)
+		# print('mkcb location', mkcb_location)
+		# print("Users:")
+		# print(self.__users)
+		# print('.')
 		if not user_id in self.__users:
-			print("user not in")
+			# print("user not in")
 			return [son_text['wrong_number']]
 		result = []
 		if self.getSerialNumber(user_id):
@@ -161,7 +167,8 @@ class SonController():
 					location = self.__locations[user_id]
 			result += self.__getSerialCodes(location)
 		if self.getDecimalNumber(user_id):
-			result += self.__getDecimalCodes(self.__mkcb_location + '\\' + self.getDecimalNumber(user_id))
+			# result += self.__getDecimalCodes(self.__mkcb_location + '\\' + self.getDecimalNumber(user_id))
+			result += self.__getDecimalCodes(mkcb_location)
 		return result
 
 	def getUsersList(self):

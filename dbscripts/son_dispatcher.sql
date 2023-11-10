@@ -67,3 +67,12 @@ CREATE TABLE devices
             REFERENCES clients(id)
     ON UPDATE CASCADE
 );
+
+CREATE TABLE decimal_numbers
+(
+mkcb varchar(25) unique not null,
+_name varchar(255),
+location varchar(255),
+CONSTRAINT PK_mkcb
+	primary key(mkcb)
+);

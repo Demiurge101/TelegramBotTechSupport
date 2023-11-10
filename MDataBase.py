@@ -152,6 +152,47 @@ class SonDB(Database):
         else:
             self._commit(f"insert into clients(org, order_key) value(\"{org}\", \"{order_key}\")")
 
+
+
+    def getMKCB(self, mkcb):
+        res = self._fetchall(f'select * from decimal_numbers where mkcb = "{mkcb}"')
+        # print(f"getMKCB() = {res}")
+        if len(res):
+            return res[0]
+        return {}
+
+    def getMKCBLocation(self,mkcb):
+        res = self._fetchall(f'select location from decimal_numbers where mkcb = "{mkcb}"')
+        if len(res):
+            return res[0]['location']
+        return ''
+
+    def getMKCBName(self, mkcb):
+        res = self._fetchall(f'select _name from decimal_numbers where mkcb = "{mkcb}"')
+        if len(res):
+            return res[0]['_name']
+        return ''
+
+    def addMKCB(self, mkcb, name="", location=""):
+        # print(f'add mkcb')
+        if not self.getMKCBLocation(mkcb):
+            # print('insert')
+            self._commit(f'insert into decimal_numbers(mkcb, _name, location) values ("{mkcb}", "{name}", "{location}")')
+        else:
+            self.setMKCBLocation(mkcb, location)
+            self.setMKCBName(mkcb, name)
+
+    def setMKCBName(self, mkcb, name):
+        self._commit(f'update decimal_numbers set _name = "{name}" where mkcb = "{mkcb}"')
+
+    def setMKCBLocation(self, mkcb, location):
+        self._commit(f'update decimal_numbers set location = "{location}" where mkcb = "{mkcb}"')
+
+    def deleteMKCB(self, mkcb):
+        self._commit(f'delete from decimal_numbers where mkcb = "{mkcb}"')
+
+
+
     def addStation(self, serial_id, org_name, mkcb, date, location, description=""):
         org_id = self.getOrgIdByName(org_name) # org_id
         if org_id < 0:

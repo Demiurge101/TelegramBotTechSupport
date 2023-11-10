@@ -3,6 +3,7 @@ import MDataBase
 import Config
 
 source_location = Config.sonDBfiles
+mkcb_location = Config.mkcb_location
 
 clients = Config.clients
 
@@ -10,12 +11,31 @@ clients = Config.clients
 source_location = os.path.abspath(source_location)
 source_list = os.listdir(source_location)
 
-SN = MDataBase.SonDB(Config.db_host, Config.db_login, Config.password, Config.db_name_dispatcher_son)
+mkcb_location = os.path.abspath(mkcb_location)
+mkcb_list = os.listdir(mkcb_location)
+
+SN = MDataBase.SonDB(Config.db_host, Config.db_login, Config.db_password, Config.db_name_dispatcher_son)
 SN.connect()
 
+# add clients
 for client in Config.clients:
 	SN.addClient(client, Config.clients[client])
 
+# parse mkcb
+for folder_name in mkcb_list:
+	if folder_name[:4] == 'МКЦБ':
+		index = folder_name.find(' ')
+		if index >= 0 and index < 19:
+			mkcb_number = folder_name[:index]
+			mkcb_name = folder_name[index+1:]
+			print()
+			print('mkcb number',mkcb_number)
+			print(f"   mkcb name {mkcb_name}")
+			SN.addMKCB(mkcb_number, mkcb_name, f'{mkcb_location}\\{folder_name}'.replace('\\', '\\\\'))
+
+
+# parse devices and stations
+print()
 for name in source_list:
 	print(name) # org_name
 	if (name in clients) == False:

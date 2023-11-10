@@ -468,6 +468,7 @@ def son(message, menu_id=0, overcount=0):
         return
     # parsed_type = son_controller.parseType(message.text)
     codes_location = son_controller.getLocation()
+    mkcb_location = ''
     parsed_type = son_controller.setNumber(message.from_user.id, message.text)
     # parsed_type = son_controller.getType(message.from_user.id)
     print(f"Parsed: {parsed_type}")
@@ -489,6 +490,8 @@ def son(message, menu_id=0, overcount=0):
             loc = device['location']
             # decimal_number = device['mkcb']
             son_controller.setNumber(message.from_user.id, device['mkcb'][5:])
+            mkcb_location = SN.getMKCBLocation(device['mkcb'])
+            # print(f'mkcb_location d = {mkcb_location}')
             if loc[:1] == '.':
                 loc = SN.dblocation + loc[1:]
             codes_location = loc
@@ -502,6 +505,8 @@ def son(message, menu_id=0, overcount=0):
             loc = station['location']
             # decimal_number = station['mkcb']
             son_controller.setNumber(message.from_user.id, station['mkcb'][5:])
+            mkcb_location = SN.getMKCBLocation(station['mkcb'])
+            # print(f'mkcb_location s = {mkcb_location}')
             if loc[:1] == '.':
                 loc = SN.dblocation + loc[1:]
             codes_location = loc
@@ -511,9 +516,11 @@ def son(message, menu_id=0, overcount=0):
             # sendFrom(message, loc, False, reply_markup=TSDB.getSubMenu(menu_id))
     elif parsed_type == 'mkcb':
         son_controller.deleteSerialNumber(message.from_user.id)
+        mkcb_location = SN.getMKCBLocation(f'МКЦБ.{son_controller.getDecimalNumber(message.from_user.id)}')
+
     if parsed_type in ['mkcb', 'number']:
-        sub_menu = son_controller.getCodes(message.from_user.id, codes_location)
-        print("sub_menu:", sub_menu)
+        sub_menu = son_controller.getCodes(message.from_user.id, codes_location, mkcb_location)
+        # print("sub_menu:", sub_menu)
         res = '-'
         if sub_menu:
             res = f"{son_text['you_can_get_docs']}\r\n\r\n"
@@ -525,8 +532,13 @@ def son(message, menu_id=0, overcount=0):
         bot.send_message(message.chat.id, res, parse_mode='HTML', reply_markup=back_button)
     elif parsed_type == 'd_code':
         if son_controller.getType(message.from_user.id):
-            d_number = son_controller.getDecimalNumber(message.from_user.id)
-            lct = f"{son_controller.getLocation()}/{d_number}/{message.text} {d_number}"
+            d_number = f'МКЦБ.{son_controller.getDecimalNumber(message.from_user.id)}'
+            # print(f'd_number = {d_number}')
+            d_name = SN.getMKCBName(d_number)
+            d_loc = SN.getMKCBLocation(d_number)
+            # print(f"d_name = {d_name}")
+            # lct = f"{son_controller.getLocation()}/{d_number}/{message.text} {d_number}"
+            lct = f'{d_loc}/{message.text} {d_number}'
             if checkFiles(lct):
                 thr.run(sendFrom, (message, lct, True, back_button, son_text['another_code_or_number']))
             else:
