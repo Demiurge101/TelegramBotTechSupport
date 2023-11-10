@@ -18,7 +18,7 @@ def makeNode(location, title = "", parent_id=0):
 	if title == "":
 		source_location = os.path.abspath(location)
 	else:
-		source_location = os.path.abspath(location + "\\" + title)
+		source_location = os.path.abspath(location + "/" + title)
 	# print(source_location)
 	if os.path.isfile(source_location):
 		file_atr = os.path.splitext(title)
@@ -73,7 +73,7 @@ def makeNode(location, title = "", parent_id=0):
 # if os.path.isdir(root_location):
 # 	root_list = os.listdir(root_location)
 # 	for i in root_list:
-# 		makeNode(root_location + "\\" + i)
+# 		makeNode(root_location + "/" + i)
 
 try:
 	makeNode(root_location)

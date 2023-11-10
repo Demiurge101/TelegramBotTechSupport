@@ -526,7 +526,7 @@ def son(message, menu_id=0, overcount=0):
     elif parsed_type == 'd_code':
         if son_controller.getType(message.from_user.id):
             d_number = son_controller.getDecimalNumber(message.from_user.id)
-            lct = f"{son_controller.getLocation()}\\{d_number}\\{message.text} {d_number}"
+            lct = f"{son_controller.getLocation()}/{d_number}/{message.text} {d_number}"
             if checkFiles(lct):
                 thr.run(sendFrom, (message, lct, True, TSDB.getSubMenu(menu_id), son_text['another_code_or_number']))
             else:
@@ -535,7 +535,7 @@ def son(message, menu_id=0, overcount=0):
             bot.send_message(message.chat.id, son_text['wrong_number'], parse_mode='HTML', reply_markup = back_button)
     elif parsed_type == 's_code':
         if son_controller.getUserLocation(message.from_user.id):
-            lct = f"{son_controller.getUserLocation(message.from_user.id)}\\{message.text} {son_controller.getSerialNumber(message.from_user.id)}"
+            lct = f"{son_controller.getUserLocation(message.from_user.id)}/{message.text} {son_controller.getSerialNumber(message.from_user.id)}"
             if checkFiles(lct):
                 thr.run(sendFrom, (message, lct, True, TSDB.getSubMenu(menu_id), son_text['another_code_or_number']))
             else:
@@ -627,26 +627,26 @@ def sendFromFolder(message, location, subfolders=True):
     full_path = os.path.abspath(location)
     l_dirs = os.listdir(full_path)
     for i in l_dirs:
-        if os.path.isdir(full_path + "\\" + i):
+        if os.path.isdir(full_path + "/" + i):
             if subfolders:
-                sendFromFolder(message, full_path + "\\" + i)
+                sendFromFolder(message, full_path + "/" + i)
         else:
             media = []
             file_type = os.path.splitext(i)
             if file_type[-1] in document_type:
-                media.append(types.InputMediaDocument(open(full_path + "\\" + i, 'rb')))
-                # print("Send: ", full_path + "\\" + i)
+                media.append(types.InputMediaDocument(open(full_path + "/" + i, 'rb')))
+                # print("Send: ", full_path + "/" + i)
             elif file_type[-1] == '.lnk':
-                sp = getLinkSource(f"{full_path}\\{i}")
+                sp = getLinkSource(f"{full_path}/{i}")
                 if os.path.isdir(sp):
                     sendFromFolder(message, sp)
                 else:
                     media.append(types.InputMediaDocument(open(sp, 'rb')))
             elif file_type[-1] in image_type:
-                media.append(types.InputMediaPhoto(open(full_path + "\\" + i, 'rb')))
-                # print("Send: ", full_path + "\\" + i)
+                media.append(types.InputMediaPhoto(open(full_path + "/" + i, 'rb')))
+                # print("Send: ", full_path + "/" + i)
             elif file_type[-1] in video_type:
-                media.append(types.InputMediaVideo(open(full_path + "\\" + i, 'rb')))
+                media.append(types.InputMediaVideo(open(full_path + "/" + i, 'rb')))
             elif file_type[-1] in audio_type:
                 pass
             # print("len media = ", len(media))

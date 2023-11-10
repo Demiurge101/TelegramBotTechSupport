@@ -126,7 +126,7 @@ def checkFiles(location, rec=True, is_first=True):
       return False
     source_list = os.listdir(source_location)
     for i in source_list:
-      if checkFiles(source_location + "\\" + i, rec, False):
+      if checkFiles(source_location + "/" + i, rec, False):
         return True
   except Exception as e:
     print(f"Error: checkFiles({location}, {rec}, {is_first}) = {e}")
@@ -147,8 +147,8 @@ def check_symbols(ch):
 def getLinkSource(link_path) -> (str):
     """
     Get the target & args of a Windows shortcut (.lnk)
-    :param link_path: The Path or string-path to the shortcut, e.g. "C:\\Users\\Public\\Desktop\\My Shortcut.lnk"
-    :return: A tuple of the target and arguments, e.g. ("C:\\Program Files\\My Program.exe", "--my-arg")
+    :param link_path: The Path or string-path to the shortcut, e.g. "C:/Users/Public/Desktop/My Shortcut.lnk"
+    :return: A tuple of the target and arguments, e.g. ("C:/Program Files/My Program.exe", "--my-arg")
     """
     # get_target implementation by hannes, https://gist.github.com/Winand/997ed38269e899eb561991a0c663fa49
     if operating_system == 'windows':

@@ -6,5 +6,6 @@ use TS_Dispatcher;
 -- select * from pathdir;
 -- select * from map; 
 
-select * from titles;
+update contents set location = 'C:/Share/TS/0_main/Проблемы с оборудованием КЕДР'
+select * from contents;
 -- insert into clients(org, order_key) value ("Новатэк", "novatek");
