@@ -16,7 +16,7 @@ MyToken = ""
 
 sonDBfiles = ""
 
-tsDBfiles = "C:/Share/TS"
+tsDBfiles = ""
 mkcb_location = ""
 
 clients = {}
