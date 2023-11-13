@@ -15,7 +15,7 @@ Token = ""
 MyToken = ""
 
 sonDBfiles = ""
-# tsDBfiles = "//falcon/marinin/TS"
+
 tsDBfiles = "C:/Share/TS"
 mkcb_location = ""
 
