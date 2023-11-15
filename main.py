@@ -187,12 +187,12 @@ def info(message):
     if message.from_user.id in admins:
         info_text = f'Bot started at {start_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}\r\n'
         info_text += f'Last error time: {last_err_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}'
-        info_text += '\r\n\r\n'
-        info_text += f'Menu stat({stat.getSum()} requests):\r\n'
+        info_text += '\r\n\r\n\r\n'
+        info_text += f'Menu stat({stat.getSum()} requests):\r\n\r\n'
         info_text += stat.getUsersInfo()
         info_text += '\r\n'
         info_text += stat.getRequestsInfo()
-        info_text += f'\r\nSON stat ({son_stat.getSum()} requests):\r\n'
+        info_text += f'\r\nSON stat ({son_stat.getSum()} requests):\r\n\r\n'
         info_text += son_stat.getUsersInfo()
         info_text += '\r\n'
         info_text += son_stat.getRequestsInfo()
