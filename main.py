@@ -104,6 +104,9 @@ def start_bot():
 
 @bot.message_handler(commands=['drop', 'stop'])
 def drop_bot(message):
+    stat.fromMessage(message)
+    stat.save()
+    son_stat.save()
     if message.from_user.id == Config.ITGenerator:
         print(yellow_text(get_time()), f"Bot has dropped by {message.from_user.id}({green_text(str(message.from_user.username))})")
         live_countdown = 0
@@ -114,6 +117,9 @@ def drop_bot(message):
 
 @bot.message_handler(commands=['reborn'])
 def reborn(message):
+    stat.fromMessage(message)
+    stat.save()
+    son_stat.save()
     print(yellow_text(get_time()), f"reborn {message.from_user.id} ({green_text(str(message.from_user.username))})")
     if message.from_user.id in admins:
         reset_live_countdown()
@@ -132,6 +138,7 @@ def reset_live_countdown():
 
 @bot.message_handler(commands=['status'])
 def get_drop_status(message):
+    stat.fromMessage(message)
     print(yellow_text(get_time()), f"STATUS {message.from_user.id} ({green_text(str(message.from_user.username))})")
     if message.from_user.id in admins:
         text = f"live_countdown: <{live_countdown}>\r\nlen(menu_position) - {len(menu_position)}"
@@ -140,6 +147,7 @@ def get_drop_status(message):
 
 @bot.message_handler(commands=['reconnect'])
 def reconnect_DB(message):
+    stat.fromMessage(message)
     print(yellow_text(get_time()), f"reconnect {message.from_user.id} ({green_text(str(message.from_user.username))})")
     if not message.from_user.id in admins:
         return
@@ -154,6 +162,7 @@ def reconnect_DB(message):
 
 @bot.message_handler(commands=['update_ts'])
 def update_ts(message):
+    stat.fromMessage(message)
     if not message.from_user.id in admins:
         return
     print(yellow_text(get_time()), f"DB TS has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
@@ -162,6 +171,7 @@ def update_ts(message):
 
 @bot.message_handler(commands=['update_son'])
 def update_son(message):
+    stat.fromMessage(message)
     if not message.from_user.id in admins:
         return
     print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
@@ -173,15 +183,16 @@ def update_son(message):
 def info(message):
     print(yellow_text(get_time()), f"INFO {message.from_user.id} ({green_text(str(message.from_user.username))})")
     # thr.show()
+    stat.fromMessage(message)
     if message.from_user.id in admins:
         info_text = f'Bot started at {start_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}\r\n'
-        info_text += f'Last error time: {last_err_time.strftime("<b>%Y.%m.%d</b> %A <b>%H:%M:%S</b>")}'
+        info_text += f'Last error time: {last_err_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}'
         info_text += '\r\n\r\n'
-        info_text += 'Menu stat:\r\n'
+        info_text += f'Menu stat({stat.getSum()} requests):\r\n'
         info_text += stat.getUsersInfo()
         info_text += '\r\n'
         info_text += stat.getRequestsInfo()
-        info_text += '\r\nSON stat:\r\n'
+        info_text += f'\r\nSON stat ({son_stat.getSum()} requests):\r\n'
         info_text += son_stat.getUsersInfo()
         info_text += '\r\n'
         info_text += son_stat.getRequestsInfo()
@@ -192,6 +203,7 @@ def info(message):
 
 @bot.message_handler(commands=['start'])
 def main(message):
+    stat.fromMessage(message)
     #bot.send_message(message.chat.id, '<b>Привет!</b>', parse_mode='html')
     bot.send_message(message.chat.id, TSDB.getContent()['content_text'], parse_mode='HTML', reply_markup=TSDB.getSubMenu())
 
@@ -224,6 +236,7 @@ def content_send(message, chat_id):
 @bot.message_handler(commands=['mail'])
 def mail(message):
     text = "mail"
+    stat.fromMessage(message)
     t_id = TSDB.getIdByCommand(message.text)
     if t_id:
         text = TSDB.getContent(t_id)['content_text']
@@ -240,6 +253,7 @@ def mailHandler(message):
 @bot.message_handler(commands=['feedback'])
 def feedback(message):
     text = "feedback"
+    stat.fromMessage(message)
     t_id = TSDB.getIdByCommand(message.text)
     if t_id:
         text = TSDB.getContent(t_id)['content_text']
@@ -280,6 +294,7 @@ def feedbackHandler(message):
 
 @bot.message_handler(commands=['site'])
 def site(message):
+    stat.fromMessage(message)
     #bot.send_message(chat_id_Demiurge, message)
     webbrowser.open('https://gfm.ru/')
 
@@ -307,6 +322,7 @@ def site(message):
 @bot.message_handler(commands=['son'])
 def sysonenum(message):
     global main_menu_id
+    son_stat.fromMessage(message)
     if message.text == "Назад":
         main_menu_id = 1 # 
         bot.send_message(message.chat.id, TSDB.getContent()['content_text'], parse_mode='HTML', reply_markup=TSDB.getSubMenu())
@@ -361,6 +377,7 @@ def getStrMap(parent_id, pre=""):
 
 @bot.message_handler(commands=['map'])
 def project_map(message, *args):
+    stat.fromMessage(message)
     print(yellow_text(get_time()), f"{message.from_user.id}({green_text(str(message.from_user.username))}): '{message.text}'")
     text = getStrMap(0)
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(get_pos(message)))
@@ -700,6 +717,8 @@ while True:
     print()
     print(f"<<<{red_text(str(live_countdown))}>>>")
     start_bot()
+    stat.save()
+    son_stat.save()
     if live_countdown < 1:
         break
     print(f"Sleep {delay_between_errors}s")

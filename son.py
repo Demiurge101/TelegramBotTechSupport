@@ -133,7 +133,7 @@ class SonController():
 			if code in self.__decimal_codes:
 				# print(f"--code: {code}")
 				if checkFiles(full_path + '/' + fld):
-					print(f'append {self.__decimal_codes[code]}')
+					# print(f'append {self.__decimal_codes[code]}')
 					result.append(self.__decimal_codes[code])
 		return result
 

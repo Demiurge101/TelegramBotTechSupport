@@ -127,10 +127,10 @@ def checkFiles(location, rec=True, is_first=True):
     source_list = os.listdir(source_location)
     for i in source_list:
       if checkFiles(source_location + "/" + i, rec, False):
-        print(f"{source_location}/{i} - have files")
+        # print(f"{source_location}/{i} - have files")
         return True
-      else:
-        print(f"{source_location}/{i} - don't have files")
+      # else:
+        # print(f"{source_location}/{i} - don't have files")
   except Exception as e:
     print(f"Error: checkFiles({location}, {rec}, {is_first}) = {e}")
   return False
