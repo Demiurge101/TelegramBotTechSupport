@@ -9,6 +9,7 @@ import sys
 from threads import Threads
 from process import Process
 from son import *
+from statistics import Statistics
 
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 # DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
@@ -35,13 +36,16 @@ for i in sys.argv:
         token = Config.Token
         print('Production')
 
+start_time = datetime.datetime.now()
+last_err_time = start_time
+
 print('bot init...')
 bot = telebot.TeleBot(token)
 print('threads init...')
 thr = Threads()
 print('son_controller init...')
 son_controller = SonController()
-
+stat = Statistics()
 
 main_menu_id = -1
 
@@ -73,6 +77,7 @@ def set_main_menu_id():
 def start_bot():
     try:
         print(yellow_text(get_time()), "Starting...")
+        last_err_time = datetime.datetime.now()
         # DB.connect()
         # DB.set_time_out(DB_timeout)
         TSDB.connect()
@@ -167,7 +172,14 @@ def update_son(message):
 def info(message):
     print(yellow_text(get_time()), f"INFO {message.from_user.id} ({green_text(str(message.from_user.username))})")
     # thr.show()
-    bot.send_message(message.chat.id, '<b><i>Какой-то текст...</i></b>', parse_mode='HTML')
+    if message.from_user.id in admins:
+        info_text = f'Bot started at {start_time.strftime("%Y.%m.%d %A %H:%M:%S")}\r\n'
+        info_text += f'Last error time: {last_err_time.strftime("%Y.%m.%d %A %H:%M:%S")}'
+        info_text += '\r\n\r\n'
+        info_text += stat.getUsersInfo()
+        info_text += '\r\n'
+        info_text += stat.getRequestsInfo()
+        bot.send_message(message.chat.id, info_text, parse_mode='HTML')
 
 
 
@@ -386,6 +398,7 @@ def navigation(message, menu_id=0):
     if len(message.text) > 100:
         bot.send_message(message.chat.id, "Слишком длинное сообщение!")
         return
+    stat.fromMessage(message)
     try:
         print(yellow_text(get_time()), f"{message.from_user.id}({green_text(str(message.from_user.username))}): '{message.text}'")
     except Exception as e:
