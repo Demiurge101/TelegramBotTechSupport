@@ -46,6 +46,7 @@ thr = Threads()
 print('son_controller init...')
 son_controller = SonController()
 stat = Statistics()
+son_stat = Statistics()
 
 main_menu_id = -1
 
@@ -176,9 +177,14 @@ def info(message):
         info_text = f'Bot started at {start_time.strftime("%Y.%m.%d %A %H:%M:%S")}\r\n'
         info_text += f'Last error time: {last_err_time.strftime("%Y.%m.%d %A %H:%M:%S")}'
         info_text += '\r\n\r\n'
+        info_text += 'Menu stat:\r\n'
         info_text += stat.getUsersInfo()
         info_text += '\r\n'
         info_text += stat.getRequestsInfo()
+        info_text += '\r\nSON stat:\r\n'
+        info_text += son_stat.getUsersInfo()
+        info_text += '\r\n'
+        info_text += son_stat.getRequestsInfo()
         bot.send_message(message.chat.id, info_text, parse_mode='HTML')
 
 
@@ -460,6 +466,7 @@ def son(message, menu_id=0, overcount=0):
     global menu_position
     number = message.text
     client_id = message.from_user.id
+    son_stat.fromMessage(message)
     # SN.test(number, client_id)
     # print("Parsed:", son_controller.parse_type(message.text.lower()))
     if(message.text in return_keys) or (overcount > 5):
