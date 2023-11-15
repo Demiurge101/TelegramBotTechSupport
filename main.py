@@ -174,8 +174,8 @@ def info(message):
     print(yellow_text(get_time()), f"INFO {message.from_user.id} ({green_text(str(message.from_user.username))})")
     # thr.show()
     if message.from_user.id in admins:
-        info_text = f'Bot started at {start_time.strftime("%Y.%m.%d %A %H:%M:%S")}\r\n'
-        info_text += f'Last error time: {last_err_time.strftime("%Y.%m.%d %A %H:%M:%S")}'
+        info_text = f'Bot started at {start_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}\r\n'
+        info_text += f'Last error time: {last_err_time.strftime("<b>%Y.%m.%d</b> %A <b>%H:%M:%S</b>")}'
         info_text += '\r\n\r\n'
         info_text += 'Menu stat:\r\n'
         info_text += stat.getUsersInfo()
@@ -669,10 +669,12 @@ def sendFromFolder(message, location, subfolders=True):
                 media.append(types.InputMediaDocument(open(full_path + "/" + i, 'rb')))
                 # print("Send: ", full_path + "/" + i)
             elif file_type[-1] == '.lnk':
+                print(f'sending link file: {full_path}/{i}')
                 sp = getLinkSource(f"{full_path}/{i}")
                 if os.path.isdir(sp):
                     sendFromFolder(message, sp)
                 else:
+                    print('not directory (lnk)')
                     media.append(types.InputMediaDocument(open(sp, 'rb')))
             elif file_type[-1] in image_type:
                 media.append(types.InputMediaPhoto(open(full_path + "/" + i, 'rb')))
@@ -681,7 +683,7 @@ def sendFromFolder(message, location, subfolders=True):
                 media.append(types.InputMediaVideo(open(full_path + "/" + i, 'rb')))
             elif file_type[-1] in audio_type:
                 pass
-            # print("len media = ", len(media))
+            print("len media = ", len(media))
             if len(media) != 0:
                 while len(media) > 10:
                     submedia = media[0:10]
