@@ -191,7 +191,7 @@ def get_file_name_or_path(row, splitter, logger=None):
         except AttributeError as e:
             print(f"Ошибка при чтении ярлыка: {e.args}")
             # logger.exception("AttributeError")
-    return result
+    return result.replace('\\', '/')
 
 
 
