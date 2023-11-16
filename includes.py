@@ -18,6 +18,15 @@ elif platform == "darwin":
 elif platform == "win32":
   operating_system = 'windows'
 
+
+
+LNKINFO: str = "lnkinfo"
+CODEPAGE: str = "windows-1251"
+LOCAL_PATH: str = "Local path"
+NETWORK_PATH: str = "Network path"
+
+
+
 print(f"OS: {operating_system}")
 
 def buttonway(list, button):
@@ -168,6 +177,26 @@ def getLinkSource(link_path) -> (str):
       launch_path, args = [x.strip() for x in raw.split(';', 1)]
       return launch_path
     elif operating_system == 'linux':
-      print(f"return: {os.path.realpath(link_path)}")
-      return os.path.realpath(link_path)
+      filename = os.path.realpath(link_path)
+      link_info = subprocess.run(
+          [LNKINFO, "-c", CODEPAGE, filename],
+          stdout=subprocess.PIPE,
+          stderr=subprocess.PIPE,
+          encoding="utf-8",
+      )
+      if link_info.returncode == 0:
+        link_info_list = link_info.stdout.split("\n")
+        for line in link_info_list:
+            row_line = r"" + line
+            if NETWORK_PATH in row_line:
+                full_path = get_file_name_or_path(row_line, ":", logger)
+                return full_path
+
+            elif LOCAL_PATH in row_line:
+                win_path = get_file_name_or_path(row_line, ":", logger)
+                # origin_name = get_file_name_or_path(win_path, "\\", logger)
+                # full_path, pict = search_file_location(origin_name)
+                return win_path
+      else:
+        return os.path.realpath(link_path)
     return ''
