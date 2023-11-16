@@ -154,6 +154,8 @@ def getLinkSource(link_path) -> (str):
     :return: A tuple of the target and arguments, e.g. ("C:/Program Files/My Program.exe", "--my-arg")
     """
     # get_target implementation by hannes, https://gist.github.com/Winand/997ed38269e899eb561991a0c663fa49
+    print(f'getLinkSource("{link_path}")')
+    print(operating_system)
     if operating_system == 'windows':
       ps_command = \
           "$WSShell = New-Object -ComObject Wscript.Shell;" \
@@ -166,5 +168,5 @@ def getLinkSource(link_path) -> (str):
       launch_path, args = [x.strip() for x in raw.split(';', 1)]
       return launch_path
     elif operating_system == 'linux':
-      return link_path
+      return os.path.realpath(link_path)
     return ''
