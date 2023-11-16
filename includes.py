@@ -168,5 +168,6 @@ def getLinkSource(link_path) -> (str):
       launch_path, args = [x.strip() for x in raw.split(';', 1)]
       return launch_path
     elif operating_system == 'linux':
+      print(f"return: {os.path.realpath(link_path)}")
       return os.path.realpath(link_path)
     return ''
