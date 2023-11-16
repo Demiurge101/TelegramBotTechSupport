@@ -156,6 +156,48 @@ def check_symbols(ch):
     return 1105
   return ch
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+def get_file_name_or_path(row, splitter, logger=None):
+    """
+    Возвращает часть строки, содержащую имя файла, либо итоговый каталог без полного пути
+
+    Параметры:
+        row (string)        - путь к файлу или каталогу в формате Windows
+        splitter (string)   - разделитель пути
+        logger (object)     - объект Logger для логирования ошибок
+
+    Возвращаемое значение:
+        result (string)     - имя файла, либо итоговый каталог без полного пути
+    """
+
+    result = ""
+    if not row == None:
+        try:
+            path_list = row.split(splitter)
+            if len(path_list) >= 2:
+                result = path_list[len(path_list) - 1].strip()
+        except AttributeError as e:
+            print(f"Ошибка при чтении ярлыка: {e.args}")
+            # logger.exception("AttributeError")
+    return result
+
+
+
+
+
+
 def getLinkSource(link_path) -> (str):
     """
     Get the target & args of a Windows shortcut (.lnk)
@@ -189,11 +231,11 @@ def getLinkSource(link_path) -> (str):
         for line in link_info_list:
             row_line = r"" + line
             if NETWORK_PATH in row_line:
-                full_path = get_file_name_or_path(row_line, ":", logger)
+                full_path = get_file_name_or_path(row_line, ":")
                 return full_path
 
             elif LOCAL_PATH in row_line:
-                win_path = get_file_name_or_path(row_line, ":", logger)
+                win_path = get_file_name_or_path(row_line, ":")
                 # origin_name = get_file_name_or_path(win_path, "\\", logger)
                 # full_path, pict = search_file_location(origin_name)
                 return win_path
