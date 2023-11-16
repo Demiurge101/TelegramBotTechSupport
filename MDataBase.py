@@ -9,6 +9,7 @@ class Database:
 
     def __init__(self, host, user, password, db_name):
         self.host = host
+        self.__port = 3306
         self.user = user
         self.password = password
         self.db_name = db_name
@@ -27,7 +28,7 @@ class Database:
         try:
             self.connection = pymysql.connect(
                 host=self.host,
-                port=3306,
+                port=self.__port,
                 user=self.user,
                 password=self.password,
                 database=self.db_name,

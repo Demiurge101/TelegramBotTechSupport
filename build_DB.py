@@ -1,9 +1,22 @@
 import os
 import MDataBase
 import Config
+from sys import argv
+from getpass import getpass
 
 source_location = Config.sonDBfiles
 mkcb_location = Config.mkcb_location
+
+host = Config.db_host
+login = Config.db_login
+password = Config.db_password
+
+
+for i in argv:
+	if i == '-f': # foreign database
+		host = input("host: ")
+		login = input('login: ')
+		password = getpass('password: ')
 
 clients = Config.clients
 
@@ -14,7 +27,7 @@ source_list = os.listdir(source_location)
 mkcb_location = os.path.abspath(mkcb_location)
 mkcb_list = os.listdir(mkcb_location)
 
-SN = MDataBase.SonDB(Config.db_host, Config.db_login, Config.db_password, Config.db_name_dispatcher_son)
+SN = MDataBase.SonDB(host, login, password, Config.db_name_dispatcher_son)
 SN.connect()
 
 # add clients
