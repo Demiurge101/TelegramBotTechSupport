@@ -567,7 +567,9 @@ def son(message, menu_id=0, overcount=0):
         else:
             res = son_text['wrong_number']
         bot.send_message(message.chat.id, res, parse_mode='HTML', reply_markup=back_button)
-    elif parsed_type == 'd_code':
+    elif parsed_type in {'d_code', 'd_icode'}:
+        if parsed_type == 'd_icode':
+            number = son_controller.inverseCode(message.text)
         if son_controller.getType(message.from_user.id):
             d_number = f'МКЦБ.{son_controller.getDecimalNumber(message.from_user.id)}'
             # print(f'd_number = {d_number}')
@@ -575,16 +577,18 @@ def son(message, menu_id=0, overcount=0):
             d_loc = SN.getMKCBLocation(d_number)
             # print(f"d_name = {d_name}")
             # lct = f"{son_controller.getLocation()}/{d_number}/{message.text} {d_number}"
-            lct = f'{d_loc}/{message.text} {d_number}'
+            lct = f'{d_loc}/{number} {d_number}' # number = message.text
             if checkFiles(lct):
                 thr.run(sendFrom, (message, lct, True, back_button, son_text['another_code_or_number']))
             else:
                 bot.send_message(message.chat.id, son_text['wrong_code'], parse_mode='HTML', reply_markup = back_button)
         else:
             bot.send_message(message.chat.id, son_text['wrong_number'], parse_mode='HTML', reply_markup = back_button)
-    elif parsed_type == 's_code':
+    elif parsed_type in {'s_code', 's_icode'}:
+        if parsed_type == 's_icode':
+            number = son_controller.inverseCode(message.text)
         if son_controller.getUserLocation(message.from_user.id):
-            lct = f"{son_controller.getUserLocation(message.from_user.id)}/{message.text} {son_controller.getSerialNumber(message.from_user.id)}"
+            lct = f"{son_controller.getUserLocation(message.from_user.id)}/{number} {son_controller.getSerialNumber(message.from_user.id)}"
             if checkFiles(lct):
                 thr.run(sendFrom, (message, lct, True, back_button, son_text['another_code_or_number']))
             else:
@@ -688,12 +692,12 @@ def sendFromFolder(message, location, subfolders=True):
             elif file_type[-1] == '.lnk':
                 print(f'sending link file: {full_path}/{i}')
                 sp = getLinkSource(f"{full_path}/{i}")
-                print(yellow_text(f"sp<'{sp}'>"))
+                # print(yellow_text(f"sp<'{sp}'>"))
                 if sp[0] == '.':
                     spa = sp[1:]
-                    print(yellow_text(f'spa<{spa}>'))
+                    # print(yellow_text(f'spa<{spa}>'))
                     for loc in Config.db_locations:
-                        print(yellow_text(f'loc<{loc}>'))
+                        # print(yellow_text(f'loc<{loc}>'))
                         spr = loc + spa
                         if os.path.exists(spr):
                             print(green_text('Exist!'))

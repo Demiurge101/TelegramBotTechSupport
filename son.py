@@ -116,7 +116,28 @@ class SonController():
 			return 'd_code'
 		elif number in self.__serial_codes:
 			return 's_code'
+		elif self.__inverseCode(number) in self.__decimal_codes:
+			return 'd_icode'
+		elif self.__inverseCode(number) in self.__serial_codes:
+			return 's_icode'
 		return "unknown"
+
+	def __inverseCode(self, code=''):
+		en_alphabet = "qwertyuiop[]asdfghjkl;'zxcvbnm,.`"
+		ru_alphabet = "йцукенгшщзхъфывапролджэячсмитьбюё"
+		res = ''
+		for c in code:
+			index = ru_alphabet.find(c)
+			if index >= 0:
+				res += en_alphabet[index]
+				continue
+			index = en_alphabet.find(c)
+			if index >= 0:
+				res += ru_alphabet[index]
+		return code
+
+	def inverseCode(self, code=''):
+		return self.__inverseCode(code)
 
 	def __getDecimalCodes(self, location=''):
 		result = []
