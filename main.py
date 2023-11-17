@@ -688,11 +688,15 @@ def sendFromFolder(message, location, subfolders=True):
             elif file_type[-1] == '.lnk':
                 print(f'sending link file: {full_path}/{i}')
                 sp = getLinkSource(f"{full_path}/{i}")
+                print(yellow_text(f"sp<'{sp}'>"))
                 if sp[0] == '.':
                     spa = sp[1:]
+                    print(yellow_text(f'spa<{spa}>'))
                     for loc in Config.db_locations:
+                        print(yellow_text(f'loc<{loc}>'))
                         spr = loc + spa
                         if os.path.exists(spr):
+                            print(green_text('Exist!'))
                             sp = spr
                             break
                 if os.path.isdir(sp):

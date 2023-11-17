@@ -8,6 +8,7 @@ colorama.init()
 from getpass import getpass
 import subprocess
 from sys import platform
+from Config import shorcut_roots
 
 operating_system = 'unknown'
 
@@ -194,7 +195,7 @@ def get_file_name_or_path(row, splitter, logger=None):
             if len(path_list) >= 2:
                 result = path_list[len(path_list) - 1].strip()
                 for root in shorcut_roots:
-                  if result.find(root):
+                  if result.find(root) > -1:
                     result = f".{result[len(root):]}"
         except AttributeError as e:
             print(f"Ошибка при чтении ярлыка: {e.args}")
