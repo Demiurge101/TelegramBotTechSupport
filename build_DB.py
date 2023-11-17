@@ -44,7 +44,7 @@ for folder_name in mkcb_list:
 			print()
 			print('mkcb number',mkcb_number)
 			print(f"   mkcb name {mkcb_name}")
-			SN.addMKCB(mkcb_number, mkcb_name, f'{mkcb_location}/{folder_name}'.replace('\\', '\\\\'))
+			SN.addMKCB(mkcb_number, mkcb_name, f'./{folder_name}'.replace('\\', '\\\\'))
 
 
 # parse devices and stations

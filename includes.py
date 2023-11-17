@@ -20,6 +20,11 @@ elif platform == "win32":
 
 
 
+
+
+
+
+
 LNKINFO: str = "lnkinfo"
 CODEPAGE: str = "windows-1251"
 LOCAL_PATH: str = "Local path"
@@ -188,6 +193,9 @@ def get_file_name_or_path(row, splitter, logger=None):
             path_list = row.split(splitter)
             if len(path_list) >= 2:
                 result = path_list[len(path_list) - 1].strip()
+                for root in shorcut_roots:
+                  if result.find(root):
+                    result = f".{result[len(root):]}"
         except AttributeError as e:
             print(f"Ошибка при чтении ярлыка: {e.args}")
             # logger.exception("AttributeError")

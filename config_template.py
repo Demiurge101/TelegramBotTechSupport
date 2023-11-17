@@ -15,9 +15,11 @@ Token = ""
 MyToken = ""
 
 sonDBfiles = ""
-
 tsDBfiles = ""
 mkcb_location = ""
+db_locations = {sonDBfiles, tsDBfiles, mkcb_location}
+
+shorcut_roots = {}
 
 clients = {}
 
