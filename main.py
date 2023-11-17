@@ -188,7 +188,7 @@ def info(message):
         info_text = f'Bot started at {start_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}\r\n'
         info_text += f'Last error time: {last_err_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}'
         info_text += '\r\n\r\n\r\n'
-        info_text += f'Menu stat({stat.getSum()} requests):\r\n\r\n'
+        info_text += f'Menu stat ({stat.getSum()} requests):\r\n\r\n'
         info_text += stat.getUsersInfo()
         info_text += '\r\n'
         info_text += stat.getRequestsInfo()
