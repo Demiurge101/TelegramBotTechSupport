@@ -41,7 +41,7 @@ class Statistics():
 	def getRequestsInfo(self):
 		res = ''
 		for request in self.__requests:
-			res += f"'{request}':{self.__requests[request]}, {round(self.__percent(self.__requests[request], self.__sum_requests), 2)}%\r\n"
+			res += f"'{request}': {self.__requests[request]} ({round(self.__percent(self.__requests[request], self.__sum_requests), 2)}%)\r\n"
 		return res
 
 	def __percent(self, c, a):
