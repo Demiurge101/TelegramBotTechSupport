@@ -197,7 +197,7 @@ def get_file_name_or_path(row, splitter, logger=None):
                 for root in shorcut_roots:
                   print(yellow_text(f'root: {root}'))
                   print(yellow_text(f'result: {result}'))
-                  if result.replace('\\', '/').find(root) > -1 or result.replace('/', '\\').find(root) > -1:
+                  if result.replace('\\', '/').lower().find(root.lower()) > -1 or result.replace('/', '\\').lower().find(root.lower()) > -1:
                     result = f".{result[len(root):]}"
         except AttributeError as e:
             print(f"Ошибка при чтении ярлыка: {e.args}")
