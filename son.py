@@ -123,6 +123,7 @@ class SonController():
 		return "unknown"
 
 	def __inverseCode(self, code=''):
+		# print(yellow_text(f"__inverseCode({code})"))
 		en_alphabet = "qwertyuiop[]asdfghjkl;'zxcvbnm,.`"
 		ru_alphabet = "йцукенгшщзхъфывапролджэячсмитьбюё"
 		res = ''
@@ -134,7 +135,7 @@ class SonController():
 			index = en_alphabet.find(c)
 			if index >= 0:
 				res += ru_alphabet[index]
-		return code
+		return res
 
 	def inverseCode(self, code=''):
 		return self.__inverseCode(code)
