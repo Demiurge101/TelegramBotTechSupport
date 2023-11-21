@@ -33,19 +33,26 @@ class Statistics():
 
 	def getUsersInfo(self):
 		res = ''
+		count = 0
 		for user in self.__users:
+			count += 1
 			req_info = f"({self.__users[user]['sum_requests']} requests, {round(self.__percent(self.__users[user]['sum_requests'], self.__sum_requests), 2)}%)"
-			res += f"{user}:  <b>{self.__users[user]['username']}  {self.__users[user]['name']}</b>  {req_info}\r\n"
+			res += f"{count}. {user}:  <b>{self.__users[user]['username']}  {self.__users[user]['name']}</b>  {req_info}\r\n"
 		return res
 
 	def getRequestsInfo(self):
 		res = ''
+		count = 0
 		for request in self.__requests:
-			res += f"'{request}':  {self.__requests[request]}  ({round(self.__percent(self.__requests[request], self.__sum_requests), 2)}%)\r\n"
+			count += 1
+			res += f"{count}.'{request}':  {self.__requests[request]}  ({round(self.__percent(self.__requests[request], self.__sum_requests), 2)}%)\r\n"
 		return res
 
 	def __percent(self, c, a):
 		return c * 100 / a
+
+	def getCountUsers(self):
+		return len(self.__users)
 
 	def getSum(self):
 		return self.__sum_requests

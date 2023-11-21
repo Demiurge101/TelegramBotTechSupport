@@ -77,6 +77,7 @@ def set_main_menu_id():
 
 def start_bot():
     try:
+        global last_err_time
         print(yellow_text(get_time()), "Starting...")
         last_err_time = datetime.datetime.now()
         # DB.connect()
@@ -181,6 +182,7 @@ def update_son(message):
 
 @bot.message_handler(commands=['info'])
 def info(message):
+    global last_err_time
     print(yellow_text(get_time()), f"INFO {message.from_user.id} ({green_text(str(message.from_user.username))})")
     # thr.show()
     stat.fromMessage(message)
@@ -188,11 +190,11 @@ def info(message):
         info_text = f'Bot started at {start_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}\r\n'
         info_text += f'Last error time: {last_err_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}'
         info_text += '\r\n\r\n\r\n'
-        info_text += f'Menu stat ({stat.getSum()} requests):\r\n\r\n'
+        info_text += f'Menu stat ({stat.getSum()} requests, {stat.getCountUsers()} users):\r\n\r\n'
         info_text += stat.getUsersInfo()
         info_text += '\r\n'
         info_text += stat.getRequestsInfo()
-        info_text += f'\r\nSON stat ({son_stat.getSum()} requests):\r\n\r\n'
+        info_text += f'\r\nSON stat ({son_stat.getSum()} requests, {son_stat.getCountUsers()} users):\r\n\r\n'
         info_text += son_stat.getUsersInfo()
         info_text += '\r\n'
         info_text += son_stat.getRequestsInfo()
