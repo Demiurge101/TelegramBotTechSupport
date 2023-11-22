@@ -717,7 +717,7 @@ def sendFromFolder(message, location, subfolders=True):
                 media.append(types.InputMediaVideo(open(full_path + "/" + i, 'rb')))
             elif file_type[-1] in audio_type:
                 pass
-            print("len media = ", len(media))
+            # print("len media = ", len(media))
             if len(media) != 0:
                 while len(media) > 10:
                     submedia = media[0:10]
