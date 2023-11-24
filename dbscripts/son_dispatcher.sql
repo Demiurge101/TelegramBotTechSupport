@@ -76,3 +76,13 @@ location varchar(255),
 CONSTRAINT PK_mkcb
 	primary key(mkcb)
 );
+
+CREATE TABLE files 
+(
+    parent_number varchar(25) unique not null,
+    uuid varchar(64) unique not null,
+    author varchar(50),
+    load_date date,
+    CONSTRAINT PK_files
+    primary key(parent_number)
+);

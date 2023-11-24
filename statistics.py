@@ -31,12 +31,17 @@ class Statistics():
 		else:
 			self.__requests[m.text] += 1
 
-	def getUsersInfo(self):
+	def getUsersInfo(self, detailed=False):
 		res = ''
 		count = 0
 		for user in self.__users:
 			count += 1
 			req_info = f"({self.__users[user]['sum_requests']} requests, {round(self.__percent(self.__users[user]['sum_requests'], self.__sum_requests), 2)}%)"
+			if detailed:
+				count_req = 0
+				for request in self.__users[user]['requests']:
+					count_req += 1
+					req_info += f"\r\n   {count_req}) {request}: {self.__users[user]['requests'][request]}"
 			res += f"<b>{count}.</b> {user}:  <b>{self.__users[user]['username']}  {self.__users[user]['name']}</b>  {req_info}\r\n"
 		return res
 

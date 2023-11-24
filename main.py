@@ -187,17 +187,24 @@ def info(message):
     # thr.show()
     stat.fromMessage(message)
     if message.from_user.id in admins:
+        # message_text = str(message.text).lower()
         info_text = f'Bot started at {start_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}\r\n'
         info_text += f'Last error time: {last_err_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}'
         info_text += '\r\n\r\n\r\n'
-        info_text += f'Menu stat ({stat.getSum()} requests, {stat.getCountUsers()} users):\r\n\r\n'
-        info_text += stat.getUsersInfo()
-        info_text += '\r\n'
-        info_text += stat.getRequestsInfo()
-        info_text += f'\r\nSON stat ({son_stat.getSum()} requests, {son_stat.getCountUsers()} users):\r\n\r\n'
-        info_text += son_stat.getUsersInfo()
-        info_text += '\r\n'
-        info_text += son_stat.getRequestsInfo()
+        detailed = False
+        if message.text.lower().find('detailed') > -1:
+            detailed = True
+        if message.text.lower().find('son') > -1:
+            info_text += f'\r\nSON stat ({son_stat.getSum()} requests, {son_stat.getCountUsers()} users):\r\n\r\n'
+            info_text += son_stat.getUsersInfo(detailed=detailed)
+            info_text += '\r\n'
+            info_text += son_stat.getRequestsInfo()
+        else:
+            info_text += f'Menu stat ({stat.getSum()} requests, {stat.getCountUsers()} users):\r\n\r\n'
+            info_text += stat.getUsersInfo(detailed=detailed)
+            info_text += '\r\n'
+            info_text += stat.getRequestsInfo()
+
         bot.send_message(message.chat.id, info_text, parse_mode='HTML')
 
 
@@ -385,7 +392,8 @@ def project_map(message, *args):
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(get_pos(message)))
     if message.from_user.id in admins:
         text = f"For admins:\r\n /status\r\n /reborn\r\n/reconnect - reconnect DB\r\n /drop - stop bot\r\n\
- /update_ts - обновить базу данных техподдержки\r\n /update_son - обновить базу данных системы одного номера"
+ /update_ts - обновить базу данных техподдержки\r\n /update_son - обновить базу данных системы одного номера\r\n\
+ /info (|son) (|detailed)"
         bot.send_message(message.chat.id, text)
 
 @bot.callback_query_handler(func=lambda callback: True)
