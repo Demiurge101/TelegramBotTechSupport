@@ -31,6 +31,9 @@ max_delay_between_errors = 60
 delay_between_errors = 1
 
 token = Config.MyToken
+
+files_location = Config.uuid_files_location
+
 for i in sys.argv:
     if i == "-prod":
         token = Config.Token
@@ -556,6 +559,8 @@ def son(message, menu_id=0, overcount=0):
             # print(f'mkcb_location s = {mkcb_location}')
             if loc[:1] == '.':
                 loc = SN.dblocation + loc[1:]
+            elif loc[:4] == 'uuid':
+                loc = f"{files_location}/{loc[4:]}"
             codes_location = loc
             son_controller.setUserLocation(message.from_user.id, loc)
             if checkFiles(loc, False):

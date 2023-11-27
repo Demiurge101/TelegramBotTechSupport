@@ -1,6 +1,9 @@
 import Config
 from includes import *
 import pymysql
+from uuid import uuid4
+from datetime import datetime
+from shutil import copy
 
 class Database:
     "Base class for Database"
@@ -129,6 +132,14 @@ class SonDB(Database):
     """Database for SON"""
     dblocation = Config.sonDBfiles
     get_access_to_path(dblocation)
+
+
+    def add_file(self, parent_number, typef, location, author=None):
+        uuid = uuid4()
+        date = datetime.now().strftime("%Y-%m-%d")
+        # copy(location, )
+        self._commit(f"insert into users(parent_number, type, uuid, author, load_date) value \"{parent_number}\", \"{typef}\", \"{uuid}\", \"{author}\", \"{load_date}\"")
+
 
     def check_user(self, user_id):
         res = self._fetchall(f"select * from users where user_id = {user_id}")
