@@ -79,11 +79,12 @@ CONSTRAINT PK_mkcb
 
 CREATE TABLE files 
 (
-    parent_number varchar(25) unique not null,
-    type varchar(3) not null,
     uuid varchar(64) unique not null,
+    parent_number varchar(25) not null,
+    typef varchar(3) not null,
+    namef varchar(128) not null,
     author varchar(50),
     load_date date,
     CONSTRAINT PK_files
-    primary key(parent_number)
+    primary key(uuid)
 );

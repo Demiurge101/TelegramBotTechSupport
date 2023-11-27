@@ -132,14 +132,24 @@ class SonDB(Database):
     """Database for SON"""
     dblocation = Config.sonDBfiles
     get_access_to_path(dblocation)
+    common_location = Config.uuid_files_location
 
 
-    def add_file(self, parent_number, typef, location, author=None):
+    def add_file_from_location(self, parent_number, typef, location, name, author=None):
         uuid = uuid4()
         date = datetime.now().strftime("%Y-%m-%d")
-        # copy(location, )
-        self._commit(f"insert into users(parent_number, type, uuid, author, load_date) value \"{parent_number}\", \"{typef}\", \"{uuid}\", \"{author}\", \"{load_date}\"")
+        # copy(location, common_location)
+        shutil.copyfile(f"{location}/{name}", f"{self.common_location}/{uuid}")
+        self._commit(f"insert into files(parent_number, typef, uuid, namef, author, load_date) value (\"{parent_number}\", \"{typef}\", \"{uuid}\", \"{name}\", \"{author}\", \"{date}\")")
 
+
+    def get_files(self, number, typef=''):
+        res = []
+        if typef:
+            res = self._fetchall(f"select * from files where parent_number = \"{number}\" and typef = \"{typef}\"")
+        else:
+            res = self._fetchall(f"select * from files where parent_number = \"{number}\"")
+        return res
 
     def check_user(self, user_id):
         res = self._fetchall(f"select * from users where user_id = {user_id}")

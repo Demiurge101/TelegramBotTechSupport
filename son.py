@@ -122,6 +122,13 @@ class SonController():
 			return 's_icode'
 		return "unknown"
 
+	def getTextByCode(self, code):
+		if code in self.__decimal_codes:
+			return self.__decimal_codes[code]
+		elif code in self.__serial_codes:
+			return self.__serial_codes[code]
+		return ''
+
 	def __inverseCode(self, code=''):
 		# print(yellow_text(f"__inverseCode({code})"))
 		en_alphabet = "qwertyuiop[]asdfghjkl;'zxcvbnm,.`"

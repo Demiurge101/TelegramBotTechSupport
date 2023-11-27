@@ -190,14 +190,15 @@ def info(message):
     # thr.show()
     stat.fromMessage(message)
     if message.from_user.id in admins:
+        mtext = message.text.lower()
         # message_text = str(message.text).lower()
         info_text = f'Bot started at {start_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}\r\n'
         info_text += f'Last error time: {last_err_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}'
         info_text += '\r\n\r\n\r\n'
         detailed = False
-        if message.text.lower().find('detailed') > -1:
+        if mtext.find('detailed') > -1 or mtext.find('detail') > -1 or mtext.find('d') > -1:
             detailed = True
-        if message.text.lower().find('son') > -1:
+        if mtext.find('son') > -1 or mtext.find('s') > -1:
             info_text += f'\r\nSON stat ({son_stat.getSum()} requests, {son_stat.getCountUsers()} users):\r\n\r\n'
             info_text += son_stat.getUsersInfo(detailed=detailed)
             info_text += '\r\n'
@@ -559,8 +560,9 @@ def son(message, menu_id=0, overcount=0):
             # print(f'mkcb_location s = {mkcb_location}')
             if loc[:1] == '.':
                 loc = SN.dblocation + loc[1:]
-            elif loc[:4] == 'uuid':
-                loc = f"{files_location}/{loc[4:]}"
+            elif loc == 'uuid':
+                pass
+                # loc = f"{files_location}/{loc[4:]}"
             codes_location = loc
             son_controller.setUserLocation(message.from_user.id, loc)
             if checkFiles(loc, False):
@@ -572,6 +574,16 @@ def son(message, menu_id=0, overcount=0):
 
     if parsed_type in ['mkcb', 'number']:
         sub_menu = son_controller.getCodes(message.from_user.id, codes_location, mkcb_location)
+        print(sub_menu)
+        files_obj = []
+        if codes_location == 'uuid':
+            files_obj = SN.get_files(message.text)
+        if mkcb_location == 'uuid':
+            files_obj += SN.get_files(f"МКЦБ.{message.text}")
+        for file_obj in files_obj:
+            print(file_obj)
+            sub_menu.append(son_controller.getTextByCode(file_obj['typef'].lower()))
+
         # print("sub_menu:", sub_menu)
         res = '-'
         if sub_menu:
@@ -590,6 +602,11 @@ def son(message, menu_id=0, overcount=0):
             # print(f'd_number = {d_number}')
             d_name = SN.getMKCBName(d_number)
             d_loc = SN.getMKCBLocation(d_number)
+            if d_loc == 'uuid':
+                files = SN.get_files(d_name)
+                print("Files:")
+                for f in files:
+                    print(f)
             # print(f"d_name = {d_name}")
             # lct = f"{son_controller.getLocation()}/{d_number}/{message.text} {d_number}"
             lct = f'{d_loc}/{number} {d_number}' # number = message.text
@@ -699,46 +716,89 @@ def sendFromFolder(message, location, subfolders=True):
             if subfolders:
                 sendFromFolder(message, full_path + "/" + i)
         else:
-            media = []
-            file_type = os.path.splitext(i)
-            if file_type[-1] in document_type:
-                media.append(types.InputMediaDocument(open(full_path + "/" + i, 'rb')))
-                # print("Send: ", full_path + "/" + i)
-            elif file_type[-1] == '.lnk':
-                print(f'sending link file: {full_path}/{i}')
-                sp = getLinkSource(f"{full_path}/{i}")
-                # print(yellow_text(f"sp<'{sp}'>"))
-                if sp[0] == '.':
-                    spa = sp[1:]
-                    # print(yellow_text(f'spa<{spa}>'))
-                    for loc in Config.db_locations:
-                        # print(yellow_text(f'loc<{loc}>'))
-                        spr = loc + spa
-                        if os.path.exists(spr):
-                            # print(green_text('Exist!'))
-                            sp = spr
-                            break
-                if os.path.isdir(sp):
-                    sendFromFolder(message, sp)
-                else:
-                    print('not directory (lnk)')
-                    media.append(types.InputMediaDocument(open(sp, 'rb')))
-            elif file_type[-1] in image_type:
-                media.append(types.InputMediaPhoto(open(full_path + "/" + i, 'rb')))
-                # print("Send: ", full_path + "/" + i)
-            elif file_type[-1] in video_type:
-                media.append(types.InputMediaVideo(open(full_path + "/" + i, 'rb')))
-            elif file_type[-1] in audio_type:
-                pass
-            # print("len media = ", len(media))
-            if len(media) != 0:
-                while len(media) > 10:
-                    submedia = media[0:10]
-                    media = media[10:]
-                    bot.send_media_group(message.chat.id, submedia)
-                    #bot.send_media_group(message.chat.id, media)
-                else:
-                    bot.send_media_group(message.chat.id, media)
+            sendFile(message, i, full_path)
+            # media = []
+            # file_type = os.path.splitext(i)
+            # if file_type[-1] in document_type:
+            #     media.append(types.InputMediaDocument(open(full_path + "/" + i, 'rb')))
+            #     # print("Send: ", full_path + "/" + i)
+            # elif file_type[-1] == '.lnk':
+            #     print(f'sending link file: {full_path}/{i}')
+            #     sp = getLinkSource(f"{full_path}/{i}")
+            #     # print(yellow_text(f"sp<'{sp}'>"))
+            #     if sp[0] == '.':
+            #         spa = sp[1:]
+            #         # print(yellow_text(f'spa<{spa}>'))
+            #         for loc in Config.db_locations:
+            #             # print(yellow_text(f'loc<{loc}>'))
+            #             spr = loc + spa
+            #             if os.path.exists(spr):
+            #                 # print(green_text('Exist!'))
+            #                 sp = spr
+            #                 break
+            #     if os.path.isdir(sp):
+            #         sendFromFolder(message, sp)
+            #     else:
+            #         print('not directory (lnk)')
+            #         media.append(types.InputMediaDocument(open(sp, 'rb')))
+            # elif file_type[-1] in image_type:
+            #     media.append(types.InputMediaPhoto(open(full_path + "/" + i, 'rb')))
+            #     # print("Send: ", full_path + "/" + i)
+            # elif file_type[-1] in video_type:
+            #     media.append(types.InputMediaVideo(open(full_path + "/" + i, 'rb')))
+            # elif file_type[-1] in audio_type:
+            #     pass
+            # # print("len media = ", len(media))
+            # if len(media) != 0:
+            #     while len(media) > 10:
+            #         submedia = media[0:10]
+            #         media = media[10:]
+            #         bot.send_media_group(message.chat.id, submedia)
+            #         #bot.send_media_group(message.chat.id, media)
+            #     else:
+            #         bot.send_media_group(message.chat.id, media)
+
+def sendFile(message, name, full_path, fname = None):
+    media = []
+    file_type = os.path.splitext(name)
+    if file_type[-1] in document_type:
+        media.append(types.InputMediaDocument(open(full_path + "/" + name, 'rb'), filename = fname))
+        # print("Send: ", full_path + "/" + name)
+    elif file_type[-1] == '.lnk':
+        print(f'sending link file: {full_path}/{name}')
+        sp = getLinkSource(f"{full_path}/{name}")
+        # print(yellow_text(f"sp<'{sp}'>"))
+        if sp[0] == '.':
+            spa = sp[1:]
+            # print(yellow_text(f'spa<{spa}>'))
+            for loc in Config.db_locations:
+                # print(yellow_text(f'loc<{loc}>'))
+                spr = loc + spa
+                if os.path.exists(spr):
+                    # print(green_text('Exist!'))
+                    sp = spr
+                    break
+        if os.path.isdir(sp):
+            sendFromFolder(message, sp)
+        else:
+            print('not directory (lnk)')
+            media.append(types.InputMediaDocument(open(sp, 'rb')))
+    elif file_type[-1] in image_type:
+        media.append(types.InputMediaPhoto(open(full_path + "/" + name, 'rb')))
+        # print("Send: ", full_path + "/" + name)
+    elif file_type[-1] in video_type:
+        media.append(types.InputMediaVideo(open(full_path + "/" + name, 'rb')))
+    elif file_type[-1] in audio_type:
+        pass
+    # print("len media = ", len(media))
+    if len(media) != 0:
+        while len(media) > 10:
+            submedia = media[0:10]
+            media = media[10:]
+            bot.send_media_group(message.chat.id, submedia)
+            #bot.send_media_group(message.chat.id, media)
+        else:
+            bot.send_media_group(message.chat.id, media)
 
 
 

@@ -9,6 +9,7 @@ from getpass import getpass
 import subprocess
 from sys import platform
 from Config import shorcut_roots
+import shutil
 
 operating_system = 'unknown'
 
