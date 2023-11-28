@@ -10,6 +10,8 @@ import subprocess
 from sys import platform
 from Config import shorcut_roots
 import shutil
+import requests
+import json
 
 operating_system = 'unknown'
 

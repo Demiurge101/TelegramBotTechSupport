@@ -83,6 +83,7 @@ CREATE TABLE files
     parent_number varchar(25) not null,
     typef varchar(3) not null,
     namef varchar(128) not null,
+    file_id varchar(128) unique,
     author varchar(50),
     load_date date,
     CONSTRAINT PK_files

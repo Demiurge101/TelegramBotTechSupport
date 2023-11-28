@@ -1,15 +1,16 @@
 import telebot
 from telebot import types
 import webbrowser
-import MDataBase
-import Config
-from includes import *
-import sys
-
 from threads import Threads
 from process import Process
+
+from includes import *
+import MDataBase
+import Config
+import sys
 from son import *
 from statistics import Statistics
+
 
 # DB = MDataBase.Database("localhost", "root", Config.password, Config.bd_name)
 # DB = MDataBase.DatabaseTS("localhost", "root", Config.password, Config.bd_name_ts)
@@ -194,22 +195,24 @@ def info(message):
         # message_text = str(message.text).lower()
         info_text = f'Bot started at {start_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}\r\n'
         info_text += f'Last error time: {last_err_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}'
-        info_text += '\r\n\r\n\r\n'
+        bot.send_message(message.chat.id, info_text, parse_mode='HTML')
         detailed = False
         if mtext.find('detailed') > -1 or mtext.find('detail') > -1 or mtext.find('d') > -1:
             detailed = True
         if mtext.find('son') > -1 or mtext.find('s') > -1:
-            info_text += f'\r\nSON stat ({son_stat.getSum()} requests, {son_stat.getCountUsers()} users):\r\n\r\n'
+            info_text = f'\r\nSON stat ({son_stat.getSum()} requests, {son_stat.getCountUsers()} users):\r\n\r\n'
             info_text += son_stat.getUsersInfo(detailed=detailed)
-            info_text += '\r\n'
-            info_text += son_stat.getRequestsInfo()
+            bot.send_message(message.chat.id, info_text, parse_mode='HTML')
+            info_text = son_stat.getRequestsInfo()
+            bot.send_message(message.chat.id, info_text, parse_mode='HTML')
         else:
-            info_text += f'Menu stat ({stat.getSum()} requests, {stat.getCountUsers()} users):\r\n\r\n'
+            info_text = f'Menu stat ({stat.getSum()} requests, {stat.getCountUsers()} users):\r\n\r\n'
             info_text += stat.getUsersInfo(detailed=detailed)
-            info_text += '\r\n'
-            info_text += stat.getRequestsInfo()
+            bot.send_message(message.chat.id, info_text, parse_mode='HTML')
+            info_text = stat.getRequestsInfo()
+            bot.send_message(message.chat.id, info_text, parse_mode='HTML')
 
-        bot.send_message(message.chat.id, info_text, parse_mode='HTML')
+        # bot.send_message(message.chat.id, info_text, parse_mode='HTML')
 
 
 
@@ -602,18 +605,41 @@ def son(message, menu_id=0, overcount=0):
             # print(f'd_number = {d_number}')
             d_name = SN.getMKCBName(d_number)
             d_loc = SN.getMKCBLocation(d_number)
+            print(d_number)
+            print(d_name)
+            print(d_loc)
+            # need to fix in future (send multiple files, remove uuid column)
             if d_loc == 'uuid':
-                files = SN.get_files(d_name)
+                files = SN.get_files(d_number, number)
                 print("Files:")
                 for f in files:
-                    print(f)
+                    # print(f)
+                    flct = f"{files_location}/{f['uuid']}"
+                    print(f['file_id'])
+                    sended = False
+                    if f['file_id'] != None:
+                        try:
+                            print('old send')
+                            bot.send_document(message.chat.id, f['file_id'])
+                            sended = True
+                        except Exception as e:
+                            print(e)
+                    if not sended:
+                        print('new send')
+                        file_id = sendFileByRequest(message.chat.id, f['uuid'], files_location, f['namef'])
+                        SN.set_file_id(f['uuid'], file_id)
+
+                    
+                    # sendFile(message, f['uuid'], files_location, f['namef'])
+
             # print(f"d_name = {d_name}")
             # lct = f"{son_controller.getLocation()}/{d_number}/{message.text} {d_number}"
-            lct = f'{d_loc}/{number} {d_number}' # number = message.text
-            if checkFiles(lct):
-                thr.run(sendFrom, (message, lct, True, back_button, son_text['another_code_or_number']))
-            else:
-                bot.send_message(message.chat.id, son_text['wrong_code'], parse_mode='HTML', reply_markup = back_button)
+
+            # lct = f'{d_loc}/{number} {d_number}' # number = message.text
+            # if checkFiles(lct):
+            #     thr.run(sendFrom, (message, lct, True, back_button, son_text['another_code_or_number']))
+            # else:
+            #     bot.send_message(message.chat.id, son_text['wrong_code'], parse_mode='HTML', reply_markup = back_button)
         else:
             bot.send_message(message.chat.id, son_text['wrong_number'], parse_mode='HTML', reply_markup = back_button)
     elif parsed_type in {'s_code', 's_icode'}:
@@ -762,7 +788,7 @@ def sendFile(message, name, full_path, fname = None):
     media = []
     file_type = os.path.splitext(name)
     if file_type[-1] in document_type:
-        media.append(types.InputMediaDocument(open(full_path + "/" + name, 'rb'), filename = fname))
+        media.append(types.InputMediaDocument(open(full_path + "/" + name, 'rb'), caption="caption"))
         # print("Send: ", full_path + "/" + name)
     elif file_type[-1] == '.lnk':
         print(f'sending link file: {full_path}/{name}')
@@ -801,6 +827,19 @@ def sendFile(message, name, full_path, fname = None):
             bot.send_media_group(message.chat.id, media)
 
 
+def sendFileByRequest(chat_id, fname, flocation, fnewname='document.png'):
+    fabsname = f"{flocation}/{fname}"
+    document = open(fabsname, "rb")
+    url = f"https://api.telegram.org/bot{token}/sendDocument"
+    response = requests.post(url, data={'chat_id': chat_id}, files={'document': (fnewname, document)})
+    # part below, just to make human readable response for such noobies as I
+    content = response.content.decode("utf8")
+    js = json.loads(content)
+    print()
+    print(f"js: {js['result']['document']}")
+
+    return js['result']['document']['file_id']
+    
 
 
 while True:

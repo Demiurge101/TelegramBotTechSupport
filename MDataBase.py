@@ -69,6 +69,7 @@ class Database:
     def _fetchall(self, cmd, err="fetch error"):
          with self.connection.cursor() as cursor:
             try:
+                # print(f"_fetchall({cmd})")
                 cursor.execute(self._checkQuote(cmd))
                 return cursor.fetchall()
             except Exception as ex:
@@ -142,13 +143,16 @@ class SonDB(Database):
         shutil.copyfile(f"{location}/{name}", f"{self.common_location}/{uuid}")
         self._commit(f"insert into files(parent_number, typef, uuid, namef, author, load_date) value (\"{parent_number}\", \"{typef}\", \"{uuid}\", \"{name}\", \"{author}\", \"{date}\")")
 
+    def set_file_id(self, uuid, file_id):
+        self._commit(f"update files set file_id = \"{file_id}\" where uuid = \"{uuid}\"")
 
     def get_files(self, number, typef=''):
         res = []
         if typef:
-            res = self._fetchall(f"select * from files where parent_number = \"{number}\" and typef = \"{typef}\"")
+            res = self._fetchall(f"select * from files where parent_number = \"{number}\" and typef = \"{typef}\";")
         else:
-            res = self._fetchall(f"select * from files where parent_number = \"{number}\"")
+            res = self._fetchall(f"select * from files where parent_number = \"{number}\";")
+        print(f"res: {res}")
         return res
 
     def check_user(self, user_id):
@@ -170,7 +174,7 @@ class SonDB(Database):
                 
     def addClient(self, org, order_key):
         if len(self._fetchall(f"select * from clients where org = \"{org}\""))>0:
-            self._commit(f"update clients set order_key =\"{order_key}\"")
+            self._commit(f"update clients set order_key =\"{order_key}\" where org = \"{org}\"")
         else:
             self._commit(f"insert into clients(org, order_key) value(\"{org}\", \"{order_key}\")")
 
