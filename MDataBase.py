@@ -222,10 +222,10 @@ class SonDB(Database):
     def addStation(self, serial_id, org_name, mkcb, date, location, description=""):
         org_id = self.getOrgIdByName(org_name) # org_id
         if org_id < 0:
-            print("There is no organizations with this name!")
+            print(f"There is no organizations with this name({org_name})!")
             return
         if len(self._fetchall(f"select * from stations where serial_number = {serial_id}")) == 1:
-            print("This station already exist!")
+            print(f"This station({serial_id}) already exist!")
             return
         self._commit(f"insert into stations(serial_number, org_id, mkcb, date_out, location, description_) \
             value({serial_id}, {org_id}, \"{mkcb}\", \"{date}\", \"{location}\", \"{description}\")")
@@ -233,14 +233,20 @@ class SonDB(Database):
     def addDevice(self, serial_id, station_id, org_name, name, mkcb, date, path, description):
         org_id = self.getOrgIdByName(org_name) # org_id
         if org_id < 0:
-            print("There is no organizations with this name!")
+            print(f"There is no organizations with this name({org_name})!")
             return
         if len(self._fetchall(f"select * from devices where serial_number = {serial_id}")) == 1:
-            print("This device already exist!")
+            print(f"This device ({serial_id}) already exist!")
             return
-        self._commit(f"insert into devices(serial_number, station_number, org_id, device_name, mkcb, date_out, location, description_) \
-            value({serial_id}, {station_id}, {org_id},  \"{name}\", \"{mkcb}\", \"{date}\", \"{path}\", \"{description}\")", \
-            "insert")
+        if station_id != None:
+            self._commit(f"insert into devices(serial_number, station_number, org_id, device_name, mkcb, date_out, location, description_) \
+                value({serial_id}, {station_id}, {org_id},  \"{name}\", \"{mkcb}\", \"{date}\", \"{path}\", \"{description}\")", \
+                "insert")
+        else:
+
+            self._commit(f"insert into devices(serial_number, org_id, device_name, mkcb, date_out, location, description_) \
+                value({serial_id}, {org_id},  \"{name}\", \"{mkcb}\", \"{date}\", \"{path}\", \"{description}\")", \
+                "insert")
 
     def getDevices(self, serial_number, client_id):
         res = self._fetchall(f"select * from devices where serial_number = {serial_number}")

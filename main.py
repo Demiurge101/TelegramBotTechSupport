@@ -184,10 +184,17 @@ def update_son(message):
     reconnect_DB(message)
 
 
+def info_send(chat_id, data, do='w', output='info_output'):
+    bot.send_message(chat_id, data, parse_mode='HTML')
+    print(data)
+    f = open(output, do)
+    f.write(data)
+    f.close()
+
 @bot.message_handler(commands=['info'])
 def info(message):
     global last_err_time
-    print(yellow_text(get_time()), f"INFO {message.from_user.id} ({green_text(str(message.from_user.username))})")
+    print(yellow_text(get_time()), f"'{message.text}': {message.from_user.id} ({green_text(str(message.from_user.username))})")
     # thr.show()
     stat.fromMessage(message)
     if message.from_user.id in admins:
@@ -195,22 +202,22 @@ def info(message):
         # message_text = str(message.text).lower()
         info_text = f'Bot started at {start_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}\r\n'
         info_text += f'Last error time: {last_err_time.strftime("<b>%Y.%m.%d</b> <i>%A</i> <b>%H:%M:%S</b>")}'
-        bot.send_message(message.chat.id, info_text, parse_mode='HTML')
+        info_send(message.chat.id, info_text, 'w')
         detailed = False
         if mtext.find('detailed') > -1 or mtext.find('detail') > -1 or mtext.find('d') > -1:
             detailed = True
         if mtext.find('son') > -1 or mtext.find('s') > -1:
             info_text = f'\r\nSON stat ({son_stat.getSum()} requests, {son_stat.getCountUsers()} users):\r\n\r\n'
             info_text += son_stat.getUsersInfo(detailed=detailed)
-            bot.send_message(message.chat.id, info_text, parse_mode='HTML')
+            info_send(message.chat.id, info_text, 'a')
             info_text = son_stat.getRequestsInfo()
-            bot.send_message(message.chat.id, info_text, parse_mode='HTML')
+            info_send(message.chat.id, info_text, 'a')
         else:
             info_text = f'Menu stat ({stat.getSum()} requests, {stat.getCountUsers()} users):\r\n\r\n'
             info_text += stat.getUsersInfo(detailed=detailed)
-            bot.send_message(message.chat.id, info_text, parse_mode='HTML')
+            info_send(message.chat.id, info_text, 'a')
             info_text = stat.getRequestsInfo()
-            bot.send_message(message.chat.id, info_text, parse_mode='HTML')
+            info_send(message.chat.id, info_text, 'a')
 
         # bot.send_message(message.chat.id, info_text, parse_mode='HTML')
 
