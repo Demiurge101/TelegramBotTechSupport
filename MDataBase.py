@@ -137,11 +137,20 @@ class SonDB(Database):
 
 
     def add_file_from_location(self, parent_number, typef, location, name, author=None):
+        file = self.get_files(number=parent_number, typef=typef)
+        if file:
+            self.delete_file(file[0]['uuid'])
         uuid = uuid4()
         date = datetime.now().strftime("%Y-%m-%d")
         # copy(location, common_location)
         shutil.copyfile(f"{location}/{name}", f"{self.common_location}/{uuid}")
-        self._commit(f"insert into files(parent_number, typef, uuid, namef, author, load_date) value (\"{parent_number}\", \"{typef}\", \"{uuid}\", \"{name}\", \"{author}\", \"{date}\")")
+        self._commit(f"insert into files(parent_number, typef, uuid, namef, author, load_date) value (\"{parent_number}\", \"{typef.lower()}\", \"{uuid}\", \"{name}\", \"{author}\", \"{date}\")")
+
+    def delete_file(self, uuid):
+        if uuid:
+            self._commit(f"delete from files where uuid = \"{uuid}\"")
+            os.remove(f"{self.common_location}/{uuid}")
+
 
     def set_file_id(self, uuid, file_id):
         self._commit(f"update files set file_id = \"{file_id}\" where uuid = \"{uuid}\"")
@@ -152,8 +161,22 @@ class SonDB(Database):
             res = self._fetchall(f"select * from files where parent_number = \"{number}\" and typef = \"{typef}\";")
         else:
             res = self._fetchall(f"select * from files where parent_number = \"{number}\";")
-        print(f"res: {res}")
+        # print(f"res: {res}")
         return res
+
+    def get_file_types(self, number):
+        res = []
+        if number:
+            data = self._fetchall(f"select typef from files where parent_number = \"{number}\"")
+            print(f"DATA: {data}")
+            for typef in data:
+                res.append(typef['typef'])
+        return res
+
+
+
+
+
 
     def check_user(self, user_id):
         res = self._fetchall(f"select * from users where user_id = {user_id}")

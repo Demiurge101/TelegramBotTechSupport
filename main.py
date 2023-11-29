@@ -35,9 +35,12 @@ token = Config.MyToken
 
 files_location = Config.uuid_files_location
 
+prod = False
+
 for i in sys.argv:
     if i == "-prod":
         token = Config.Token
+        prod = True
         print('Production')
 
 start_time = datetime.datetime.now()
@@ -113,12 +116,18 @@ def drop_bot(message):
     stat.save()
     son_stat.save()
     if message.from_user.id == Config.ITGenerator:
-        print(yellow_text(get_time()), f"Bot has dropped by {message.from_user.id}({green_text(str(message.from_user.username))})")
-        live_countdown = 0
-        bot.send_message(message.chat.id, "Bot has ruined!")
-        bot.stop_polling()
-        bot.stop_bot()
-        os._exit(0)
+        if message.text.lower() in ['yes', 'y'] or not prod:
+            print(yellow_text(get_time()), f"Bot has dropped by {message.from_user.id}({green_text(str(message.from_user.username))})")
+            live_countdown = 0
+            bot.send_message(message.chat.id, "Bot has ruined!")
+            bot.stop_polling()
+            bot.stop_bot()
+            os._exit(0)
+        elif message.text.lower() in ['n', 'no']:
+            bot.send_message(message.chat.id, TSDB.getContent()['content_text'], parse_mode='HTML', reply_markup=TSDB.getSubMenu())
+        else:
+            bot.send_message(message.chat.id, "Are you sure?")
+            bot.register_next_step_handler(message, drop_bot)
 
 @bot.message_handler(commands=['reborn'])
 def reborn(message):
@@ -185,11 +194,12 @@ def update_son(message):
 
 
 def info_send(chat_id, data, do='w', output='info_output'):
-    bot.send_message(chat_id, data, parse_mode='HTML')
-    print(data)
-    f = open(output, do)
-    f.write(data)
-    f.close()
+    if data:
+        bot.send_message(chat_id, data, parse_mode='HTML')
+        print(data)
+        f = open(output, do)
+        f.write(data)
+        f.close()
 
 @bot.message_handler(commands=['info'])
 def info(message):
@@ -555,6 +565,8 @@ def son(message, menu_id=0, overcount=0):
             # print(f'mkcb_location d = {mkcb_location}')
             if loc[:1] == '.':
                 loc = SN.dblocation + loc[1:]
+            # elif loc == 'uuid':
+            #     files = SN.get_files(number)
             codes_location = loc
             son_controller.setUserLocation(message.from_user.id, loc)
             if checkFiles(loc, False):
@@ -570,8 +582,8 @@ def son(message, menu_id=0, overcount=0):
             # print(f'mkcb_location s = {mkcb_location}')
             if loc[:1] == '.':
                 loc = SN.dblocation + loc[1:]
-            elif loc == 'uuid':
-                pass
+            # elif loc == 'uuid':
+            #     files = SN.get_files(number)
                 # loc = f"{files_location}/{loc[4:]}"
             codes_location = loc
             son_controller.setUserLocation(message.from_user.id, loc)
@@ -587,12 +599,16 @@ def son(message, menu_id=0, overcount=0):
         print(sub_menu)
         files_obj = []
         if codes_location == 'uuid':
-            files_obj = SN.get_files(message.text)
+            files_obj = SN.get_file_types(son_controller.getSerialNumber(message.from_user.id))
+            print(f"for {son_controller.getSerialNumber(message.from_user.id)}")
+            print(f"get: {files_obj}")
         if mkcb_location == 'uuid':
-            files_obj += SN.get_files(f"МКЦБ.{message.text}")
+            files_obj += SN.get_file_types(f'МКЦБ.{son_controller.getDecimalNumber(message.from_user.id)}')
+            print(f"for {son_controller.getDecimalNumber(message.from_user.id)}")
+            print(f"get: {files_obj}")
         for file_obj in files_obj:
             print(file_obj)
-            sub_menu.append(son_controller.getTextByCode(file_obj['typef'].lower()))
+            sub_menu.append(son_controller.getTextByCode(file_obj.lower()))
 
         # print("sub_menu:", sub_menu)
         res = '-'
@@ -612,9 +628,6 @@ def son(message, menu_id=0, overcount=0):
             # print(f'd_number = {d_number}')
             d_name = SN.getMKCBName(d_number)
             d_loc = SN.getMKCBLocation(d_number)
-            print(d_number)
-            print(d_name)
-            print(d_loc)
             # need to fix in future (send multiple files, remove uuid column)
             if d_loc == 'uuid':
                 files = SN.get_files(d_number, number)
@@ -652,7 +665,27 @@ def son(message, menu_id=0, overcount=0):
     elif parsed_type in {'s_code', 's_icode'}:
         if parsed_type == 's_icode':
             number = son_controller.inverseCode(message.text)
-        if son_controller.getUserLocation(message.from_user.id):
+        if son_controller.getUserLocation(message.from_user.id) == 'uuid':
+            files = SN.get_files(son_controller.getSerialNumber(message.from_user.id), number)
+            print("Files:")
+            for f in files:
+                flct = f"{files_location}/{f['uuid']}"
+                print(f['file_id'])
+                sended = False
+                if f['file_id'] != None:
+                    try:
+                        print('old send')
+                        bot.send_document(message.chat.id, f['file_id'])
+                        sended = True
+                    except Exception as e:
+                        print(e)
+                if not sended:
+                    print('new send')
+                    file_id = sendFileByRequest(message.chat.id, f['uuid'], files_location, f['namef'])
+                    SN.set_file_id(f['uuid'], file_id)
+
+
+        elif son_controller.getUserLocation(message.from_user.id):
             lct = f"{son_controller.getUserLocation(message.from_user.id)}/{number} {son_controller.getSerialNumber(message.from_user.id)}"
             if checkFiles(lct):
                 thr.run(sendFrom, (message, lct, True, back_button, son_text['another_code_or_number']))
@@ -842,8 +875,8 @@ def sendFileByRequest(chat_id, fname, flocation, fnewname='document.png'):
     # part below, just to make human readable response for such noobies as I
     content = response.content.decode("utf8")
     js = json.loads(content)
-    print()
-    print(f"js: {js['result']['document']}")
+    # print()
+    # print(f"js: {js['result']['document']}")
 
     return js['result']['document']['file_id']
     
