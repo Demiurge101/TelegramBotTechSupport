@@ -824,11 +824,11 @@ def sendFromFolder(message, location, subfolders=True):
             #     else:
             #         bot.send_media_group(message.chat.id, media)
 
-def sendFile(message, name, full_path, fname = None):
+def sendFile(message, name, full_path, fname = None, caption=''):
     media = []
     file_type = os.path.splitext(name)
     if file_type[-1] in document_type:
-        media.append(types.InputMediaDocument(open(full_path + "/" + name, 'rb'), caption="caption"))
+        media.append(types.InputMediaDocument(open(full_path + "/" + name, 'rb'), caption=caption))
         # print("Send: ", full_path + "/" + name)
     elif file_type[-1] == '.lnk':
         print(f'sending link file: {full_path}/{name}')
