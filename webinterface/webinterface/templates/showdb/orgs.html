@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Организации{% endblock %}
+
+
+{% block content %}
+
+	{% if orgs %}
+		{% for org in orgs %}
+			<a href="">{{org.org}}</a><br>
+		{% endfor %}
+	{% else %}
+		No organisations.
+	{% endif %}
+
+
+{% endblock %}

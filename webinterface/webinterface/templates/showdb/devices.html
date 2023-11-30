@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Датчики{% endblock %}
+
+{% block content %}
+	
+	<h3>Датчики</h3>
+
+	<p><a href=""><b>Добавить</b></a></p>
+
+	{% if devices %}
+		<p>Количество: {{ devices|length }}</p>
+		{% for device in devices %}
+			<p>
+				Заводской номер: <a href="">{{device.serial_number}}</a><br>
+				Станция: <a href="">{{device.station_number.serial_number}}</a><br>
+				Название: {{device.device_name}}<br>
+				<a href="">{{device.mkcb}}</a><br>
+				Отгружен: {{device.date_out}}, {{device.org}}<br>
+				{{device.location}}
+			</p>
+		{% endfor %}
+	{% else %}
+		No devices.
+	{% endif %}
+
+
+{% endblock %}

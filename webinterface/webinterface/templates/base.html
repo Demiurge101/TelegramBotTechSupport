@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{% block title %}Base{% endblock %}</title>
+</head>
+<body>
+	{% block menu %}
+		<p>
+			<a href="{% url 'showdb:orgs' %}">Организации </a>
+			<a href="">Даты </a>
+			<a href="{% url 'showdb:mkcb' %}">МКЦБ </a>
+			<a href="{% url 'showdb:stations' %}">Станции </a>
+			<a href="{% url 'showdb:devices' %}">Датчики </a>
+			<form action="{% url 'showdb:logout' %}" method="POST">
+				{% csrf_token %}
+				<input type="submit" value="Log out" />
+			</form>
+		</p>
+	{% endblock %}
+
+	<br>
+	<br>
+
+	{% block content %}Empty.{% endblock %}
+	
+</body>
+</html>

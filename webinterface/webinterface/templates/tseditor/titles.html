@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Titles{% endblock %}
+
+{% block content %}
+
+	{% if titles %}
+		{% for title in titles %}
+			<a href="">{{title.title}}</a><br>
+		{% endfor %}
+	{% else %}
+		No titles.
+	{% endif %}
+
+
+{% endblock %}

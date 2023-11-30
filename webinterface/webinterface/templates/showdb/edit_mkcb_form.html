@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактирование МКЦБ{% endblock %}
+
+{% block menu %}
+<a href="{% url 'showdb:mkcb' %}">Назад</a>
+{% endblock %}
+
+{% block content %}
+
+{% if decimal_obj %}
+	<p>{{decimal_obj.mkcb}}</p>
+{% endif %}
+<form action="{% url 'showdb:delete_mkcb' decimal_obj.mkcb %}" method="POST">
+	{% csrf_token %}
+	<button type="submit">Delete</button>
+</form>
+<form action="{% url 'showdb:edit_mkcb' %}" method="POST">
+	{% csrf_token %}
+	<input type="text" required placeholder="Decimal number" name="number"><br>
+	<input type="text" required placeholder="Name" name="name"><br>
+	<input type="text" name="files"><br>
+	<button type="submit">Add</button>
+
+</form>
+
+{% endblock %}

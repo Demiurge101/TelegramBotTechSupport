@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}List{% endblock %}
+
+{% block content %}
+
+	{% if stations %}
+		<table>
+		{% for station in stations %}
+			<tr><th>{{station.serial_number}}</th><th>{{station.mkcb}}</th><th>{{station.location}}</th></tr><br>
+		{% endfor %}
+		</table>
+	{% else %}
+		No stations.
+	{% endif %}
+
+	<br>
+
+	{% if devices %}
+		<table>
+			{% for device in devices %}
+				<tr><th>{{device.serial_number}}</th><th>{{device.station_number.serial_number}}</th><th>{{device.mkcb}}</th><th>{{device.location}}</th></tr><br>
+			{% endfor %}
+		</table>
+	{% else %}
+		No devices.
+	{% endif %}
+
+{% endblock %}
