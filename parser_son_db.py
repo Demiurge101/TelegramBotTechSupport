@@ -73,11 +73,11 @@ for folder_name in mkcb_list:
 						for file in os.listdir(location):
 							print(f"         file: {file}")
 							print(f"abspath: {location}")
-							print(yellow_text(file))
-							index = file.find('.')
-							if file[index:] != '.lnk':
+							# print(yellow_text(file))
+							# index = file.find('.')
+							# if file[index:] != '.lnk':
 								# location = getLinkSource(f"{location}/{file}")
-								SN.add_file_from_location(mkcb_number, typef, location, file, "parser_son_db")
+							SN.add_file_from_location(mkcb_number, typef, location, file, "parser_son_db")
 
 
 
@@ -116,12 +116,12 @@ def parse_device_mkcb(folder_name, folder_location, station_id, org_name, date_o
 			for file in files:
 				# print("-abspath")
 				# print(os.path.abspath(file))
-				index = file.find('.')
-				print(yellow_text(file))
-				if index >= 0:
-					if file[index:] != '.lnk':
+				# index = file.find('.')
+				# print(yellow_text(file))
+				# if index >= 0:
+				# 	if file[index:] != '.lnk':
 						# types_folder = getLinkSource(f"{types_folder}/{file}")
-						SN.add_file_from_location(serial_number, typef, types_folder, file, "parser_son_db")
+				SN.add_file_from_location(serial_number, typef, types_folder, file, "parser_son_db")
 
 
 
@@ -154,11 +154,11 @@ def parse_station_mkcb(org_name, date_out, mkcb, mkcb_folder):
 					for file in os.listdir(device_folder):
 						# print(f"device_folder: {device_folder}")
 						# print(f"file: {file}")
-						print(yellow_text(file))
-						index = file.find('.')
-						if index > -1 and file[index:] != '.lnk':
+						# print(yellow_text(file))
+						# index = file.find('.')
+						# if index > -1 and file[index:] != '.lnk':
 							# types_folder = getLinkSource(f"{location}/{file}")
-							SN.add_file_from_location(number, typef, device_folder, file, "parser_son_db")
+						SN.add_file_from_location(number, typef, device_folder, file, "parser_son_db")
 
 
 print()

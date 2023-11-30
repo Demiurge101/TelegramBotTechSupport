@@ -14,6 +14,8 @@ db_name_dispatcher_ts = ""
 Token = ""
 MyToken = ""
 
+uuid_files_location = ""
+
 sonDBfiles = ""
 tsDBfiles = ""
 mkcb_location = ""
