@@ -8,6 +8,7 @@ from .models import Devices
 from .models import Clients
 from .models import Users
 from .models import DecimalNumbers
+from .models import Files
 
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
@@ -89,7 +90,8 @@ def edit_mkcb_form(request, decimal_number):
 	if not request.user.is_authenticated:
 		return render(request, 'showdb/auth.html')
 	number = DecimalNumbers.objects.get(mkcb = decimal_number)
-	return render(request, 'showdb/edit_mkcb_form.html', {'decimal_obj': number})
+	files = Files.objects.filter(parent_number=decimal_number)
+	return render(request, 'showdb/edit_mkcb_form.html', {'decimal_obj': number, 'files':files})
 
 def add_mkcb(request):
 	if not request.user.is_authenticated:

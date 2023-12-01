@@ -3,7 +3,7 @@
 {% block title %}МКЦБ{% endblock %}
 
 {% block menu %}
-<a href="{% url 'showdb:mkcb' %}">Назад</a>
+<a class='btn' href="{% url 'showdb:mkcb' %}">Назад</a>
 {% endblock %}
 
 {% block content %}
@@ -12,7 +12,7 @@
 	{% csrf_token %}
 	<input type="text" required placeholder="Decimal number" name="number"><br>
 	<input type="text" required placeholder="Name" name="name"><br>
-	<button type="submit">Add</button>
+	<button type="submit">Добавить</button>
 
 </form>
 

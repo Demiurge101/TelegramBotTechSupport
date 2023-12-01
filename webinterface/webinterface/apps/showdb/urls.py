@@ -1,4 +1,4 @@
-from django.urls import path 
+from django.urls import path
 
 from . import views
 
@@ -17,6 +17,8 @@ path('add_mkcb', views.add_mkcb, name = 'add_mkcb'),
 path('mkcb/<decimal_number>', views.edit_mkcb_form, name = 'edit_mkcb_form'),
 path('edit_mkcb', views.edit_mkcb, name = 'edit_mkcb'),
 path('delete_mkcb/<decimal_number>', views.delete_mkcb, name = 'delete_mkcb')
+
+
 
 # path('<int:botool_id>/', views.detail, name='detail'),
 # path('<int:botool_id>/leave_comment', views.leave_comment, name='leave_comment')

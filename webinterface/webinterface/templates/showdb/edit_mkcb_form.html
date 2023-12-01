@@ -1,27 +1,42 @@
 {% extends 'base.html' %}
-
 {% block title %}Редактирование МКЦБ{% endblock %}
 
+
 {% block menu %}
-<a href="{% url 'showdb:mkcb' %}">Назад</a>
+<a class="btn" href="{% url 'showdb:mkcb' %}">Назад</a>
 {% endblock %}
 
 {% block content %}
 
 {% if decimal_obj %}
-	<p>{{decimal_obj.mkcb}}</p>
+	<p>
+		{{decimal_obj.mkcb}}<br>
+		{{decimal_obj.field_name}}<br>
+		<a class="btn" href="{% url 'showdb:delete_mkcb' decimal_obj.mkcb %}">Удалить децимальный номер</a>
+	</p>
+	<p>
+		{% if files %}
+			<table>
+			<tr><th>Название</th><th>Тип документа</th><th>Автор</th><th>Дата загрузки</th></tr>
+			{% for file in files %}
+				<tr><td>{{ file.namef }}</td><td>{{ file.typef }}</td><td>{{ file.author }}</td><td>{{ file.load_date }}</td></tr>
+			{% endfor %}
+			</table>
+		{% else %}
+			There is no files.
+		{% endif %}
+	</p>
 {% endif %}
-<form action="{% url 'showdb:delete_mkcb' decimal_obj.mkcb %}" method="POST">
+<!-- <form action="{% url 'showdb:delete_mkcb' decimal_obj.mkcb %}" method="POST">
 	{% csrf_token %}
 	<button type="submit">Delete</button>
-</form>
+</form> -->
 <form action="{% url 'showdb:edit_mkcb' %}" method="POST">
-	{% csrf_token %}
-	<input type="text" required placeholder="Decimal number" name="number"><br>
-	<input type="text" required placeholder="Name" name="name"><br>
-	<input type="text" name="files"><br>
-	<button type="submit">Add</button>
-
-</form>
-
+          <img id="upload-image" src="upload.svg">
+          <div>
+               <input id="file-input" type="file" name="file" multiple>
+               <label for="file-input">Выберите файл</label>
+               <span>или перетащите его сюда</span>
+          </div>
+     </form>
 {% endblock %}

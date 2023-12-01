@@ -4,6 +4,55 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{% block title %}Base{% endblock %}</title>
+
+	{% block style %}
+		<style type="text/css">
+			table {
+			   border: 0px solid black;
+			   border-radius: 4px;
+			   background: darkblue;
+			}
+			/* границы ячеек первого ряда таблицы */
+			th {
+			   border: 0px solid darkblue;
+			   color: darkblue;
+			   border-radius: 1px;
+			   padding: 8px;
+			   background: lightblue;
+			}
+			/* границы ячеек тела таблицы */
+			td {
+				background: lightblue;
+			   border: 0px solid darkblue;
+			   border-radius: 1px;
+			   padding-left: 8px;
+			   padding-right: 8px;
+			   color: darkblue;
+			}
+
+			.btn {
+				border:1px solid darkblue;
+				border-radius: 4px;
+				background: lightblue;
+				color: darkblue;
+				padding: 2px;
+				text-decoration: none;
+			}
+			.logout {
+				background: lightblue;
+				border: 2px solid darkblue;
+			}
+			button {
+				border:1px solid darkgreen;
+				border-radius: 4px;
+				background: lightgreen;
+				color: black;
+				padding: 4px;
+				text-decoration: none;
+			}
+
+		</style>
+	{% endblock %}
 </head>
 <body>
 	{% block menu %}
@@ -15,7 +64,7 @@
 			<a href="{% url 'showdb:devices' %}">Датчики </a>
 			<form action="{% url 'showdb:logout' %}" method="POST">
 				{% csrf_token %}
-				<input type="submit" value="Log out" />
+				<button class="btn logout" type="submit">Выйти</button>
 			</form>
 		</p>
 	{% endblock %}

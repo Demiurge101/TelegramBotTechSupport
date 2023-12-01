@@ -25,3 +25,13 @@ urlpatterns = [
     path('tseditor/', include('tseditor.urls')),
     path('admin/', admin.site.urls),
 ]
+
+# from django.conf import settings
+# if settings.DEBUG:
+#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+# from webinterface import settings
+# urlpatterns += patterns('',
+# url(r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
+# { 'document_root': settings.SITE_MEDIA_ROOT }),
+# )
