@@ -10,8 +10,7 @@
 
 <form action="{% url 'showdb:add_mkcb' %}" method="POST">
 	{% csrf_token %}
-	<input type="text" required placeholder="Decimal number" name="number"><br>
-	<input type="text" required placeholder="Name" name="name"><br>
+	{{ form.as_p }}
 	<button type="submit">Добавить</button>
 
 </form>

@@ -77,15 +77,24 @@ CONSTRAINT PK_mkcb
 	primary key(mkcb)
 );
 
+CREATE TABLE filebond
+(
+    snumber varchar(25) not null,
+    uuid varchar(64) unique not null,
+    CONSTRAINT FK_bond
+        FOREIGN KEY(uuid)
+            REFERENCES files(uuid)
+);
+
 CREATE TABLE files 
 (
     uuid varchar(64) unique not null,
-    parent_number varchar(25) not null,
+    -- parent_number varchar(25) not null,
     typef varchar(3) not null,
     namef varchar(128) not null,
     file_id varchar(128) unique,
     author varchar(50),
     load_date date,
     CONSTRAINT PK_files
-    primary key(uuid)
+        primary key(uuid)
 );

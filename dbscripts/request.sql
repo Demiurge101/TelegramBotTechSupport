@@ -1,4 +1,4 @@
-use TS_Dispatcher;
+use SON_Dispatcher;
 -- update devices
 -- set location = ".\\ННГФ\\29.08.2023\\Станция МКЦБ.611139.102-01\\30056199\\1 Датчик оборотов лебёдки Кедр ДОЛ-100 МКЦБ.401269.109\\30052548"
 -- where serial_number = 30052548;
@@ -6,6 +6,15 @@ use TS_Dispatcher;
 -- select * from pathdir;
 -- select * from map; 
 
-update contents set location = 'C:/Share/TS/0_main/Проблемы с оборудованием КЕДР'
-select * from contents;
+-- select * from contents;
 -- insert into clients(org, order_key) value ("Новатэк", "novatek");
+
+
+CREATE TABLE filebond
+(
+    snumber varchar(25) not null,
+    uuid varchar(64) unique not null,
+    CONSTRAINT FK_bond
+        FOREIGN KEY(uuid)
+            REFERENCES files(uuid)
+);

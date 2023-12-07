@@ -16,7 +16,9 @@ path('add_mkcb_form', views.form_add_mkcb, name = 'add_mkcb_form'),
 path('add_mkcb', views.add_mkcb, name = 'add_mkcb'),
 path('mkcb/<decimal_number>', views.edit_mkcb_form, name = 'edit_mkcb_form'),
 path('edit_mkcb', views.edit_mkcb, name = 'edit_mkcb'),
-path('delete_mkcb/<decimal_number>', views.delete_mkcb, name = 'delete_mkcb')
+path('delete_mkcb/<decimal_number>', views.delete_mkcb, name = 'delete_mkcb'),
+
+path('upload_file', views.upload_file, name='upload_file'),
 
 
 

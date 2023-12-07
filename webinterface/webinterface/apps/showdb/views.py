@@ -1,7 +1,11 @@
 from django.shortcuts import render
-
-import uuid
-# Create your views here.
+from django.http import Http404, HttpResponseRedirect
+from django.urls import reverse
+from django.contrib.auth import authenticate, login, logout
+from .forms import UploadFileForm
+from .forms import AddDecimalNumber
+from .forms import *
+from uuid import uuid4
 
 from .models import Stations
 from .models import Devices
@@ -10,9 +14,7 @@ from .models import Users
 from .models import DecimalNumbers
 from .models import Files
 
-from django.http import Http404, HttpResponseRedirect
-from django.urls import reverse
-from django.contrib.auth import authenticate, login, logout
+# Create your views here.
 
 def index(request):
 	# data = Botool.objects.all()[:10]
@@ -20,40 +22,42 @@ def index(request):
 	# stations = Stations.objects.all()
 	# devices = Devices.objects.all()
 	# orgs = Clients.objects.all()
-	return render(request, 'showdb/auth.html')
+	form = LoginForm()
+	if request.method == 'POST':
+		form = LoginForm(request.POST)
+		if form.is_valid():
+			print(form.cleaned_data)
+	return render(request, 'showdb/auth.html', {"form": form})
 	
 
 def orgs(request):
 	if not request.user.is_authenticated:
-		return render(request, 'showdb/auth.html')
+		return index(request)
 	print(f"Authenticated: {request.user}")
 	orgs = Clients.objects.all()
 	return render(request, 'showdb/orgs.html', {'orgs': orgs})
 
 def dates(request):
 	if not request.user.is_authenticated:
-		return render(request, 'showdb/auth.html')
+		return index(request)
 	pass
 
 def stations(request):
 	if not request.user.is_authenticated:
-		return render(request, 'showdb/auth.html')
+		return index(request)
 	stations = Stations.objects.all()
 	return render(request, 'showdb/stations.html', {'stations': stations})
 
 def devices(request):
 	if not request.user.is_authenticated:
-		return render(request, 'showdb/auth.html')
+		return index(request)
 	devices = Devices.objects.all()
 	return render(request, 'showdb/devices.html', {'devices': devices})
 
 def auth(request):
 	print("Request:")
-	# print(request.session)
-	# for i in request.session:
-	# 	print(i)
 	username = request.POST["login"]
-	password = request.POST["pass"]
+	password = request.POST["password"]
 	user = authenticate(request, username=username, password=password)
 	if user is not None:
 		login(request, user)
@@ -73,29 +77,60 @@ def log_out(request):
 
 
 
+def handle_uploaded_file(f):
+	print(f"save file.")
+	location = "C:/projects/garbage"
+	uuid = uuid4()
+	with open(f"{location}/{uuid}", "wb+") as destination:
+		for chunk in f.chunks():
+			destination.write(chunk)
+
+def upload_file(request):
+	print(f"upload_file()")
+	if request.method == "POST":
+		file_form = UploadFileForm(request.POST, request.FILES)
+		if form.is_valid():
+			handle_uploaded_file(request.FILES["file"])
+			# return HttpResponseRedirect("/success/url/")
+	else:
+		file_form = UploadFileForm()
+	return render(request, "showdb/edit_mkcb_form.html", {'file_form': file_form, 'decimal_obj': number, 'files':files})
+
+
+
+
+
+
+
+
+
 
 
 def mkcb(request):
 	if not request.user.is_authenticated:
-		return render(request, 'showdb/auth.html')
+		return index(request)
 	mkcb = DecimalNumbers.objects.all()
 	return render(request, 'showdb/mkcb.html', {'mkcb': mkcb})
 
 
 def form_add_mkcb(request):
 	if not request.user.is_authenticated:
-		return render(request, 'showdb/auth.html')
-	return render(request, 'showdb/add_mkcb_form.html')
+		return index(request)
+	form = AddDecimalNumber()
+	return render(request, 'showdb/add_mkcb_form.html', {'form': form})
+
 def edit_mkcb_form(request, decimal_number):
+	print(f"edit_mkcb_form({decimal_number})")
 	if not request.user.is_authenticated:
-		return render(request, 'showdb/auth.html')
+		return index(request)
 	number = DecimalNumbers.objects.get(mkcb = decimal_number)
 	files = Files.objects.filter(parent_number=decimal_number)
-	return render(request, 'showdb/edit_mkcb_form.html', {'decimal_obj': number, 'files':files})
+	file_form = UploadFileForm()
+	return render(request, 'showdb/edit_mkcb_form.html', {'file_form': file_form, 'decimal_obj': number, 'files':files})
 
 def add_mkcb(request):
 	if not request.user.is_authenticated:
-		return render(request, 'showdb/auth.html')
+		return index(request)
 	print(f"add_mkcb()")
 	try:
 		number = request.POST['number']
@@ -122,7 +157,7 @@ def add_mkcb(request):
 
 def edit_mkcb(request, decimal_number):
 	if not request.user.is_authenticated:
-		return render(request, 'showdb/auth.html')
+		return index(request)
 
 def delete_mkcb(request, decimal_number):
 	DecimalNumbers.objects.filter(mkcb=decimal_number).delete()

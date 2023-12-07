@@ -26,17 +26,15 @@
 			There is no files.
 		{% endif %}
 	</p>
+
+	<form action="{% url 'showdb:upload_file' %}" method="POST" enctype="multipart/form-data">
+		{% csrf_token %}
+		<div class="form-error">{{ form.non_field_errors }}</div>
+		{% for f in file_form %}
+			<p><label class="form-label" for={{ f.id_for_label }}>{{f.label}}: </label>{{f}}</p>
+			<div class="form-error">{{f.errors}}</div>
+		{% endfor %}
+		<button type="submit">Добавить</button>
+    </form>
 {% endif %}
-<!-- <form action="{% url 'showdb:delete_mkcb' decimal_obj.mkcb %}" method="POST">
-	{% csrf_token %}
-	<button type="submit">Delete</button>
-</form> -->
-<form action="{% url 'showdb:edit_mkcb' %}" method="POST">
-          <img id="upload-image" src="upload.svg">
-          <div>
-               <input id="file-input" type="file" name="file" multiple>
-               <label for="file-input">Выберите файл</label>
-               <span>или перетащите его сюда</span>
-          </div>
-     </form>
 {% endblock %}
