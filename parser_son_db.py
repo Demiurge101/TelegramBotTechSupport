@@ -61,7 +61,7 @@ for folder_name in mkcb_list:
 			print()
 			print('mkcb number:',mkcb_number)
 			print(f"   mkcb name: {mkcb_name}")
-			SN.addMKCB(mkcb_number, mkcb_name, "uuid")
+			SN.addMKCB(mkcb_number, mkcb_name)
 			for subfolder in os.listdir(mkcb_location + '/' + folder_name):
 				print(f"      -subfolder: {subfolder}")
 				if os.path.isdir(mkcb_location + '/' + folder_name + '/' + subfolder):
@@ -78,7 +78,6 @@ for folder_name in mkcb_list:
 							# if file[index:] != '.lnk':
 								# location = getLinkSource(f"{location}/{file}")
 							SN.add_file_from_location(mkcb_number, typef, location, file, "parser_son_db")
-
 
 
 

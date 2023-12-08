@@ -36,7 +36,7 @@ CREATE TABLE stations
     org_id INT(4) NOT NULL,
     mkcb varchar(25) not null,
     date_out date,
-    location varchar(255) not null,
+    -- location varchar(255) not null,
     description_ varchar(50),
     CONSTRAINT pk_stations
         PRIMARY KEY(serial_number),
@@ -55,7 +55,7 @@ CREATE TABLE devices
      device_name varchar(80) not null,
      mkcb varchar(25) not null,
      date_out date,
-     location varchar(255) not null,
+     -- location varchar(255) not null,
      description_ varchar(50),
     CONSTRAINT PK_devices
         PRIMARY KEY(serial_number),
@@ -72,21 +72,12 @@ CREATE TABLE decimal_numbers
 (
 mkcb varchar(25) unique not null,
 _name varchar(255),
-location varchar(255),
+-- location varchar(255),
 CONSTRAINT PK_mkcb
 	primary key(mkcb)
 );
 
-CREATE TABLE filebond
-(
-    snumber varchar(25) not null,
-    uuid varchar(64) unique not null,
-    CONSTRAINT FK_bond
-        FOREIGN KEY(uuid)
-            REFERENCES files(uuid)
-);
-
-CREATE TABLE files 
+CREATE TABLE files
 (
     uuid varchar(64) unique not null,
     -- parent_number varchar(25) not null,
@@ -98,3 +89,17 @@ CREATE TABLE files
     CONSTRAINT PK_files
         primary key(uuid)
 );
+
+CREATE TABLE filebond
+(
+	id int(16) NOT NULL AUTO_INCREMENT, 
+    snumber varchar(25) not null,
+    uuid varchar(64) not null,
+    CONSTRAINT PK_filebond
+		primary key(id)
+   --  CONSTRAINT FK_files
+--         FOREIGN KEY(uuid)
+--             REFERENCES files(uuid)
+);
+
+

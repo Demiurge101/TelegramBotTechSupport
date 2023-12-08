@@ -558,9 +558,10 @@ def son(message, menu_id=0, overcount=0):
         if(len(device) > 0):
             print('device')
             # sendMedia(message, device['location'], 'son')
-            loc = device['location']
+            loc = 'uuid'
             # decimal_number = device['mkcb']
             son_controller.setNumber(message.from_user.id, device['mkcb'][5:])
+            mkcb_location = 'uuid'
             mkcb_location = SN.getMKCBLocation(device['mkcb'])
             # print(f'mkcb_location d = {mkcb_location}')
             if loc[:1] == '.':
@@ -575,10 +576,10 @@ def son(message, menu_id=0, overcount=0):
 
         if(len(station) > 0):
             print('station')
-            loc = station['location']
+            loc = 'uuid'
             # decimal_number = station['mkcb']
             son_controller.setNumber(message.from_user.id, station['mkcb'][5:])
-            mkcb_location = SN.getMKCBLocation(station['mkcb'])
+            mkcb_location = 'uuid'
             # print(f'mkcb_location s = {mkcb_location}')
             if loc[:1] == '.':
                 loc = SN.dblocation + loc[1:]

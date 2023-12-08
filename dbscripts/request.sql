@@ -5,16 +5,9 @@ use SON_Dispatcher;
 -- select id from clients where org = "Developer";
 -- select * from pathdir;
 -- select * from map; 
-
--- select * from contents;
+-- show tables;
+select * from decimal_numbers;
 -- insert into clients(org, order_key) value ("Новатэк", "novatek");
 
 
-CREATE TABLE filebond
-(
-    snumber varchar(25) not null,
-    uuid varchar(64) unique not null,
-    CONSTRAINT FK_bond
-        FOREIGN KEY(uuid)
-            REFERENCES files(uuid)
-);
+-- show tables;

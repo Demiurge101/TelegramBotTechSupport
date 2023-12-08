@@ -136,19 +136,27 @@ class SonDB(Database):
     common_location = Config.uuid_files_location
 
 
-    def add_file_from_location(self, parent_number, typef, location, name, author=None):
+    def add_file_from_location(self, parent_number, typef, location, name, author='Unknown by SonDB class'):
         file = self.get_files(number=parent_number, typef=typef)
-        if file:
-            self.delete_file(file[0]['uuid'])
+        print(blue_text(f"FILE: {file}"))
         uuid = uuid4()
+        if file:
+            print(yellow_text(f"Warning! This file exist! ({typef} for {parent_number})"))
+            uuid = file[0]['uuid']
+            self.delete_file(file[0]['uuid'])
+            sleep(0.1)
         date = datetime.now().strftime("%Y-%m-%d")
         # copy(location, common_location)
         shutil.copyfile(f"{location}/{name}", f"{self.common_location}/{uuid}")
-        self._commit(f"insert into files(parent_number, typef, uuid, namef, author, load_date) value (\"{parent_number}\", \"{typef.lower()}\", \"{uuid}\", \"{name}\", \"{author}\", \"{date}\")")
+        self._commit(f"insert into files(uuid, typef, namef, author, load_date) value (\"{uuid}\", \"{typef.lower()}\", \"{name}\", \"{author}\", \"{date}\")")
+        self._commit(f"insert into filebond(snumber, uuid) value (\"{parent_number}\", \"{uuid}\")")
 
     def delete_file(self, uuid):
+        print(f"delete_file({uuid})")
         if uuid:
+            print("Deleting...")
             self._commit(f"delete from files where uuid = \"{uuid}\"")
+            self._commit(f"delete from filebond where uuid = \"{uuid}\"")
             os.remove(f"{self.common_location}/{uuid}")
 
 
@@ -156,21 +164,26 @@ class SonDB(Database):
         self._commit(f"update files set file_id = \"{file_id}\" where uuid = \"{uuid}\"")
 
     def get_files(self, number, typef=''):
+        typef = typef.lower()
         res = []
-        if typef:
-            res = self._fetchall(f"select * from files where parent_number = \"{number}\" and typef = \"{typef}\";")
-        else:
-            res = self._fetchall(f"select * from files where parent_number = \"{number}\";")
-        # print(f"res: {res}")
+        filebonds = self._fetchall(f"select * from filebond where snumber = \"{number}\"")
+        for filebond in filebonds:
+            file = self._fetchall(f"select * from files where uuid = \"{filebond['uuid']}\"")
+            print("file:", file)
+            if not typef or file[0]['typef'] == typef:
+                res += file
+        print(f"get_files({number}, {typef}) RES: {res}")
         return res
 
     def get_file_types(self, number):
         res = []
         if number:
-            data = self._fetchall(f"select typef from files where parent_number = \"{number}\"")
-            print(f"DATA: {data}")
-            for typef in data:
-                res.append(typef['typef'])
+            filebonds = self._fetchall(f"select * from filebond where snumber = \"{number}\"")
+            for filebond in filebonds:
+                file = self._fetchall(f"select * from files where uuid = \"{filebond['uuid']}\"")
+                if len(file):
+                    res.append(file[0]['typef'])
+                print(f"get_file_types(), FILE: {file}")
         return res
 
 
@@ -211,10 +224,10 @@ class SonDB(Database):
         return {}
 
     def getMKCBLocation(self,mkcb):
-        res = self._fetchall(f'select location from decimal_numbers where mkcb = "{mkcb}"')
-        if len(res):
-            return res[0]['location']
-        return ''
+        # res = self._fetchall(f'select location from decimal_numbers where mkcb = "{mkcb}"')
+        # if len(res):
+        #     return res[0]['location']
+        return 'uuid'
 
     def getMKCBName(self, mkcb):
         res = self._fetchall(f'select _name from decimal_numbers where mkcb = "{mkcb}"')
@@ -223,26 +236,29 @@ class SonDB(Database):
         return ''
 
     def addMKCB(self, mkcb, name="", location=""):
-        # print(f'add mkcb')
-        if not self.getMKCBLocation(mkcb):
-            # print('insert')
-            self._commit(f'insert into decimal_numbers(mkcb, _name, location) values ("{mkcb}", "{name}", "{location}")')
+        print(f'add mkcb')
+        if not self.getMKCB(mkcb):
+            print('insert')
+            self._commit(f'insert into decimal_numbers(mkcb, _name) values ("{mkcb}", "{name}")')
         else:
-            self.setMKCBLocation(mkcb, location)
+            print("change")
+            # self.setMKCBLocation(mkcb, location)
             self.setMKCBName(mkcb, name)
 
     def setMKCBName(self, mkcb, name):
         self._commit(f'update decimal_numbers set _name = "{name}" where mkcb = "{mkcb}"')
 
     def setMKCBLocation(self, mkcb, location):
-        self._commit(f'update decimal_numbers set location = "{location}" where mkcb = "{mkcb}"')
+        print(yellow_text("Warining! This function obsolete!"))
+        # self._commit(f'update decimal_numbers set location = "{location}" where mkcb = "{mkcb}"')
 
     def deleteMKCB(self, mkcb):
         self._commit(f'delete from decimal_numbers where mkcb = "{mkcb}"')
+        self._commit(f"delete from filebond where snumber = \"{mkcb}\"")
 
 
 
-    def addStation(self, serial_id, org_name, mkcb, date, location, description=""):
+    def addStation(self, serial_id, org_name, mkcb, date, location='', description=""):
         org_id = self.getOrgIdByName(org_name) # org_id
         if org_id < 0:
             print(f"There is no organizations with this name({org_name})!")
@@ -250,10 +266,10 @@ class SonDB(Database):
         if len(self._fetchall(f"select * from stations where serial_number = {serial_id}")) == 1:
             print(f"This station({serial_id}) already exist!")
             return
-        self._commit(f"insert into stations(serial_number, org_id, mkcb, date_out, location, description_) \
-            value({serial_id}, {org_id}, \"{mkcb}\", \"{date}\", \"{location}\", \"{description}\")")
+        self._commit(f"insert into stations(serial_number, org_id, mkcb, date_out, description_) \
+            value({serial_id}, {org_id}, \"{mkcb}\", \"{date}\", \"{description}\")")
 
-    def addDevice(self, serial_id, station_id, org_name, name, mkcb, date, path, description):
+    def addDevice(self, serial_id, station_id, org_name, name, mkcb, date, path="", description=""):
         org_id = self.getOrgIdByName(org_name) # org_id
         if org_id < 0:
             print(f"There is no organizations with this name({org_name})!")
@@ -262,13 +278,13 @@ class SonDB(Database):
             print(f"This device ({serial_id}) already exist!")
             return
         if station_id != None:
-            self._commit(f"insert into devices(serial_number, station_number, org_id, device_name, mkcb, date_out, location, description_) \
-                value({serial_id}, {station_id}, {org_id},  \"{name}\", \"{mkcb}\", \"{date}\", \"{path}\", \"{description}\")", \
+            self._commit(f"insert into devices(serial_number, station_number, org_id, device_name, mkcb, date_out, description_) \
+                value({serial_id}, {station_id}, {org_id},  \"{name}\", \"{mkcb}\", \"{date}\", \"{description}\")", \
                 "insert")
         else:
 
-            self._commit(f"insert into devices(serial_number, org_id, device_name, mkcb, date_out, location, description_) \
-                value({serial_id}, {org_id},  \"{name}\", \"{mkcb}\", \"{date}\", \"{path}\", \"{description}\")", \
+            self._commit(f"insert into devices(serial_number, org_id, device_name, mkcb, date_out, description_) \
+                value({serial_id}, {org_id},  \"{name}\", \"{mkcb}\", \"{date}\", \"{description}\")", \
                 "insert")
 
     def getDevices(self, serial_number, client_id):
@@ -293,6 +309,7 @@ class SonDB(Database):
         return {}
 
     def deleteDevice(self, serial_number, tp="device"):
+        self._commit(f"delete from filebond where snumber = \"{serial_number}\"")
         self._commit(f"delete from {tp}s where serial_number = {serial_number}", "delete <serial_number> error")
 
     def delStation(self, serial_number):
