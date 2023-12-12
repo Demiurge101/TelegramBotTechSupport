@@ -232,6 +232,15 @@ def info(message):
         # bot.send_message(message.chat.id, info_text, parse_mode='HTML')
 
 
+@bot.message_handler(commands=['send'])
+def send_message_to_user(message):
+    stat.fromMessage(message)
+    if message.from_user.id in admins:
+        mdata = message.text.lower().split()
+        if len(mdata) >= 3:
+            user_id = mdata[1]
+            text = mdata[2]
+            bot.send_message(user_id, text)
 
 
 @bot.message_handler(commands=['start'])
@@ -415,9 +424,15 @@ def project_map(message, *args):
     text = getStrMap(0)
     bot.send_message(message.chat.id, text, reply_markup=TSDB.getSubMenu(get_pos(message)))
     if message.from_user.id in admins:
-        text = f"For admins:\r\n /status\r\n /reborn\r\n/reconnect - reconnect DB\r\n /drop - stop bot\r\n\
- /update_ts - обновить базу данных техподдержки\r\n /update_son - обновить базу данных системы одного номера\r\n\
- /info (|son) (|detailed)"
+        text = f"""For admins:
+        /status
+        /reborn
+        /reconnect - reconnect DB
+        /drop - stop bot
+        /update_ts - обновить базу данных техподдержки
+        update_son - обновить базу данных системы одного номера
+        /info (|son) (|detailed)
+        /send <id> <text>"""
         bot.send_message(message.chat.id, text)
 
 @bot.callback_query_handler(func=lambda callback: True)
