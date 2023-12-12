@@ -12,6 +12,9 @@ class Clients(models.Model):
     org = models.CharField(max_length=70)
     order_key = models.CharField(unique=True, max_length=20)
 
+    def __str__(self):
+        return f"{self.org}"
+        
     class Meta:
         managed = False
         db_table = 'clients'
@@ -20,7 +23,9 @@ class Clients(models.Model):
 class DecimalNumbers(models.Model):
     mkcb = models.CharField(primary_key=True, max_length=25)
     field_name = models.CharField(db_column='_name', max_length=255, blank=True, null=True)  # Field renamed because it started with '_'.
-    location = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.mkcb}: {self.field_name}, {self.location}"
 
     class Meta:
         managed = False
@@ -34,22 +39,38 @@ class Devices(models.Model):
     device_name = models.CharField(max_length=80)
     mkcb = models.CharField(max_length=25)
     date_out = models.DateField(blank=True, null=True)
-    location = models.CharField(max_length=255)
     description_field = models.CharField(db_column='description_', max_length=50, blank=True, null=True)  # Field renamed because it ended with '_'.
+
+    def __str__(self):
+        return f"{self.serial_number}({self.station_number}): {self.org}, {self.device_name}, {self.mkcb}, {self.date_out}, {self.location} ({self.description_field})"
 
     class Meta:
         managed = False
         db_table = 'devices'
 
 
+class Filebond(models.Model):
+    snumber = models.CharField(max_length=25)
+    uuid = models.CharField(max_length=64)
+
+    def __str__(self):
+        pass
+
+    class Meta:
+        managed = False
+        db_table = 'filebond'
+
+
 class Files(models.Model):
     uuid = models.CharField(primary_key=True, max_length=64)
-    parent_number = models.CharField(max_length=25)
     typef = models.CharField(max_length=3)
     namef = models.CharField(max_length=128)
     file_id = models.CharField(unique=True, max_length=128, blank=True, null=True)
     author = models.CharField(max_length=50, blank=True, null=True)
     load_date = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.namef}: {self.typef} {self.author} ({self.load_date})"
 
     class Meta:
         managed = False
@@ -61,8 +82,10 @@ class Stations(models.Model):
     org = models.ForeignKey(Clients, models.DO_NOTHING)
     mkcb = models.CharField(max_length=25)
     date_out = models.DateField(blank=True, null=True)
-    location = models.CharField(max_length=255)
     description_field = models.CharField(db_column='description_', max_length=50, blank=True, null=True)  # Field renamed because it ended with '_'.
+
+    def __str__(self):
+        return f"{self.serial_number}: {self.org}, {self.mkcb}, {self.date_out}, {self.location} ({self.description_field})"
 
     class Meta:
         managed = False
@@ -73,6 +96,9 @@ class Users(models.Model):
     org = models.ForeignKey(Clients, models.DO_NOTHING)
     user_id = models.BigIntegerField(unique=True)
     user_name = models.CharField(max_length=32, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.org}: {self.user_id} {self.user_name}"
 
     class Meta:
         managed = False

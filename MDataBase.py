@@ -151,6 +151,9 @@ class SonDB(Database):
         self._commit(f"insert into files(uuid, typef, namef, author, load_date) value (\"{uuid}\", \"{typef.lower()}\", \"{name}\", \"{author}\", \"{date}\")")
         self._commit(f"insert into filebond(snumber, uuid) value (\"{parent_number}\", \"{uuid}\")")
 
+    def add_file_bond(self, parent_number, uuid):
+        self._commit(f"insert into filebond(snumber, uuid) value(\"{parent_number}\", \"{uuid}\")")
+
     def delete_file(self, uuid):
         print(f"delete_file({uuid})")
         if uuid:
