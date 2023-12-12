@@ -172,10 +172,10 @@ class SonDB(Database):
         filebonds = self._fetchall(f"select * from filebond where snumber = \"{number}\"")
         for filebond in filebonds:
             file = self._fetchall(f"select * from files where uuid = \"{filebond['uuid']}\"")
-            print("file:", file)
+            # print("file:", file)
             if not typef or file[0]['typef'] == typef:
                 res += file
-        print(f"get_files({number}, {typef}) RES: {res}")
+        # print(f"get_files({number}, {typef}) RES: {res}")
         return res
 
     def get_file_types(self, number):
@@ -186,7 +186,7 @@ class SonDB(Database):
                 file = self._fetchall(f"select * from files where uuid = \"{filebond['uuid']}\"")
                 if len(file):
                     res.append(file[0]['typef'])
-                print(f"get_file_types(), FILE: {file}")
+                # print(f"get_file_types(), FILE: {file}")
         return res
 
 

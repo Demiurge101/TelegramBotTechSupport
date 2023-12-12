@@ -655,13 +655,13 @@ def son(message, menu_id=0, overcount=0):
                     sended = False
                     if f['file_id'] != None:
                         try:
-                            print('old send')
+                            print(f"Try send old file (file_id: {f['file_id']})")
                             bot.send_document(message.chat.id, f['file_id'])
                             sended = True
                         except Exception as e:
                             print(e)
                     if not sended:
-                        print('new send')
+                        print('Sending new file...')
                         file_id = sendFileByRequest(message.chat.id, f['uuid'], files_location, f['namef'])
                         SN.set_file_id(f['uuid'], file_id)
 
