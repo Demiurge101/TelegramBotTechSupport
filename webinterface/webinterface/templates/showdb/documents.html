@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Документы{% endblock %}
+
+{% block content %}
+
+	<h3>Документы</h3>
+	
+	<p><a href="{% url 'showdb:add_document' %}"><b>Добавить документ</b></a></p>
+
+	{% if files %}
+		<p>Количество: {{ files|length }}</p>
+		{% for file in files %}
+			<br>
+			<p>
+				<a href="{% url 'showdb:edit_document' file.uuid %}">{{file.uuid}}</a><br>
+				{{file}}<br>
+			</p>
+		{% endfor %}
+	{% else %}
+		Нет документов.
+	{% endif %}
+
+
+{% endblock %}

@@ -13,6 +13,9 @@ from .models import Clients
 from .models import Users
 from .models import DecimalNumbers
 from .models import Files
+from .models import Filebond
+
+import Config
 
 # Create your views here.
 
@@ -77,9 +80,33 @@ def log_out(request):
 
 
 
+
+def document_add_form(request, text=""):
+	if not request.user.is_authenticated:
+		return index(request)
+	form = AddDocument()
+	if request.method == 'POST':
+		form = AddDocument(request.POST)
+		if form.is_valid():
+			print(f"form.cleaned_data: {form.cleaned_data}")
+	return render(request, 'showdb/add_document_form.html', {'form': form, 'text': text})
+
+
+def document_edit_form(request, uuid):
+	if not request.user.is_authenticated:
+		return index(request)
+	files = Files.objects.all()
+	return render(request, 'showdb/documents.html', {'files': files})
+
+def documents(request):
+	if not request.user.is_authenticated:
+		return index(request)
+	files = Files.objects.all()
+	return render(request, 'showdb/documents.html', {'files': files})
+
 def handle_uploaded_file(f):
 	print(f"save file.")
-	location = "C:/projects/garbage"
+	location = Config.files_location
 	uuid = uuid4()
 	with open(f"{location}/{uuid}", "wb+") as destination:
 		for chunk in f.chunks():
@@ -106,6 +133,7 @@ def upload_file(request):
 
 
 
+
 def mkcb(request):
 	if not request.user.is_authenticated:
 		return index(request)
@@ -113,18 +141,28 @@ def mkcb(request):
 	return render(request, 'showdb/mkcb.html', {'mkcb': mkcb})
 
 
-def form_add_mkcb(request):
+def form_add_mkcb(request, text=""):
 	if not request.user.is_authenticated:
 		return index(request)
 	form = AddDecimalNumber()
-	return render(request, 'showdb/add_mkcb_form.html', {'form': form})
+	if request.method == 'POST':
+		form = AddDecimalNumber(request.POST)
+		if form.is_valid():
+			print(f"form.cleaned_data: {form.cleaned_data}")
+	return render(request, 'showdb/add_mkcb_form.html', {'form': form, 'text': text})
 
 def edit_mkcb_form(request, decimal_number):
 	print(f"edit_mkcb_form({decimal_number})")
 	if not request.user.is_authenticated:
 		return index(request)
 	number = DecimalNumbers.objects.get(mkcb = decimal_number)
-	files = Files.objects.filter(parent_number=decimal_number)
+	bonds = Filebond.objects.filter(snumber=decimal_number)
+	files = []
+	print(f"Filebonds: \r\n{bonds}")
+	for bond in bonds:
+		file = Files.objects.get(uuid = bond)
+		files.append(file)
+		print(f"file: {file}")
 	file_form = UploadFileForm()
 	return render(request, 'showdb/edit_mkcb_form.html', {'file_form': file_form, 'decimal_obj': number, 'files':files})
 
@@ -142,12 +180,14 @@ def add_mkcb(request):
 			name = request.POST['name']
 			print(f"Name: {name}")
 			if not DecimalNumbers.objects.filter(mkcb=f"МКЦБ.{number}").exists():
-				m = DecimalNumbers.objects.create(mkcb=f"МКЦБ.{number}", field_name=name, location='uuid')
+				m = DecimalNumbers.objects.create(mkcb=f"МКЦБ.{number}", field_name=name)
 				m.save()
 				print(f"after: {m}")
 				return render(request, 'showdb/edit_mkcb_form.html', {'decimal_obj': m})
 			else:
 				print(f"Already exist!")
+				return form_add_mkcb(request, "Такой номер уже существует!")
+			return render(request, 'showdb/auth.html', {"form": form})
 		return render(request, 'showdb/add_mkcb_form.html')
 	except Exception as e:
 		raise Http404(f"Error: Can't create DecimalNumber.\r\n {e}")

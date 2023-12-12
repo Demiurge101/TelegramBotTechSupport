@@ -34,6 +34,11 @@ class UploadFileForm(forms.Form):
 #             'typef': forms.ChoiceField(choices = decimal_file_types)
 #         }
 
+class AddDocument(forms.Form):
+    global decimal_file_types
+    file_type = forms.ChoiceField(choices = decimal_file_types)
+    file = forms.FileField()
+
 
 class AddDecimalNumber(forms.Form):
     number = forms.CharField(max_length=25)

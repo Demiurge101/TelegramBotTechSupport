@@ -25,7 +25,7 @@ class DecimalNumbers(models.Model):
     field_name = models.CharField(db_column='_name', max_length=255, blank=True, null=True)  # Field renamed because it started with '_'.
 
     def __str__(self):
-        return f"{self.mkcb}: {self.field_name}, {self.location}"
+        return f"{self.mkcb}: {self.field_name}"
 
     class Meta:
         managed = False
@@ -42,7 +42,7 @@ class Devices(models.Model):
     description_field = models.CharField(db_column='description_', max_length=50, blank=True, null=True)  # Field renamed because it ended with '_'.
 
     def __str__(self):
-        return f"{self.serial_number}({self.station_number}): {self.org}, {self.device_name}, {self.mkcb}, {self.date_out}, {self.location} ({self.description_field})"
+        return f"{self.serial_number}({self.station_number}): {self.org}, {self.device_name}, {self.mkcb}, {self.date_out} ({self.description_field})"
 
     class Meta:
         managed = False
@@ -54,7 +54,7 @@ class Filebond(models.Model):
     uuid = models.CharField(max_length=64)
 
     def __str__(self):
-        pass
+        return f"{self.uuid}"
 
     class Meta:
         managed = False
@@ -70,7 +70,7 @@ class Files(models.Model):
     load_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.namef}: {self.typef} {self.author} ({self.load_date})"
+        return f"{self.namef}: {self.typef.upper()} {self.author} ({self.load_date})"
 
     class Meta:
         managed = False
@@ -85,7 +85,7 @@ class Stations(models.Model):
     description_field = models.CharField(db_column='description_', max_length=50, blank=True, null=True)  # Field renamed because it ended with '_'.
 
     def __str__(self):
-        return f"{self.serial_number}: {self.org}, {self.mkcb}, {self.date_out}, {self.location} ({self.description_field})"
+        return f"{self.serial_number}: {self.org}, {self.mkcb}, {self.date_out} ({self.description_field})"
 
     class Meta:
         managed = False

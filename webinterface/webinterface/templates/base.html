@@ -50,6 +50,10 @@
 				text-decoration: none;
 			}
 
+			.form-error {
+				color: red;
+			}
+
 		</style>
 	{% endblock %}
 </head>
@@ -61,6 +65,7 @@
 			<a href="{% url 'showdb:mkcb' %}">МКЦБ </a>
 			<a href="{% url 'showdb:stations' %}">Станции </a>
 			<a href="{% url 'showdb:devices' %}">Датчики </a>
+			<a href="{% url 'showdb:documents' %}">Файлы </a>
 			<form action="{% url 'showdb:logout' %}" method="POST">
 				{% csrf_token %}
 				<button class="btn logout" type="submit">Выйти</button>

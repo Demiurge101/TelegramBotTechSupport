@@ -7,7 +7,7 @@
 	{% if stations %}
 		<table>
 		{% for station in stations %}
-			<tr><th>{{station.serial_number}}</th><th>{{station.mkcb}}</th><th>{{station.location}}</th></tr><br>
+			<tr><th>{{station.serial_number}}</th><th>{{station.mkcb}}</th></tr><br>
 		{% endfor %}
 		</table>
 	{% else %}
@@ -19,7 +19,7 @@
 	{% if devices %}
 		<table>
 			{% for device in devices %}
-				<tr><th>{{device.serial_number}}</th><th>{{device.station_number.serial_number}}</th><th>{{device.mkcb}}</th><th>{{device.location}}</th></tr><br>
+				<tr><th>{{device.serial_number}}</th><th>{{device.station_number.serial_number}}</th><th>{{device.mkcb}}</th></tr><br>
 			{% endfor %}
 		</table>
 	{% else %}

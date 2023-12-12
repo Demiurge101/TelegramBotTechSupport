@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}МКЦБ{% endblock %}
+{% block title %}Добавить документ{% endblock %}
 
 {% block menu %}
-<a class='btn' href="{% url 'showdb:mkcb' %}">Назад</a>
+<a class='btn' href="{% url 'showdb:documents' %}">Назад</a>
 {% endblock %}
 
 {% block content %}
 
-<form action="{% url 'showdb:add_mkcb' %}" method="POST">
+<form action="{% url 'showdb:add_document' %}" method="POST">
 	{% csrf_token %}
 	<div class="form-error">{{ text }}</div>
 	{{ form.as_p }}

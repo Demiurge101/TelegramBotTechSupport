@@ -18,6 +18,9 @@ path('mkcb/<decimal_number>', views.edit_mkcb_form, name = 'edit_mkcb_form'),
 path('edit_mkcb', views.edit_mkcb, name = 'edit_mkcb'),
 path('delete_mkcb/<decimal_number>', views.delete_mkcb, name = 'delete_mkcb'),
 
+path('documents', views.documents, name='documents'),
+path('add_document', views.document_add_form, name='add_document'),
+path('edit_document/<uuid>', views.document_edit_form, name='edit_document'),
 path('upload_file', views.upload_file, name='upload_file'),
 
 
