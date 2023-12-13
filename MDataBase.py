@@ -136,12 +136,14 @@ class SonDB(Database):
     common_location = Config.uuid_files_location
 
 
-    def add_file_from_location(self, parent_number, typef, location, name, author='Unknown by SonDB class'):
+    def add_file_from_location(self, parent_number, typef, location, name, author='Unknown by SonDB class', rewrite=True):
         file = self.get_files(number=parent_number, typef=typef)
         print(blue_text(f"FILE: {file}"))
         uuid = uuid4()
         if file:
             print(yellow_text(f"Warning! This file exist! ({typef} for {parent_number})"))
+            if not rewrite:
+                return file[0]['uuid']
             uuid = file[0]['uuid']
             self.delete_file(file[0]['uuid'])
             sleep(0.1)
@@ -150,6 +152,7 @@ class SonDB(Database):
         shutil.copyfile(f"{location}/{name}", f"{self.common_location}/{uuid}")
         self._commit(f"insert into files(uuid, typef, namef, author, load_date) value (\"{uuid}\", \"{typef.lower()}\", \"{name}\", \"{author}\", \"{date}\")")
         self._commit(f"insert into filebond(snumber, uuid) value (\"{parent_number}\", \"{uuid}\")")
+        return uuid
 
     def add_file_bond(self, parent_number, uuid):
         self._commit(f"insert into filebond(snumber, uuid) value(\"{parent_number}\", \"{uuid}\")")
