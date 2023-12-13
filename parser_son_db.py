@@ -72,22 +72,28 @@ for client in Config.clients:
 
 
 def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
-	global SN
-	global path_list
-	global author
-	index = file.rfind('.')
-	if index >= 0:
-		if file[index:] == '.lnk':
-			location = getLinkSource(f"{file_location}/{file_name}")
-			print(green_text(f"LOCATION: {location}"))
-			if location in path_list:
-				SN.add_file_bond(parent_number, path_list[location])
-				print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
-			else:
-				i_loc = location.rfind('/')
-				uuid = SN.add_file_from_location(parent_number, file_type, location[:i_loc], location[i_loc+1:], rewrite=False)
-				path_list[location] = uuid
-	SN.add_file_from_location(parent_number, file_type, file_location, file_name, author, rewrite=False)
+	try:
+		global SN
+		global path_list
+		global author
+		index = file.rfind('.')
+		if index >= 0:
+			if file[index:] == '.lnk':
+				location = getLinkSource(f"{file_location}/{file_name}")
+				print(green_text(f"LOCATION: {location}"))
+				if location in path_list:
+					SN.add_file_bond(parent_number, path_list[location])
+					print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
+				else:
+					i_loc = location.rfind('/')
+					uuid = SN.add_file_from_location(parent_number, file_type, location[:i_loc], location[i_loc+1:], rewrite=False)
+					path_list[location] = uuid
+		SN.add_file_from_location(parent_number, file_type, file_location, file_name, author, rewrite=False)
+	except Exception as e:
+		print(red_text("Error! (device)"), e)
+		f = open(log_file, 'a')
+		f.write(f"{e}\r\n\r\n")
+		f.close()
 
 
 
