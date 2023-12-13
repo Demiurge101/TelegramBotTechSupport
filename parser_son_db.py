@@ -16,7 +16,7 @@ parse_devices = True
 
 
 
-
+common_location = Config.common_location
 source_location = Config.sonDBfiles
 mkcb_location = Config.mkcb_location
 # common_location = Config.uuid_files_location
@@ -80,6 +80,8 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 		if index >= 0:
 			if file[index:] == '.lnk':
 				location = getLinkSource(f"{file_location}/{file_name}")
+				if location[0] == '.':
+					location = common_location + location[1:]
 				print(green_text(f"LOCATION: {location}"))
 				if location in path_list:
 					SN.add_file_bond(parent_number, path_list[location])

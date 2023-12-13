@@ -16,6 +16,7 @@ MyToken = ""
 
 uuid_files_location = ""
 
+common_location = ""
 sonDBfiles = ""
 tsDBfiles = ""
 mkcb_location = ""

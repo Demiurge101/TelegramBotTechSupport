@@ -198,8 +198,8 @@ def get_file_name_or_path(row, splitter, logger=None):
             if len(path_list) >= 2:
                 result = path_list[len(path_list) - 1].strip()
                 for root in shorcut_roots:
-                  # print(yellow_text(f'root: {root}'))
-                  # print(yellow_text(f'result: {result}'))
+                  print(yellow_text(f'root: {root}'))
+                  print(yellow_text(f'result: {result}'))
                   if result.replace('\\', '/').lower().find(root.lower()) > -1 or result.replace('/', '\\').lower().find(root.lower()) > -1:
                     result = f".{result[len(root):]}"
         except AttributeError as e:
