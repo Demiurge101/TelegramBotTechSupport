@@ -117,6 +117,7 @@ if parse_mkcb:
 								if tp[0]:
 									SN.add_file_bond(mkcb_number, tp[1])
 									print(green_text(f"From {location}/{file}, get {tp[1]}"))
+									file = file[:-4]
 								else:
 									uuid = SN.add_file_from_location(mkcb_number, typef, location, file, "parser_son_db", rewrite=rewrite)
 									if tp[1]:
@@ -166,6 +167,7 @@ def parse_device_mkcb(folder_name, folder_location, station_id, org_name, date_o
 					if tp[0]:
 						SN.add_file_bond(serial_number, tp[1])
 						print(green_text(f"From {types_folder}/{file}, get {tp[1]}"))
+						file = file[:-4]
 					else:
 						uuid = SN.add_file_from_location(serial_number, typef, types_folder, file, "parser_son_db", rewrite=rewrite)
 						if tp[1]:
@@ -173,7 +175,7 @@ def parse_device_mkcb(folder_name, folder_location, station_id, org_name, date_o
 	except Exception as e:
 		print(red_text("Error! (device)"), e)
 		f = open(log_file, 'a')
-		f.write(str(e))
+		f.write(f"{e}\r\n\r\n")
 		f.close()
 
 
@@ -216,6 +218,7 @@ def parse_station_mkcb(org_name, date_out, mkcb, mkcb_folder):
 							tp = get_common_file(device_folder, file)
 							if tp[0]:
 								print(green_text(f"From {device_folder}/{file}, get {tp[1]}"))
+								file = file[:-4]
 								SN.add_file_bond(number, tp[1])
 							else:
 								uuid = SN.add_file_from_location(number, typef, device_folder, file, "parser_son_db", rewrite=rewrite)
@@ -224,7 +227,7 @@ def parse_station_mkcb(org_name, date_out, mkcb, mkcb_folder):
 	except Exception as e:
 		print(red_text("Error! (station)"), e)
 		f = open(log_file, 'a')
-		f.write(str(e))
+		f.write(f"{e}\r\n\r\n")
 		f.close()
 
 
