@@ -104,7 +104,7 @@ def documents(request):
 	files = Files.objects.all()
 	return render(request, 'showdb/documents.html', {'files': files})
 
-def handle_uploaded_file(f):
+def save_uploaded_file(f):
 	print(f"save file.")
 	location = Config.files_location
 	uuid = uuid4()
@@ -115,13 +115,13 @@ def handle_uploaded_file(f):
 def upload_file(request):
 	print(f"upload_file()")
 	if request.method == "POST":
-		file_form = UploadFileForm(request.POST, request.FILES)
-		if form.is_valid():
-			handle_uploaded_file(request.FILES["file"])
+		file_form = AddDocument(request.POST, request.FILES)
+		if file_form.is_valid():
+			save_uploaded_file(request.FILES["file"])
 			# return HttpResponseRedirect("/success/url/")
 	else:
-		file_form = UploadFileForm()
-	return render(request, "showdb/edit_mkcb_form.html", {'file_form': file_form, 'decimal_obj': number, 'files':files})
+		file_form = AddDocument()
+	return render(request, 'showdb/add_document_form.html', {'form': file_form})
 
 
 

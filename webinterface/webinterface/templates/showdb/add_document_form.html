@@ -8,7 +8,7 @@
 
 {% block content %}
 
-<form action="{% url 'showdb:add_document' %}" method="POST">
+<form action="{% url 'showdb:upload_file' %}" method="POST" enctype="multipart/form-data">
 	{% csrf_token %}
 	<div class="form-error">{{ text }}</div>
 	{{ form.as_p }}

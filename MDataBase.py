@@ -318,6 +318,9 @@ class SonDB(Database):
     def delStation(self, serial_number):
         deleteDevice(serial_number, "station")
 
+    def addOrg(self, name, key):
+        self._commit(f"insert into clients(org, order_key) value (\"{name}\", \"{key}\")")
+
     def getOrgIdByName(self, name):
         res = self._fetchall(f"select id from clients where org = \"{name}\"")
         # print("org_id = ", res)

@@ -54,18 +54,24 @@
 				color: red;
 			}
 
+			.menu {
+				font-size: 28px;
+/*				color: black;*/
+				text-decoration: none;
+			}
+
 		</style>
 	{% endblock %}
 </head>
 <body>
 	{% block menu %}
 		<p>
-			<a href="{% url 'showdb:orgs' %}">Организации </a>
-			<a href="">Даты </a>
-			<a href="{% url 'showdb:mkcb' %}">МКЦБ </a>
-			<a href="{% url 'showdb:stations' %}">Станции </a>
-			<a href="{% url 'showdb:devices' %}">Датчики </a>
-			<a href="{% url 'showdb:documents' %}">Файлы </a>
+			<a class="menu" href="{% url 'showdb:orgs' %}">Организации </a>
+			<a class="menu" href="">Даты </a>
+			<a class="menu" href="{% url 'showdb:mkcb' %}">МКЦБ </a>
+			<a class="menu" href="{% url 'showdb:stations' %}">Станции </a>
+			<a class="menu" href="{% url 'showdb:devices' %}">Датчики </a>
+			<a class="menu" href="{% url 'showdb:documents' %}">Файлы </a>
 			<form action="{% url 'showdb:logout' %}" method="POST">
 				{% csrf_token %}
 				<button class="btn logout" type="submit">Выйти</button>
