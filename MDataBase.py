@@ -137,6 +137,7 @@ class SonDB(Database):
 
 
     def add_file_from_location(self, parent_number, typef, location, name, author='Unknown by SonDB class', rewrite=True):
+        # print(green_text(f"add file:  {location}  {name}"))
         file = self.get_files(number=parent_number, typef=typef)
         print(blue_text(f"FILE: {file}"))
         uuid = uuid4()

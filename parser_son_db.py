@@ -6,7 +6,7 @@ from getpass import getpass
 from includes import *
 
 
-
+author = "parser_son_db"
 log_file = "son_parser_log.txt"
 rewrite = False
 
@@ -71,17 +71,22 @@ for client in Config.clients:
 
 
 
-def get_common_file(types_folder, file):
-	index = file.find('.')
+def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
+	global SN
+	global path_list
+	global author
+	index = file.rfind('.')
 	if index >= 0:
-		if file[index:] != '.lnk':
-			location = getLinkSource(f"{types_folder}/{file}")
+		if file[index:] == '.lnk':
+			location = getLinkSource(f"{file_location}/{file_name}")
 			if location in path_list:
-				return (True, path_list[location])
+				SN.add_file_bond(parent_number, path_list[location])
+				print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
 			else:
-				return (False, location)
-	return (False, '')
-
+				i_loc = location.rfind('/')
+				uuid = SN.add_file_from_location(parent_number, file_type, location[:i_loc], location[i_loc+1:], rewrite=False)
+				path_list[location] = uuid
+	SN.add_file_from_location(parent_number, file_type, file_location, file_name, author, rewrite=False)
 
 
 
@@ -113,18 +118,8 @@ if parse_mkcb:
 								print(f"         file: {file}")
 								print(f"abspath: {location}")
 								# print(yellow_text(file))
-								tp = get_common_file(location, file)
-								if tp[0]:
-									SN.add_file_bond(mkcb_number, tp[1])
-									print(green_text(f"From {location}/{file}, get {tp[1]}"))
-								else:
-									if tp[1]:
-										index_l = tp[1].rfind('/')
-										location = tp[1][:index_l]
-										file = tp[1][index_l+1:-4]
-									uuid = SN.add_file_from_location(mkcb_number, typef, location, file, "parser_son_db", rewrite=rewrite)
-									if tp[1]:
-										path_list[tp[1]] = uuid
+								add_file(mkcb_number, typef, location, file, rewrite=rewrite)
+								
 
 
 
@@ -151,7 +146,7 @@ def parse_device_mkcb(folder_name, folder_location, station_id, org_name, date_o
 		list_devices = os.listdir(folder_devices)
 		for serial_number in list_devices:
 			device_folder = os.path.abspath(f"{folder_devices}/{serial_number}")
-			SN.addDevice(serial_number, station_id, org_name, name, mkcb, date_out, "uuid", "parser_son_db")
+			SN.addDevice(serial_number, station_id, org_name, name, mkcb, date_out, description=author)
 			list_types = os.listdir(device_folder)
 			for folder_type in list_types:
 				types_folder = os.path.abspath(f"{device_folder}/{folder_type}")
@@ -166,19 +161,7 @@ def parse_device_mkcb(folder_name, folder_location, station_id, org_name, date_o
 					# if index >= 0:
 					# 	if file[index:] != '.lnk':
 							# types_folder = getLinkSource(f"{types_folder}/{file}")
-					tp = get_common_file(types_folder, file)
-					if tp[0]:
-						SN.add_file_bond(serial_number, tp[1])
-						print(green_text(f"From {types_folder}/{file}, get {tp[1]}"))
-					else:
-						lc = types_folder
-						if tp[1]:
-							index_l = tp[1].rfind('/')
-							lc = tp[1][:index_l]
-							file = tp[1][index_l+1:-4]
-						uuid = SN.add_file_from_location(serial_number, typef, lc, file, "parser_son_db", rewrite=rewrite)
-						if tp[1]:
-							path_list[tp[1]] = uuid
+					add_file(serial_number, typef, types_folder, file, rewrite=rewrite)
 	except Exception as e:
 		print(red_text("Error! (device)"), e)
 		f = open(log_file, 'a')
@@ -205,7 +188,7 @@ def parse_station_mkcb(org_name, date_out, mkcb, mkcb_folder):
 		for number in numbers:
 			devices_folder = os.path.abspath(f"{numbers_folder}/{number}")
 			if os.path.isdir(devices_folder):
-				SN.addStation(number, org_name, decimal_number, date_out, "uuid", "parser_son_db")
+				SN.addStation(number, org_name, decimal_number, date_out, description=author)
 				devices = os.listdir(devices_folder)
 				for device in devices:
 					# print("-----", device)
@@ -222,19 +205,7 @@ def parse_station_mkcb(org_name, date_out, mkcb, mkcb_folder):
 							# index = file.find('.')
 							# if index > -1 and file[index:] != '.lnk':
 								# types_folder = getLinkSource(f"{location}/{file}")
-							tp = get_common_file(device_folder, file)
-							if tp[0]:
-								print(green_text(f"From {device_folder}/{file}, get {tp[1]}"))
-								SN.add_file_bond(number, tp[1])
-							else:
-								lc = device_folder
-								if tp[1]:
-									index_l = tp[1].rfind('/')
-									lc = tp[1][:index_l]
-									file = tp[1][index_l+1:-4]
-								uuid = SN.add_file_from_location(number, typef, lc, file, "parser_son_db", rewrite=rewrite)
-								if tp[1]:
-									path_list[tp[1]] = uuid
+							add_file(number, typef, device_folder, file, rewrite=rewrite)
 	except Exception as e:
 		print(red_text("Error! (station)"), e)
 		f = open(log_file, 'a')
