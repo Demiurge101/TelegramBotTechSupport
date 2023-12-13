@@ -79,6 +79,7 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 	if index >= 0:
 		if file[index:] == '.lnk':
 			location = getLinkSource(f"{file_location}/{file_name}")
+			print(green_text(f"LOCATION: {location}"))
 			if location in path_list:
 				SN.add_file_bond(parent_number, path_list[location])
 				print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
