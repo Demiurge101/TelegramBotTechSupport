@@ -71,7 +71,7 @@
 			<a class="menu" href="{% url 'showdb:mkcb' %}">МКЦБ </a>
 			<a class="menu" href="{% url 'showdb:stations' %}">Станции </a>
 			<a class="menu" href="{% url 'showdb:devices' %}">Датчики </a>
-			<a class="menu" href="{% url 'showdb:documents' %}">Файлы </a>
+			<a class="menu" href="{% url 'showdb:documents' %}">Документы </a>
 			<form action="{% url 'showdb:logout' %}" method="POST">
 				{% csrf_token %}
 				<button class="btn logout" type="submit">Выйти</button>

@@ -38,6 +38,7 @@ class AddDocument(forms.Form):
     global decimal_file_types
     file_type = forms.ChoiceField(choices = decimal_file_types)
     file = forms.FileField()
+    file_name = forms.CharField(max_length=255, required=False)
 
 
 class AddDecimalNumber(forms.Form):

@@ -6,6 +6,7 @@ from .forms import UploadFileForm
 from .forms import AddDecimalNumber
 from .forms import *
 from uuid import uuid4
+from datetime import datetime
 
 from .models import Stations
 from .models import Devices
@@ -104,26 +105,40 @@ def documents(request):
 	files = Files.objects.all()
 	return render(request, 'showdb/documents.html', {'files': files})
 
-def save_uploaded_file(f):
+def save_uploaded_file(request):
 	print(f"save file.")
 	location = Config.files_location
 	uuid = uuid4()
+	date = datetime.now().strftime("%Y-%m-%d")
+	frequest = request.FILES["file"]
 	with open(f"{location}/{uuid}", "wb+") as destination:
-		for chunk in f.chunks():
+		for chunk in frequest.chunks():
 			destination.write(chunk)
+	try:
+		print(request.POST)
+		file_name = request.POST['file_name']
+		if not file_name:
+			file_name = frequest
+		file_obj = Files.objects.create(uuid=uuid, typef=request.POST['file_type'], namef=file_name, file_id=None, author='web', load_date=date)
+		file_obj.save()
+	except Exception as e:
+		print(e)
 
 def upload_file(request):
 	print(f"upload_file()")
 	if request.method == "POST":
 		file_form = AddDocument(request.POST, request.FILES)
 		if file_form.is_valid():
-			save_uploaded_file(request.FILES["file"])
-			# return HttpResponseRedirect("/success/url/")
+			save_uploaded_file(request)
 	else:
 		file_form = AddDocument()
 	return render(request, 'showdb/add_document_form.html', {'form': file_form})
 
 
+def delete_file(request, uuid):
+	Files.objects.filter(uuid=uuid).delete()
+	Filebond.objects.filter(uuid=uuid).delete()
+	return HttpResponseRedirect( reverse('showdb:documents'))
 
 
 
