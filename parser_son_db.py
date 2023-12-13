@@ -173,7 +173,7 @@ def parse_device_mkcb(folder_name, folder_location, station_id, org_name, date_o
 	except Exception as e:
 		print(red_text("Error! (device)"), e)
 		f = open(log_file, 'a')
-		f.write(e)
+		f.write(str(e))
 		f.close()
 
 
@@ -224,7 +224,7 @@ def parse_station_mkcb(org_name, date_out, mkcb, mkcb_folder):
 	except Exception as e:
 		print(red_text("Error! (station)"), e)
 		f = open(log_file, 'a')
-		f.write(e)
+		f.write(str(e))
 		f.close()
 
 
