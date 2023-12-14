@@ -48,6 +48,20 @@ class Devices(models.Model):
         managed = False
         db_table = 'devices'
 
+class Stations(models.Model):
+    serial_number = models.IntegerField(primary_key=True)
+    org = models.ForeignKey(Clients, models.DO_NOTHING)
+    mkcb = models.CharField(max_length=25)
+    date_out = models.DateField(blank=True, null=True)
+    description_field = models.CharField(db_column='description_', max_length=50, blank=True, null=True)  # Field renamed because it ended with '_'.
+
+    def __str__(self):
+        return f"{self.serial_number}: {self.org}, {self.mkcb}, {self.date_out} ({self.description_field})"
+
+    class Meta:
+        managed = False
+        db_table = 'stations'
+
 
 class Filebond(models.Model):
     snumber = models.CharField(max_length=25)
@@ -76,20 +90,6 @@ class Files(models.Model):
         managed = False
         db_table = 'files'
 
-
-class Stations(models.Model):
-    serial_number = models.IntegerField(primary_key=True)
-    org = models.ForeignKey(Clients, models.DO_NOTHING)
-    mkcb = models.CharField(max_length=25)
-    date_out = models.DateField(blank=True, null=True)
-    description_field = models.CharField(db_column='description_', max_length=50, blank=True, null=True)  # Field renamed because it ended with '_'.
-
-    def __str__(self):
-        return f"{self.serial_number}: {self.org}, {self.mkcb}, {self.date_out} ({self.description_field})"
-
-    class Meta:
-        managed = False
-        db_table = 'stations'
 
 
 class Users(models.Model):

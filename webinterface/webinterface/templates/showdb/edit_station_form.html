@@ -3,5 +3,48 @@
 
 
 {% block menu %}
-<a class="btn" href="{% url 'showdb:stations' %}">Stations</a>
+<a class="btn" href="{% url 'showdb:stations' %}">Станции</a>
+{% endblock %}
+
+{% block content %}
+	{% if station %}
+		<p>
+			Номер: {{station.serial_number}}<br>
+			МКЦБ: {{station.mkcb}}<br>
+			Отгружен: {{ station.org }}, {{ station.date_out }}<br>
+			Описание: {{ station.description_field }}<br>
+			<br>
+			<a class="btn" href="{% url 'showdb:delete_device' station.serial_number %}">Удалить станцию</a>
+		</p>
+		<p>
+			{% if devices %}
+				Устройства:<br>
+				{% for device in devices %}
+					<p><a href="{% url 'showdb:edit_device_form' device.serial_number %}">{{ device.serial_number }}</a> {{ device.device_name }}</p>
+				{% endfor %}
+				
+			{% endif %}
+			{% if files %}
+				<table>
+				<tr><th>Название</th><th>Тип документа</th><th>Автор</th><th>Дата загрузки</th></tr>
+				{% for file in files %}
+					<tr><td>{{ file.namef }}</td><td>{{ file.typef }}</td><td>{{ file.author }}</td><td>{{ file.load_date }}</td>
+						<td><a href="{% url 'showdb:delete_document' file.uuid %}">Delete</a></td></tr>
+				{% endfor %}
+				</table>
+			{% else %}
+				Нет файлов для этого устройства.
+			{% endif %}
+		</p>
+
+		<form action="{% url 'showdb:upload_file' station.serial_number %}" method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div class="form-error">{{ file_form.non_field_errors }}</div>
+			{% for f in file_form %}
+				<p><label class="form-label" for={{ f.id_for_label }}>{{f.label}}: </label>{{f}}</p>
+				<div class="form-error">{{f.errors}}</div>
+			{% endfor %}
+			<button type="submit">Добавить</button>
+	    </form>
+	{% endif %}
 {% endblock %}

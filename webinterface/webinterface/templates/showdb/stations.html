@@ -12,7 +12,7 @@
 		<p>Количество: {{ stations|length }}</p>
 		{% for station in stations %}
 			<p>
-				Заводской номер: <a href="">{{station.serial_number}}</a><br>
+				Заводской номер: <a href="{% url 'showdb:edit_station_form' station.serial_number %}">{{station.serial_number}}</a><br>
 				<a href="{% url 'showdb:edit_mkcb_form' station.mkcb %}">{{station.mkcb}}</a><br>
 				Отгружен: {{station.date_out}}, {{station.org}}<br>
 			</p>

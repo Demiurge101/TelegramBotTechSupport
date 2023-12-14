@@ -296,6 +296,18 @@ def add_station(request):
 def edit_station_form(request, number):
 	if not request.user.is_authenticated:
 		return index(request)
+	station = Stations.objects.get(serial_number = number)
+	devices = Devices.objects.filter(station_number = number)
+	bonds = Filebond.objects.filter(snumber=number)
+	files = []
+	print(f"Filebonds: \r\n{bonds}")
+	for bond in bonds:
+		file = Files.objects.get(uuid = bond)
+		files.append(file)
+		print(f"file: {file}")
+	file_form = AddDocument()
+	return render(request, 'showdb/edit_station_form.html', {'file_form': file_form, 'station': station, 'devices': devices, 'files':files})
+
 
 def edit_station(request):
 	if not request.user.is_authenticated:
