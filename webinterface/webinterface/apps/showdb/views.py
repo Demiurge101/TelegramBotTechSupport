@@ -46,17 +46,8 @@ def dates(request):
 		return index(request)
 	pass
 
-def stations(request):
-	if not request.user.is_authenticated:
-		return index(request)
-	stations = Stations.objects.all()
-	return render(request, 'showdb/stations.html', {'stations': stations})
 
-def devices(request):
-	if not request.user.is_authenticated:
-		return index(request)
-	devices = Devices.objects.all()
-	return render(request, 'showdb/devices.html', {'devices': devices})
+
 
 def auth(request):
 	print("Request:")
@@ -238,3 +229,80 @@ def delete_mkcb(request, decimal_number):
 
 
 
+
+
+def devices(request):
+	if not request.user.is_authenticated:
+		return index(request)
+	devices = Devices.objects.all()
+	return render(request, 'showdb/devices.html', {'devices': devices})
+
+def form_add_device(request):
+	if not request.user.is_authenticated:
+		return index(request)
+
+
+def add_device(request):
+	if not request.user.is_authenticated:
+		return index(request)
+
+def edit_device_form(request, number):
+	if not request.user.is_authenticated:
+		return index(request)
+	device = Devices.objects.get(serial_number = number)
+	bonds = Filebond.objects.filter(snumber=number)
+	files = []
+	print(f"Filebonds: \r\n{bonds}")
+	for bond in bonds:
+		file = Files.objects.get(uuid = bond)
+		files.append(file)
+		print(f"file: {file}")
+	file_form = AddDocument()
+	return render(request, 'showdb/edit_device_form.html', {'file_form': file_form, 'device': device, 'files':files})
+
+
+def edit_device(request):
+	if not request.user.is_authenticated:
+		return index(request)
+
+def delete_device(request, number):
+	if not request.user.is_authenticated:
+		return index(request)
+	Devices.objects.filter(serial_number=number).delete()
+	return HttpResponseRedirect( reverse('showdb:devices'))
+
+
+
+
+
+
+
+
+def stations(request):
+	if not request.user.is_authenticated:
+		return index(request)
+	stations = Stations.objects.all()
+	return render(request, 'showdb/stations.html', {'stations': stations})
+
+def form_add_station(request):
+	if not request.user.is_authenticated:
+		return index(request)
+
+
+def add_station(request):
+	if not request.user.is_authenticated:
+		return index(request)
+
+def edit_station_form(request, number):
+	if not request.user.is_authenticated:
+		return index(request)
+
+def edit_station(request):
+	if not request.user.is_authenticated:
+		return index(request)
+
+def delete_station(request, number):
+	if not request.user.is_authenticated:
+		return index(request)
+	Stations.objects.filter(serial_number=number).delete()
+	return HttpResponseRedirect( reverse('showdb:stations'))

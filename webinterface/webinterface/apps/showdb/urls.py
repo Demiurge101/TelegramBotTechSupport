@@ -6,8 +6,6 @@ app_name = 'showdb'
 urlpatterns = [
 path('', views.index, name = 'index'),
 path('orgs', views.orgs, name = 'orgs'),
-path('stations', views.stations, name = 'stations'),
-path('devices', views.devices, name = 'devices'),
 path('auth', views.auth, name = 'auth'),
 path('logout', views.log_out, name = 'logout'),
 
@@ -24,6 +22,20 @@ path('edit_document/<uuid>', views.document_edit_form, name='edit_document'),
 path('delete_document/<uuid>', views.delete_file, name='delete_document'),
 path('upload_file', views.upload_file, name='upload_file'),
 path('upload_file/<number>', views.upload_file, name='upload_file'),
+
+path('stations', views.stations, name = 'stations'),
+path('add_station_form', views.form_add_station, name = 'add_station_form'),
+path('add_station', views.add_station, name = 'add_station'),
+path('station/<number>', views.edit_station_form, name = 'edit_station_form'),
+path('edit_station', views.edit_station, name = 'edit_station'),
+path('delete_station/<number>', views.delete_station, name = 'delete_station'),
+
+path('devices', views.devices, name = 'devices'),
+path('add_device_form', views.form_add_device, name = 'add_device_form'),
+path('add_device', views.add_device, name = 'add_device'),
+path('device/<number>', views.edit_device_form, name = 'edit_device_form'),
+path('edit_device', views.edit_device, name = 'edit_device'),
+path('delete_device/<int:number>', views.delete_device, name = 'delete_device'),
 
 
 

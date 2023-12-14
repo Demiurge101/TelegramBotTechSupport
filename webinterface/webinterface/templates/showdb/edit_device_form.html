@@ -1,18 +1,23 @@
 {% extends 'base.html' %}
-{% block title %}Редактирование МКЦБ{% endblock %}
+{% block title %}Редактирование Устройства{% endblock %}
 
 
 {% block menu %}
-<a class="btn" href="{% url 'showdb:mkcb' %}">Назад</a>
+<a class="btn" href="{% url 'showdb:devices' %}">Датчики</a>
 {% endblock %}
 
 {% block content %}
 
-{% if decimal_obj %}
+{% if device %}
 	<p>
-		{{decimal_obj.mkcb}}<br>
-		{{decimal_obj.field_name}}<br><br>
-		<a class="btn" href="{% url 'showdb:delete_mkcb' decimal_obj.mkcb %}">Удалить децимальный номер</a>
+		{{device.serial_number}}<br>
+		{{device.device_name}}<br>
+		Station: {{device.station_number}}<br>
+		mkcb: {{device.mkcb}}<br>
+		Отгружен: {{ device.org }}, {{ device.date_out }}<br>
+		Описание: {{ device.description_field }}<br>
+		<br>
+		<a class="btn" href="{% url 'showdb:delete_device' device.serial_number %}">Удалить устройство</a>
 	</p>
 	<p>
 		{% if files %}
@@ -24,11 +29,11 @@
 			{% endfor %}
 			</table>
 		{% else %}
-			Нет файлов для этого МКЦБ.
+			Нет файлов для этого устройства.
 		{% endif %}
 	</p>
 
-	<form action="{% url 'showdb:upload_file' decimal_obj.mkcb %}" method="POST" enctype="multipart/form-data">
+	<form action="{% url 'showdb:upload_file' device.serial_number %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
 		<div class="form-error">{{ file_form.non_field_errors }}</div>
 		{% for f in file_form %}

@@ -46,6 +46,14 @@ class AddDecimalNumber(forms.Form):
     name = forms.CharField(max_length=255)
 
 
+class AddStationForm(forms.Form):
+    number = forms.CharField(min_length=8, max_length=8)
+
+
+class AddDeviceFrom(forms.Form):
+    number = forms.CharField(min_length=8, max_length=8)
+
+
 class LoginForm(forms.Form):
     login = forms.CharField(max_length=65, label="Логин")
     password = forms.CharField(widget=forms.PasswordInput(), label="Пароль")
