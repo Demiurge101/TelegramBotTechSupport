@@ -27,9 +27,9 @@
 		{% endif %}
 	</p>
 
-	<form action="{% url 'showdb:upload_file' %}" method="POST" enctype="multipart/form-data">
+	<form action="{% url 'showdb:upload_file' decimal_obj.mkcb %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
-		<div class="form-error">{{ form.non_field_errors }}</div>
+		<div class="form-error">{{ file_form.non_field_errors }}</div>
 		{% for f in file_form %}
 			<p><label class="form-label" for={{ f.id_for_label }}>{{f.label}}: </label>{{f}}</p>
 			<div class="form-error">{{f.errors}}</div>

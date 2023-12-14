@@ -105,11 +105,14 @@ def documents(request):
 	files = Files.objects.all()
 	return render(request, 'showdb/documents.html', {'files': files})
 
-def save_uploaded_file(request):
+def save_uploaded_file(request, number = ""):
+	if not request.user.is_authenticated:
+		return index(request)
 	print(f"save file.")
 	location = Config.files_location
 	uuid = uuid4()
 	date = datetime.now().strftime("%Y-%m-%d")
+	user_name = request.user.username
 	frequest = request.FILES["file"]
 	with open(f"{location}/{uuid}", "wb+") as destination:
 		for chunk in frequest.chunks():
@@ -119,23 +122,33 @@ def save_uploaded_file(request):
 		file_name = request.POST['file_name']
 		if not file_name:
 			file_name = frequest
-		file_obj = Files.objects.create(uuid=uuid, typef=request.POST['file_type'], namef=file_name, file_id=None, author='web', load_date=date)
+		file_obj = Files.objects.create(uuid=uuid, typef=request.POST['file_type'], namef=file_name, file_id=None, author=user_name, load_date=date)
 		file_obj.save()
+		if number:
+			bond = Filebond.objects.create(snumber=number, uuid=uuid)
+			bond.save()
 	except Exception as e:
 		print(e)
 
-def upload_file(request):
-	print(f"upload_file()")
+def upload_file(request, number=""):
+	print(f"upload_file({number})")
+	if not request.user.is_authenticated:
+		return index(request)
 	if request.method == "POST":
 		file_form = AddDocument(request.POST, request.FILES)
 		if file_form.is_valid():
-			save_uploaded_file(request)
+			save_uploaded_file(request, number)
 	else:
 		file_form = AddDocument()
-	return render(request, 'showdb/add_document_form.html', {'form': file_form})
+	if number:
+		if number[:4] == 'МКЦБ':
+			return edit_mkcb_form(request, number)
+	return render(request, 'showdb/add_document_form.html', {'form': file_form, 'number': number})
 
 
 def delete_file(request, uuid):
+	if not request.user.is_authenticated:
+		return index(request)
 	Files.objects.filter(uuid=uuid).delete()
 	Filebond.objects.filter(uuid=uuid).delete()
 	return HttpResponseRedirect( reverse('showdb:documents'))
@@ -178,7 +191,7 @@ def edit_mkcb_form(request, decimal_number):
 		file = Files.objects.get(uuid = bond)
 		files.append(file)
 		print(f"file: {file}")
-	file_form = UploadFileForm()
+	file_form = AddDocument()
 	return render(request, 'showdb/edit_mkcb_form.html', {'file_form': file_form, 'decimal_obj': number, 'files':files})
 
 def add_mkcb(request):
@@ -215,6 +228,8 @@ def edit_mkcb(request, decimal_number):
 		return index(request)
 
 def delete_mkcb(request, decimal_number):
+	if not request.user.is_authenticated:
+		return index(request)
 	DecimalNumbers.objects.filter(mkcb=decimal_number).delete()
 	return HttpResponseRedirect( reverse('showdb:mkcb'))
 

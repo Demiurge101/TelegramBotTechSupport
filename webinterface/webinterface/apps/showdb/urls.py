@@ -23,6 +23,8 @@ path('add_document', views.document_add_form, name='add_document'),
 path('edit_document/<uuid>', views.document_edit_form, name='edit_document'),
 path('delete_document/<uuid>', views.delete_file, name='delete_document'),
 path('upload_file', views.upload_file, name='upload_file'),
+path('upload_file/<number>', views.upload_file, name='upload_file'),
+
 
 
 

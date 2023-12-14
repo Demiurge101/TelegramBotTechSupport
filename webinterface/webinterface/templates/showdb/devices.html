@@ -15,12 +15,12 @@
 				Заводской номер: <a href="">{{device.serial_number}}</a><br>
 				Станция: <a href="">{{device.station_number.serial_number}}</a><br>
 				Название: {{device.device_name}}<br>
-				<a href="">{{device.mkcb}}</a><br>
+				<a href="{% url 'showdb:edit_mkcb_form' device.mkcb %}">{{device.mkcb}}</a><br>
 				Отгружен: {{device.date_out}}, {{device.org}}<br>
 			</p>
 		{% endfor %}
 	{% else %}
-		No devices.
+		Нет устройств.
 	{% endif %}
 
 
