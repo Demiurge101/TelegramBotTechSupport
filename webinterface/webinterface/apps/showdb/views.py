@@ -2,12 +2,11 @@ from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
-from .forms import UploadFileForm
-from .forms import AddDecimalNumber
-from .forms import *
+
 from uuid import uuid4
 from datetime import datetime
 
+from .forms import *
 from .models import Stations
 from .models import Devices
 from .models import Clients
@@ -240,11 +239,20 @@ def devices(request):
 def form_add_device(request):
 	if not request.user.is_authenticated:
 		return index(request)
+	form = AddDeviceForm()
+	if request.method == 'POST':
+		form = AddDeviceForm(request.POST)
+		if form.is_valid():
+			print(f"form.cleaned_data: {form.cleaned_data}")
+	text = ''
+	return render(request, 'showdb/add_device_form.html', {'form': form, 'text': text})
 
 
 def add_device(request):
 	if not request.user.is_authenticated:
 		return index(request)
+	number = request.POST['number']
+	return edit_device_form(request, number)
 
 def edit_device_form(request, number):
 	if not request.user.is_authenticated:
@@ -287,11 +295,20 @@ def stations(request):
 def form_add_station(request):
 	if not request.user.is_authenticated:
 		return index(request)
+	form = AddStationForm()
+	if request.method == 'POST':
+		form = AddStationForm(request.POST)
+		if form.is_valid():
+			print(f"form.cleaned_data: {form.cleaned_data}")
+	text = ''
+	return render(request, 'showdb/add_station_form.html', {'form': form, 'text': text})
 
 
 def add_station(request):
 	if not request.user.is_authenticated:
 		return index(request)
+	number = request.POST['number']
+	edit_station_form(request, number)
 
 def edit_station_form(request, number):
 	if not request.user.is_authenticated:

@@ -3,5 +3,17 @@
 
 
 {% block menu %}
-<a class="btn" href="{% url 'showdb:station' %}">Stations</a>
+<a class="btn" href="{% url 'showdb:stations' %}">Stations</a>
+{% endblock %}
+
+{% block content %}
+
+<form action="{% url 'showdb:add_station' %}" method="POST">
+	{% csrf_token %}
+	<div class="form-error">{{ text }}</div>
+	{{ form.as_p }}
+	<button type="submit">Добавить</button>
+
+</form>
+
 {% endblock %}

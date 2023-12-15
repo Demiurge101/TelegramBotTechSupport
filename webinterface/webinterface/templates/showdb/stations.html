@@ -6,7 +6,7 @@
 
 	<h3>Станции</h3>
 	
-	<p><a href=""><b>Добавить станцию</b></a></p>
+	<p><a href="{% url 'showdb:add_station_form' %}"><b>Добавить станцию</b></a></p>
 
 	{% if stations %}
 		<p>Количество: {{ stations|length }}</p>
