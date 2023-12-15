@@ -8,6 +8,18 @@
 
 	<p><a href="{% url 'showdb:add_device_form' %}"><b>Добавить</b></a></p>
 
+	{% if filter_form %}
+		<div class="filters">
+			<form action="{% url 'showdb:devices' %}" method="POST">
+				{% csrf_token %}
+				<div class="form-error">{{ text }}</div>
+					Фильтры:
+					{{ filter_form.as_p }}
+				<button type="submit">Применить</button>
+			</form>
+		</div>
+	{% endif %}
+
 	{% if devices %}
 		<p>Количество: {{ devices|length }}</p>
 		{% for device in devices %}

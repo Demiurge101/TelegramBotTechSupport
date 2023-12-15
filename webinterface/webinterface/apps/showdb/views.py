@@ -233,8 +233,19 @@ def delete_mkcb(request, decimal_number):
 def devices(request):
 	if not request.user.is_authenticated:
 		return index(request)
+	filter_form = DeviceFilterForm()
 	devices = Devices.objects.all()
-	return render(request, 'showdb/devices.html', {'devices': devices})
+	if request.method == 'POST':
+		filter_form = DeviceFilterForm(request.POST)
+		if request.POST['date_out']:
+			devices = devices.filter(date_out=request.POST['date_out'])
+		if request.POST['org']:
+			devices = devices.filter(org=request.POST['org'])
+		if request.POST['mkcb']:
+			devices = devices.filter(mkcb=request.POST['mkcb'])
+		if request.POST['device_name']:
+			devices = devices.filter(device_name=request.POST['device_name'])
+	return render(request, 'showdb/devices.html', {'devices': devices, 'filter_form': filter_form})
 
 def form_add_device(request):
 	if not request.user.is_authenticated:
@@ -289,8 +300,18 @@ def delete_device(request, number):
 def stations(request):
 	if not request.user.is_authenticated:
 		return index(request)
+	filter_form = StationFilterForm()
 	stations = Stations.objects.all()
-	return render(request, 'showdb/stations.html', {'stations': stations})
+	if request.method == 'POST':
+		filter_form = StationFilterForm(request.POST)
+		if request.POST['date_out']:
+			stations = stations.filter(date_out=request.POST['date_out'])
+		if request.POST['org']:
+			stations = stations.filter(org=request.POST['org'])
+		if request.POST['mkcb']:
+			stations = stations.filter(mkcb=request.POST['mkcb'])
+	
+	return render(request, 'showdb/stations.html', {'stations': stations, 'filter_form' : filter_form})
 
 def form_add_station(request):
 	if not request.user.is_authenticated:

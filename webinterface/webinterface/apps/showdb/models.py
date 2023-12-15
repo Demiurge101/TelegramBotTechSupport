@@ -9,7 +9,7 @@ from django.db import models
 
 
 class Clients(models.Model):
-    org = models.CharField(max_length=70)
+    org = models.CharField(max_length=70, verbose_name="Имя организации")
     order_key = models.CharField(unique=True, max_length=20)
 
     def __str__(self):
@@ -21,8 +21,8 @@ class Clients(models.Model):
 
 
 class DecimalNumbers(models.Model):
-    mkcb = models.CharField(primary_key=True, max_length=25)
-    field_name = models.CharField(db_column='_name', max_length=255, blank=True, null=True)  # Field renamed because it started with '_'.
+    mkcb = models.CharField(primary_key=True, max_length=25, verbose_name="Децимальный номер")
+    field_name = models.CharField(db_column='_name', max_length=255, blank=True, null=True, verbose_name="Наименование")  # Field renamed because it started with '_'.
 
     def __str__(self):
         return f"{self.mkcb}: {self.field_name}"
@@ -33,13 +33,13 @@ class DecimalNumbers(models.Model):
 
 
 class Devices(models.Model):
-    serial_number = models.IntegerField(primary_key=True)
-    station_number = models.ForeignKey('Stations', models.DO_NOTHING, db_column='station_number', blank=True, null=True)
-    org = models.ForeignKey(Clients, models.DO_NOTHING)
-    device_name = models.CharField(max_length=80)
-    mkcb = models.CharField(max_length=25)
-    date_out = models.DateField(blank=True, null=True)
-    description_field = models.CharField(db_column='description_', max_length=50, blank=True, null=True)  # Field renamed because it ended with '_'.
+    serial_number = models.IntegerField(primary_key=True, verbose_name="Номер")
+    station_number = models.ForeignKey('Stations', models.DO_NOTHING, db_column='station_number', blank=True, null=True, verbose_name="Номер станции")
+    org = models.ForeignKey(Clients, models.DO_NOTHING, verbose_name="Организация")
+    device_name = models.CharField(max_length=80, verbose_name="Название")
+    mkcb = models.CharField(max_length=25, verbose_name="Децимальный номер")
+    date_out = models.DateField(blank=True, null=True, verbose_name="Дата")
+    description_field = models.CharField(db_column='description_', max_length=50, blank=True, null=True, verbose_name="Примечание")  # Field renamed because it ended with '_'.
 
     def __str__(self):
         return f"{self.serial_number}({self.station_number}): {self.org}, {self.device_name}, {self.mkcb}, {self.date_out} ({self.description_field})"
@@ -50,10 +50,10 @@ class Devices(models.Model):
 
 class Stations(models.Model):
     serial_number = models.IntegerField(primary_key=True)
-    org = models.ForeignKey(Clients, models.DO_NOTHING)
-    mkcb = models.CharField(max_length=25)
-    date_out = models.DateField(blank=True, null=True)
-    description_field = models.CharField(db_column='description_', max_length=50, blank=True, null=True)  # Field renamed because it ended with '_'.
+    org = models.ForeignKey(Clients, models.DO_NOTHING, verbose_name="Организация")
+    mkcb = models.CharField(max_length=25, verbose_name="Децимальный номер")
+    date_out = models.DateField(blank=True, null=True, verbose_name="Дата")
+    description_field = models.CharField(db_column='description_', max_length=50, blank=True, null=True, verbose_name="Примечание")  # Field renamed because it ended with '_'.
 
     def __str__(self):
         return f"{self.serial_number}: {self.org}, {self.mkcb}, {self.date_out}"

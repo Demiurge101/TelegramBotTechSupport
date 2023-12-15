@@ -4,7 +4,6 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{% block title %}Base{% endblock %}</title>
-
 	{% block style %}
 		<style type="text/css">
 			table {
@@ -40,7 +39,14 @@
 			}
 			.logout {
 				border: 2px solid darkblue;
+				border-radius: 8px;
+				text-align: right;
+				margin-top: 10px;
+				margin-right: 10px;
+				font-size: 20px;
+				padding: 5px;
 			}
+
 			button {
 				border:1px solid darkgreen;
 				border-radius: 4px;
@@ -60,29 +66,46 @@
 				text-decoration: none;
 			}
 
+			.filters {
+				float: right;
+			}
+
+			#logout_block {
+				float: right;
+			}
+
+
+
+
 		</style>
 	{% endblock %}
 </head>
-<body>
-	{% block menu %}
-		<p>
-			<a class="menu" href="{% url 'showdb:orgs' %}">Организации </a>
-			<a class="menu" href="">Даты </a>
-			<a class="menu" href="{% url 'showdb:mkcb' %}">МКЦБ </a>
-			<a class="menu" href="{% url 'showdb:stations' %}">Станции </a>
-			<a class="menu" href="{% url 'showdb:devices' %}">Датчики </a>
-			<a class="menu" href="{% url 'showdb:documents' %}">Документы </a>
-			<form action="{% url 'showdb:logout' %}" method="POST">
-				{% csrf_token %}
-				<button class="btn logout" type="submit">Выйти</button>
-			</form>
-		</p>
-	{% endblock %}
+	<body>
+		<div>
+			{% block menu %}
+				<div id="logout_block">
+					<form action="{% url 'showdb:logout' %}" method="POST">
+						{% csrf_token %}
+						<button class="btn logout" type="submit">Выйти</button>
+					</form>
+				</div>
+				<div id="menu_block">
+					<p>
+						<a class="menu" href="{% url 'showdb:orgs' %}">Организации </a>
+						<!-- <a class="menu" href="">Даты </a> -->
+						<a class="menu" href="{% url 'showdb:mkcb' %}">МКЦБ </a>
+						<a class="menu" href="{% url 'showdb:stations' %}">Станции </a>
+						<a class="menu" href="{% url 'showdb:devices' %}">Датчики </a>
+						<a class="menu" href="{% url 'showdb:documents' %}">Документы </a>
+					</p>
+				</div>
+			{% endblock %}
+		</div>
+		<div>
+			<br>
+			<br>
 
-	<br>
-	<br>
-
-	{% block content %}Empty.{% endblock %}
-	
-</body>
+			{% block content %}Empty.{% endblock %}
+		</div>
+	</body>
 </html>

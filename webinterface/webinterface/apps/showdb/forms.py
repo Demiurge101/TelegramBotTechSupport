@@ -68,3 +68,62 @@ class AddDeviceForm(forms.Form):
 class LoginForm(forms.Form):
     login = forms.CharField(max_length=65, label="Логин")
     password = forms.CharField(widget=forms.PasswordInput(), label="Пароль")
+
+
+
+# class FilterForm(forms.Form):
+#     date = forms.DateField(label="Дата отправки")
+
+class StationFilterForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['date_out'].widget = forms.widgets.DateInput(
+            attrs={
+                'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
+                'class': 'form-control'
+                }
+            )
+
+        self.fields['mkcb'] = forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
+        self.fields['mkcb'].required = False
+        self.fields['mkcb'].empty_label = 'Все'
+        self.fields['mkcb'].max_length = 255
+        self.fields['org'].empty_label = 'Все'
+        self.fields['org'].required = False
+        self.fields['date_out'].required = False
+
+    class Meta:
+        model = Stations
+        fields = ['org', 'mkcb', 'date_out']
+        # widgets = {
+        #     'mkcb' : forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
+        # }
+
+
+class DeviceFilterForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['date_out'].widget = forms.widgets.DateInput(
+            attrs={
+                'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
+                'class': 'form-control'
+                }
+            )
+
+        self.fields['mkcb'] = forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
+        self.fields['mkcb'].required = False
+        self.fields['mkcb'].empty_label = 'Все'
+        self.fields['mkcb'].max_length = 255
+        self.fields['org'].empty_label = 'Все'
+        self.fields['org'].required = False
+        self.fields['date_out'].required = False
+        self.fields['device_name'].required = False
+
+    class Meta:
+        model = Devices
+        fields = ['org', 'mkcb', 'date_out', 'device_name']
+        # widgets = {
+        #     'mkcb' : forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
+        # }
