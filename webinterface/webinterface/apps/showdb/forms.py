@@ -46,24 +46,65 @@ class AddDecimalNumber(forms.Form):
     name = forms.CharField(label="Название", max_length=255)
 
 
-class AddStationForm(forms.Form):
-    number = forms.CharField(label="Номер", min_length=8, max_length=8)
-    org = forms.ModelChoiceField(label="Организация", queryset=Clients.objects.all())
-    mkcb = forms.ModelChoiceField(label="Децимальный номер", queryset=DecimalNumbers.objects.all())
-    date = forms.DateField(label="Дата отправки", input_formats="%Y-%m-%d")
-    description = forms.CharField(label="Примечание", max_length=255, required=False)
+# class AddStationForm(forms.Form):
+#     number = forms.CharField(label="Номер", min_length=8, max_length=8)
+#     org = forms.ModelChoiceField(label="Организация", queryset=Clients.objects.all())
+#     mkcb = forms.ModelChoiceField(label="Децимальный номер", queryset=DecimalNumbers.objects.all())
+#     date = forms.DateField(label="Дата отправки", input_formats="%Y-%m-%d")
+#     description = forms.CharField(label="Примечание", max_length=255, required=False)
 
 
-class AddDeviceForm(forms.Form):
-    number = forms.CharField(label="Номер", min_length=8, max_length=8)
-    device_name = forms.CharField(label="Название", max_length=255)
-    station_number = forms.ModelChoiceField(label="Номер станции (не обязательно)", queryset=Stations.objects.all(), required=False)
-    org = forms.ModelChoiceField(label="Организация", queryset=Clients.objects.all())
-    mkcb = forms.ModelChoiceField(label="Децимальный номер", queryset=DecimalNumbers.objects.all())
-    date = forms.DateField(label="Дата отправки", input_formats="%Y-%m-%d")
-    description = forms.CharField(label="Примечание", max_length=255, required=False)
+class AddStationForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['date_out'].widget = forms.widgets.DateInput(
+            attrs={
+                'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
+                'class': 'form-control'
+                }
+            )
+        self.fields['serial_number'] = forms.CharField(min_length=4, max_length=8)
+        # self.fields['serial_number'].max_length = 8
+        # self.fields['serial_number'].min_length = 4
+        self.fields['mkcb'] = forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
+        self.fields['date_out'].required = True
+
+    class Meta:
+        model = Stations
+        fields = ['serial_number', 'org', 'mkcb', 'date_out', 'description_field']
 
 
+
+
+# class AddDeviceForm(forms.Form):
+#     number = forms.CharField(label="Номер", min_length=8, max_length=8)
+#     device_name = forms.CharField(label="Название", max_length=255)
+#     station_number = forms.ModelChoiceField(label="Номер станции (не обязательно)", queryset=Stations.objects.all(), required=False)
+#     org = forms.ModelChoiceField(label="Организация", queryset=Clients.objects.all())
+#     mkcb = forms.ModelChoiceField(label="Децимальный номер", queryset=DecimalNumbers.objects.all())
+#     date = forms.DateField(label="Дата отправки", input_formats="%Y-%m-%d")
+#     description = forms.CharField(label="Примечание", max_length=255, required=False)
+
+class AddDeviceForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['date_out'].widget = forms.widgets.DateInput(
+            attrs={
+                'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
+                'class': 'form-control'
+                }
+            )
+        self.fields['serial_number'] = forms.CharField(min_length=4, max_length=8)
+        self.fields['station_number'] = forms.ModelChoiceField(queryset=Stations.objects.all())
+        self.fields['station_number'].required = False
+        # self.fields['serial_number'].max_length = 8
+        # self.fields['serial_number'].min_length = 4
+        self.fields['mkcb'] = forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
+        self.fields['date_out'].required = True
+
+    class Meta:
+        model = Devices
+        fields = ['serial_number', 'station_number', 'device_name', 'org', 'mkcb', 'date_out', 'description_field']
 
 class LoginForm(forms.Form):
     login = forms.CharField(max_length=65, label="Логин")

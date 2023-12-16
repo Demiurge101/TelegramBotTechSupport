@@ -254,7 +254,9 @@ def form_add_device(request):
 	if request.method == 'POST':
 		form = AddDeviceForm(request.POST)
 		if form.is_valid():
+			form.save()
 			print(f"form.cleaned_data: {form.cleaned_data}")
+			return edit_device_form(request, form.cleaned_data['serial_number'])
 	text = ''
 	return render(request, 'showdb/add_device_form.html', {'form': form, 'text': text})
 
@@ -320,16 +322,18 @@ def form_add_station(request):
 	if request.method == 'POST':
 		form = AddStationForm(request.POST)
 		if form.is_valid():
+			form.save()
 			print(f"form.cleaned_data: {form.cleaned_data}")
+			return edit_station_form(request, form.cleaned_data['serial_number'])
 	text = ''
 	return render(request, 'showdb/add_station_form.html', {'form': form, 'text': text})
 
 
-def add_station(request):
-	if not request.user.is_authenticated:
-		return index(request)
-	number = request.POST['number']
-	edit_station_form(request, number)
+# def add_station(request):
+# 	if not request.user.is_authenticated:
+# 		return index(request)
+# 	number = request.POST['serial_number']
+# 	return edit_station_form(request, number)
 
 def edit_station_form(request, number):
 	if not request.user.is_authenticated:

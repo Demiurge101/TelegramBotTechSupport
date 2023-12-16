@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Редактирование Устройства{% endblock %}
+{% block title %}Добавить станцию{% endblock %}
 
 
 {% block menu %}
@@ -8,7 +8,7 @@
 
 {% block content %}
 
-<form action="{% url 'showdb:add_station' %}" method="POST">
+<form action="{% url 'showdb:add_station_form' %}" method="POST">
 	{% csrf_token %}
 	<div class="form-error">{{ text }}</div>
 	{{ form.as_p }}

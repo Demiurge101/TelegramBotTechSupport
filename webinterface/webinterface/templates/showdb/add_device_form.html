@@ -9,7 +9,7 @@
 
 {% block content %}
 
-<form action="{% url 'showdb:add_device' %}" method="POST">
+<form action="{% url 'showdb:add_device_form' %}" method="POST">
 	{% csrf_token %}
 	<div class="form-error">{{ text }}</div>
 	{{ form.as_p }}

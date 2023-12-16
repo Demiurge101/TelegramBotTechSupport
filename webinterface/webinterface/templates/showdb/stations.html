@@ -4,21 +4,21 @@
 
 {% block content %}
 
-	<h3>Станции</h3>
-	
-	<p><a href="{% url 'showdb:add_station_form' %}"><b>Добавить станцию</b></a></p>
-
 	{% if filter_form %}
 		<div class="filters">
 			<form action="{% url 'showdb:stations' %}" method="POST">
 				{% csrf_token %}
 				<div class="form-error">{{ text }}</div>
-					Фильтры:
+					<h3>Фильтры:</h3>
 					{{ filter_form.as_p }}
 				<button type="submit">Применить</button>
 			</form>
 		</div>
 	{% endif %}
+	<h3>Станции</h3>
+	
+	<p><a href="{% url 'showdb:add_station_form' %}"><b>Добавить станцию</b></a></p>
+
 	{% if stations %}
 		<p>Количество: {{ stations|length }}</p>
 		{% for station in stations %}
