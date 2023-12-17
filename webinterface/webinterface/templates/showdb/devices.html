@@ -10,27 +10,31 @@
 					{% csrf_token %}
 					<div class="form-error">{{ text }}</div>
 						<h3>Фильтры:</h3>
+						<hr>
 						{{ filter_form.as_p }}
 					<button type="submit">Применить</button>
 				</form>
 			</div>
 		{% endif %}
 
-	<h3>Датчики</h3>
+	<h2>Датчики</h2><hr>
 
-	<p><a href="{% url 'showdb:add_device_form' %}"><b>Добавить</b></a></p>
+	<p><a class="btn" href="{% url 'showdb:add_device_form' %}"><b>Добавить</b></a></p>
 
 	{% if devices %}
-		<p>Количество: {{ devices|length }}</p>
-		{% for device in devices %}
-			<p>
-				Заводской номер: <a href="{% url 'showdb:edit_device_form' device.serial_number %}">{{device.serial_number}}</a><br>
-				Станция: {% if device.station_number %}<a href="{% url 'showdb:edit_station_form' device.station_number.serial_number %}">{{device.station_number.serial_number}}</a>{% else %}Без станции.{% endif %}<br>
-				Название: {{device.device_name}}<br>
-				<a href="{% url 'showdb:edit_mkcb_form' device.mkcb %}">{{device.mkcb}}</a><br>
-				Отгружен: {{device.date_out}}, {{device.org}}<br>
-			</p>
-		{% endfor %}
+		<div class="content">
+			<p>Количество: {{ devices|length }}</p>
+			{% for device in devices %}
+				<div class="cell">
+					Заводской номер: <a href="{% url 'showdb:edit_device_form' device.serial_number %}">{{device.serial_number}}</a><br>
+					<hr>
+					Станция: {% if device.station_number %}<a href="{% url 'showdb:edit_station_form' device.station_number.serial_number %}">{{device.station_number.serial_number}}</a>{% else %}Без станции.{% endif %}<br>
+					Название: {{device.device_name}}<br>
+					<a href="{% url 'showdb:edit_mkcb_form' device.mkcb %}">{{device.mkcb}}</a><br>
+					Отгружен: {{device.date_out}}, {{device.org}}<br>
+				</div>
+			{% endfor %}
+		</div>
 	{% else %}
 		Нет устройств.
 	{% endif %}

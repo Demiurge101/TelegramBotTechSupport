@@ -9,25 +9,28 @@
 			<form action="{% url 'showdb:stations' %}" method="POST">
 				{% csrf_token %}
 				<div class="form-error">{{ text }}</div>
-					<h3>Фильтры:</h3>
+					<h3>Фильтры:</h3><hr>
 					{{ filter_form.as_p }}
 				<button type="submit">Применить</button>
 			</form>
 		</div>
 	{% endif %}
-	<h3>Станции</h3>
+	<h2>Станции</h2><hr>
 	
-	<p><a href="{% url 'showdb:add_station_form' %}"><b>Добавить станцию</b></a></p>
+	<p><a class="btn" href="{% url 'showdb:add_station_form' %}"><b>Добавить станцию</b></a></p>
 
 	{% if stations %}
-		<p>Количество: {{ stations|length }}</p>
-		{% for station in stations %}
-			<p>
-				Заводской номер: <a href="{% url 'showdb:edit_station_form' station.serial_number %}">{{station.serial_number}}</a><br>
-				<a href="{% url 'showdb:edit_mkcb_form' station.mkcb %}">{{station.mkcb}}</a><br>
-				Отгружен: {{station.date_out}}, {{station.org}}<br>
-			</p>
-		{% endfor %}
+		<div class='content'>
+			<p>Количество: {{ stations|length }}</p>
+			{% for station in stations %}
+				<div class='cell'>
+					Заводской номер: <a href="{% url 'showdb:edit_station_form' station.serial_number %}">{{station.serial_number}}</a>
+					<hr>
+					<a href="{% url 'showdb:edit_mkcb_form' station.mkcb %}">{{station.mkcb}}</a><br>
+					Отгружен: {{station.date_out}}, {{station.org}}<br>
+				</div>
+			{% endfor %}
+		</div>
 	{% else %}
 		Нет станций.
 	{% endif %}

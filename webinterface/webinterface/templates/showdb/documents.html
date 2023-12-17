@@ -5,16 +5,17 @@
 
 {% block content %}
 
-	<h3>Документы</h3>
+	<h2>Документы</h2><hr>
 	
-	<p><a href="{% url 'showdb:add_document' %}"><b>Добавить документ</b></a></p>
+	<p><a class="btn" href="{% url 'showdb:add_document' %}"><b>Добавить документ</b></a></p>
 
 	{% if files %}
+		{% with count_row=0 %}
 		<p>Количество: {{ files|length }}</p>
 		<table>
 		<tr><th>id</th><th>Название</th><th>Тип документа</th><th>Автор</th><th>Дата загрузки</th></tr>
 		{% for file in files %}
-			<tr><td>0</td>
+			<tr><td>{{ count_row }}</td>
 				<td>{{ file.namef }}</td>
 				<td>{{ file.typef }}</td>
 				<td>{{ file.author }}</td>
@@ -24,6 +25,7 @@
 			</tr>
 		{% endfor %}
 		</table>
+		{% endwith %}
 	{% else %}
 		Нет документов.
 	{% endif %}

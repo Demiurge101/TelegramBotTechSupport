@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{% block title %}Base{% endblock %}</title>
-	{% block style %}
+	{% block common_style %}
 		<style type="text/css">
 			table {
 			   border: 0px solid black;
@@ -37,6 +37,10 @@
 				padding: 2px;
 				text-decoration: none;
 			}
+
+			.btn:hover {
+				background: white;
+			}
 			.logout {
 				border: 2px solid darkblue;
 				border-radius: 8px;
@@ -45,6 +49,12 @@
 				margin-right: 10px;
 				font-size: 20px;
 				padding: 5px;
+			}
+
+			.logout:hover {
+				color: blue;
+				border-color: blue;
+				background: white;
 			}
 
 			button {
@@ -56,28 +66,73 @@
 				text-decoration: none;
 			}
 
+			button:hover {
+				background: white;
+			}
+
+			a:hover {
+				color: darkblue;
+				font-weight: bold;
+			}
+
 			.form-error {
 				color: red;
+			}
+
+			#menu_block {
+				margin-top: 30px;
+				padding-left: 10px;
+				background: #77f;
+				border-radius: 6px;
 			}
 
 			.menu {
 				font-size: 28px;
 /*				color: black;*/
 				text-decoration: none;
+				background: #ccf;
+				padding: 8px;
+				margin-left: 3px;
+				border-radius: 8px;
+			}
+
+			.menu:hover {
+				font-size: 28px;
+				color: darkblue;
+				font-weight: normal;
+				border: 2px solid darkblue;
 			}
 
 			.filters {
 				float: right;
+				border: 2px solid #ddd;
+				border-radius: 5px;
+				padding: 8px;
 			}
 
 			#logout_block {
 				float: right;
 			}
 
+			.content {
+				float: left;
+			}
+			.cell {
+				background: #eeeeff;
+				border: 2px solid #00f;
+				border-radius: 8px;
+				padding: 7px;
+				font-weight: calc(50%);
+				margin-left: 5px;
+				margin-bottom: 8px;
+			}
+
 
 
 
 		</style>
+	{% endblock %}
+	{% block style %}
 	{% endblock %}
 </head>
 	<body>

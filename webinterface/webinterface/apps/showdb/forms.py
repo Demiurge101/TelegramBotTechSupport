@@ -66,12 +66,19 @@ class AddStationForm(forms.ModelForm):
         self.fields['serial_number'] = forms.CharField(min_length=4, max_length=8)
         # self.fields['serial_number'].max_length = 8
         # self.fields['serial_number'].min_length = 4
-        self.fields['mkcb'] = forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
+        self.fields['mkcb'] = forms.ModelChoiceField(to_field_name='mkcb', queryset=DecimalNumbers.objects.all(), empty_label='Не выбрано')
         self.fields['date_out'].required = True
 
     class Meta:
         model = Stations
         fields = ['serial_number', 'org', 'mkcb', 'date_out', 'description_field']
+
+    def clean(self):
+        cleaned_data=super(AddStationForm, self).clean()
+        print("---------------", cleaned_data.get('mkcb').mkcb)
+        mkcb = cleaned_data.get('mkcb').mkcb
+        org = cleaned_data.get('org').org
+        return cleaned_data
 
 
 
@@ -95,20 +102,23 @@ class AddDeviceForm(forms.ModelForm):
                 }
             )
         self.fields['serial_number'] = forms.CharField(min_length=4, max_length=8)
-        self.fields['station_number'] = forms.ModelChoiceField(queryset=Stations.objects.all())
+        self.fields['station_number'] = forms.ModelChoiceField(to_field_name='serial_number', queryset=Stations.objects.all(), empty_label='Не выбрано')
         self.fields['station_number'].required = False
         # self.fields['serial_number'].max_length = 8
         # self.fields['serial_number'].min_length = 4
-        self.fields['mkcb'] = forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
+        self.fields['mkcb'] = forms.ModelChoiceField(to_field_name="mkcb", queryset=DecimalNumbers.objects.all(), empty_label='Не выбрано')
         self.fields['date_out'].required = True
 
     class Meta:
         model = Devices
         fields = ['serial_number', 'station_number', 'device_name', 'org', 'mkcb', 'date_out', 'description_field']
 
+
+
+
 class LoginForm(forms.Form):
-    login = forms.CharField(max_length=65, label="Логин")
-    password = forms.CharField(widget=forms.PasswordInput(), label="Пароль")
+    login = forms.CharField(widget=forms.TextInput(attrs={'id':'login', 'class':'login'}), max_length=65, label="Логин")
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'password', 'class': 'password'}), label="Пароль")
 
 
 

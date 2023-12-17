@@ -1,22 +1,26 @@
 {% extends 'base.html' %}
 
-{% block title %}МКЦБ{% endblock %}
+{% block title %}Децимальные номера{% endblock %}
+
 
 {% block content %}
 
-	<h3>МКЦБ</h3>
+	<h2>Децимальные номера</h2><hr>
 	
-	<p><a href="{% url 'showdb:add_mkcb_form' %}"><b>Добавить децимальный номер</b></a></p>
+	<p><a class="btn" href="{% url 'showdb:add_mkcb_form' %}"><b>Добавить децимальный номер</b></a></p>
 
 	{% if mkcb %}
-		<p>Количество: {{ mkcb|length }}</p>
-		{% for m in mkcb %}
-			<br>
-			<p>
-				<a href="{% url 'showdb:edit_mkcb_form' m.mkcb %}">{{m.mkcb}}</a><br>
-				{{m.field_name}}<br>
-			</p>
-		{% endfor %}
+		<div class="content">
+			<p>Количество: {{ mkcb|length }}</p>
+			{% for m in mkcb %}
+				<br>
+				<div class='cell'>
+					<a href="{% url 'showdb:edit_mkcb_form' m.mkcb %}">{{m.mkcb}}</a>
+					<hr>
+					{{m.field_name}}<br>
+				</div>
+			{% endfor %}
+		</div>
 	{% else %}
 		No decimal numbers.
 	{% endif %}
