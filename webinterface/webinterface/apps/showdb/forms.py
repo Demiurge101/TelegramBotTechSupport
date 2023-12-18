@@ -68,6 +68,7 @@ class AddStationForm(forms.ModelForm):
         # self.fields['serial_number'].min_length = 4
         self.fields['mkcb'] = forms.ModelChoiceField(to_field_name='mkcb', queryset=DecimalNumbers.objects.all(), empty_label='Не выбрано')
         self.fields['date_out'].required = True
+        self.fields['org'].empty_label = "Не выбрано"
 
     class Meta:
         model = Stations
@@ -111,6 +112,7 @@ class AddDeviceForm(forms.ModelForm):
         # self.fields['serial_number'].min_length = 4
         self.fields['mkcb'] = forms.ModelChoiceField(to_field_name="mkcb", queryset=DecimalNumbers.objects.all(), empty_label='Не выбрано')
         self.fields['date_out'].required = True
+        self.fields['org'].empty_label = "Не выбрано"
 
     class Meta:
         model = Devices

@@ -254,11 +254,13 @@ def form_add_device(request):
 	if request.method == 'POST':
 		form = AddDeviceForm(request.POST)
 		if form.is_valid():
-			# device = form.save(commit=False)
-			# device.mkcb = form.cleaned_data.get('mkcb').mkcb
-			# device.station_number = form.cleaned_data.get('station_number').serial_number
-			# device.save()
-			form.save()
+			device = form.save(commit=False)
+			org = form.cleaned_data.get('station_number').org
+			if org:
+				print(f"ORG: {org}")
+				device.org = org
+			device.save()
+			# form.save()
 			print(f"form.cleaned_data: {form.cleaned_data}")
 			return edit_device_form(request, form.cleaned_data['serial_number'])
 	text = ''
@@ -326,9 +328,6 @@ def form_add_station(request):
 	if request.method == 'POST':
 		form = AddStationForm(request.POST)
 		if form.is_valid():
-			# station = form.save(commit=False)
-			# station.mkcb = form.cleaned_data.get('mkcb').mkcb
-			# station.save()
 			form.save()
 			print(f"form.cleaned_data: {form.cleaned_data}")
 			return edit_station_form(request, form.cleaned_data['serial_number'])
