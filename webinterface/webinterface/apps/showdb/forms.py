@@ -73,12 +73,15 @@ class AddStationForm(forms.ModelForm):
         model = Stations
         fields = ['serial_number', 'org', 'mkcb', 'date_out', 'description_field']
 
-    def clean(self):
-        cleaned_data=super(AddStationForm, self).clean()
-        print("---------------", cleaned_data.get('mkcb').mkcb)
-        mkcb = cleaned_data.get('mkcb').mkcb
-        org = cleaned_data.get('org').org
-        return cleaned_data
+    def clean_mkcb(self):
+        return self.cleaned_data.get('mkcb').mkcb
+
+    def clean_org(self):
+        return self.cleaned_data.get('org').org
+        # if len(mkcb) > 25:
+        #     print(forms.ValidationError("mkcb must to contain 9 digits."))
+            # return self.cleaned_data   # <--- DON'T DO THIS
+        # return mkcb['mkcb']
 
 
 
@@ -113,7 +116,16 @@ class AddDeviceForm(forms.ModelForm):
         model = Devices
         fields = ['serial_number', 'station_number', 'device_name', 'org', 'mkcb', 'date_out', 'description_field']
 
+    def clean_mkcb(self):
+        return self.cleaned_data.get('mkcb').mkcb
 
+    # def clean_org(self):
+    #     return self.cleaned_data.get('org').org
+
+    # def clean_station_number(self):
+    #     print('clean_data()')
+    #     print(self.cleaned_data.get('station_number').serial_number)
+    #     return self.cleaned_data.get('station_number').serial_number
 
 
 class LoginForm(forms.Form):
