@@ -76,8 +76,8 @@ class AddStationForm(forms.ModelForm):
     def clean_mkcb(self):
         return self.cleaned_data.get('mkcb').mkcb
 
-    def clean_org(self):
-        return self.cleaned_data.get('org').org
+    # def clean_org(self):
+    #     return self.cleaned_data.get('org').org
         # if len(mkcb) > 25:
         #     print(forms.ValidationError("mkcb must to contain 9 digits."))
             # return self.cleaned_data   # <--- DON'T DO THIS

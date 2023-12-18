@@ -365,5 +365,6 @@ def edit_station(request):
 def delete_station(request, number):
 	if not request.user.is_authenticated:
 		return index(request)
+	Devices.objects.filter(station_number=number).delete()
 	Stations.objects.filter(serial_number=number).delete()
 	return HttpResponseRedirect( reverse('showdb:stations'))
