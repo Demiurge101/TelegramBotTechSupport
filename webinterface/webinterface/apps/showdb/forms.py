@@ -69,6 +69,7 @@ class AddStationForm(forms.ModelForm):
         self.fields['mkcb'] = forms.ModelChoiceField(to_field_name='mkcb', queryset=DecimalNumbers.objects.all(), empty_label='Не выбрано')
         self.fields['date_out'].required = True
         self.fields['org'].empty_label = "Не выбрано"
+        # self.fields['org'].attrs = {'class':'form-common'}
 
     class Meta:
         model = Stations

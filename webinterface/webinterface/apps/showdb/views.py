@@ -120,8 +120,8 @@ def save_uploaded_file(request, number = ""):
 	except Exception as e:
 		print(e)
 
-def upload_file(request, number=""):
-	print(f"upload_file({number})")
+def upload_file(request, number="", backlink=""):
+	print(f"upload_file({number}, {backlink})")
 	if not request.user.is_authenticated:
 		return index(request)
 	if request.method == "POST":
@@ -130,7 +130,15 @@ def upload_file(request, number=""):
 			save_uploaded_file(request, number)
 	else:
 		file_form = AddDocument()
-	if number:
+	if backlink == 'docs':
+		return documents(request)
+	elif backlink == 'device':
+		return edit_device_form(request, number)
+	elif backlink == 'mkcb':
+		return edit_mkcb_form(request, number)
+	elif backlink == 'station':
+		return edit_station_form(request, number)
+	elif number:
 		if number[:4] == 'МКЦБ':
 			return edit_mkcb_form(request, number)
 	return render(request, 'showdb/add_document_form.html', {'form': file_form, 'number': number})

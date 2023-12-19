@@ -3,9 +3,6 @@
 
 {% block style %}
 <style>
-      html, body {
-      min-height: 100%;
-      }
       body, div, form, input, select { 
       padding: 0;
       margin: 0;
@@ -16,14 +13,7 @@
       line-height: 22px;
       }
 
-      .addform {
-      display: flex;
-      float: left;
-      justify-content: center;
-      align-items: center;
-      height: inherit;
-      padding: 3px;
-      }
+      
       form {
       width: 100%;
       padding: 20px;
@@ -109,7 +99,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="addform">
+<div class="main-div-form">
 	<form action="{% url 'showdb:add_station_form' %}" method="POST">
 		{% csrf_token %}
 		<div class="form-error">{{ text }}</div>
@@ -119,7 +109,7 @@
 					{{ field }}
 				</div>
 			{% endfor %}
-		<button type="submit">Добавить</button>
+		<button class="backbutton" type="submit">Добавить</button>
 
 	</form>
 </div>

@@ -2,9 +2,6 @@
 {% block title %}Редактирование Устройства{% endblock %}
 {% block style %}
 <style>
-      html, body {
-      min-height: 100%;
-      }
       body, div, form, input, select { 
       padding: 0;
       margin: 0;
@@ -15,14 +12,6 @@
       line-height: 22px;
       }
 
-      .addform {
-      display: flex;
-      float: left;
-      justify-content: center;
-      align-items: center;
-      height: inherit;
-      padding: 3px;
-      }
       form {
       width: 100%;
       padding: 20px;
@@ -65,39 +54,7 @@
       textarea {
       width: calc(100% - 6px);
       }
-      .btn-block {
-      margin-top: 20px;
-      text-align: center;
-      }
 
-      .back {
-      	margin-top: 20px;
-      	margin-left: 20px;
-      }
-
-      .backbutton {
-      	text-decoration: none;
-      	font-weight: bold;
-      }
-
-      button, .backbutton {
-      width: 150px;
-      padding: 10px;
-      border: none;
-      -webkit-border-radius: 5px; 
-      -moz-border-radius: 5px; 
-      border-radius: 5px; 
-      background-color: #095484;
-      font-size: 16px;
-      color: #fff;
-      cursor: pointer;
-      }
-
-      button:hover, .backbutton:hover {
-      background-color: #0666a3;
-      font-size: 16px;
-      color: #fff;
-  }
     </style>
 {% endblock %}
 
@@ -109,7 +66,7 @@
 
 
 {% block content %}
-<div class="addform">
+<div class="main-div-form">
 	<form action="{% url 'showdb:add_device_form' %}" method="POST">
 		{% csrf_token %}
 		<div class="form-error">{{ text }}</div>
@@ -119,7 +76,7 @@
 					{{ field }}
 				</div>
 			{% endfor %}
-		<button type="submit">Добавить</button>
+		<button class="backbutton" type="submit">Добавить</button>
 
 	</form>
 </div>

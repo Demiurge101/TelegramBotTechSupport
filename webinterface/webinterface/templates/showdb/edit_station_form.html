@@ -37,7 +37,27 @@
 			{% endif %}
 		</p>
 
-		<form action="{% url 'showdb:upload_file' station.serial_number %}" method="POST" enctype="multipart/form-data">
+
+
+		{% include 'add_file_form.html' with file_form=file_form number=station.serial_number backlink='station' %}
+
+
+		<!-- <div class="main-div-form">
+			<form action="{% url 'showdb:upload_file' station.serial_number %}" method="POST" enctype="multipart/form-data">
+				{% csrf_token %}
+				<div class="form-error">{{ file_form.non_field_errors }}</div>
+				{% for field in file_form %}
+					<div>
+						{{ field.label}}<br>
+						{{ field }}
+					</div>
+				{% endfor %}
+				<button class="backbutton" type="submit">Добавить</button>
+
+			</form>
+		</div> -->
+
+		<!-- <form action="{% url 'showdb:upload_file' station.serial_number %}" method="POST" enctype="multipart/form-data">
 			{% csrf_token %}
 			<div class="form-error">{{ file_form.non_field_errors }}</div>
 			{% for f in file_form %}
@@ -45,6 +65,6 @@
 				<div class="form-error">{{f.errors}}</div>
 			{% endfor %}
 			<button type="submit">Добавить</button>
-	    </form>
+	    </form> -->
 	{% endif %}
 {% endblock %}

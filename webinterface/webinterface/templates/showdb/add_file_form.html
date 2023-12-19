@@ -1,0 +1,15 @@
+
+<div class="main-div-form">
+	<form action="{% url 'showdb:upload_file' number backlink %}" method="POST" enctype="multipart/form-data">
+		{% csrf_token %}
+		<div class="form-error">{{ file_form.non_field_errors }}</div>
+		{% for field in file_form %}
+			<div>
+				{{ field.label}}<br>
+				{{ field }}
+			</div>
+		{% endfor %}
+		<button class="backbutton" type="submit">Добавить</button>
+
+	</form>
+</div>

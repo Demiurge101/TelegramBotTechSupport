@@ -6,6 +6,18 @@
 	<title>{% block title %}Base{% endblock %}</title>
 	{% block common_style %}
 		<style type="text/css">
+			html, body {
+		      min-height: 100%;
+		      }
+		      /*body, div, form, input, select { 
+		      padding: 0;
+		      margin: 0;
+		      outline: none;
+		      font-family: Roboto, Arial, sans-serif;
+		      font-size: 14px;
+		      color: #666;
+		      line-height: 22px;
+		      }*/
 			table {
 			   border: 0px solid black;
 			   border-radius: 4px;
@@ -164,6 +176,138 @@
 
 
 		</style>
+		<style>
+      /*html, body {
+      min-height: 100%;
+      }
+      body, div, form, input, select { 
+      padding: 0;
+      margin: 0;
+      outline: none;
+      font-family: Roboto, Arial, sans-serif;
+      font-size: 14px;
+      color: #666;
+      line-height: 22px;
+      }*/
+
+      /*.filters {
+      display: flex;
+      float: right;
+      justify-content: center;
+      align-items: center;
+      height: inherit;
+      padding: 3px;
+      }
+      .filters {
+      width: 100%;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 2px 5px #ccc; 
+      }*/
+      input {
+      width: calc(100% - 10px);
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      vertical-align: middle;
+      }
+      input:hover, textarea:hover, select:hover {
+      outline: none;
+      border: 1px solid #095484;
+      background: #e6eef7;
+      }
+
+      select {
+      padding: 7px 0;
+      border-radius: 3px;
+      border: 1px solid #ccc;
+      background: transparent;
+      }
+      select {
+      width: 100%;
+      }
+
+      select, input {
+      	margin-bottom: 10px;
+      }
+      option {
+      background: #f8f8ff;
+      border-radius: 8px;
+      }
+
+      .btn-block {
+      margin-top: 20px;
+      text-align: center;
+      }
+
+
+      .filter-btn {
+      width: 150px;
+      padding: 10px;
+      border: none;
+      -webkit-border-radius: 5px; 
+      -moz-border-radius: 5px; 
+      border-radius: 5px; 
+      background-color: #095484;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      }
+
+      .filter-btn:hover{
+      background-color: #0666a3;
+      font-size: 16px;
+      color: #fff;}
+
+
+
+/*      FORMS*/
+
+		.main-div-form {
+      display: flex;
+      float: left;
+      justify-content: center;
+      align-items: center;
+      height: inherit;
+      padding: 3px;
+      }
+		
+		.backbutton {
+      text-decoration: none;
+/*      	font-weight: bold;*/
+      }
+
+      .backbutton {
+      width: 150px;
+      padding: 10px;
+      border: none;
+      -webkit-border-radius: 5px; 
+      -moz-border-radius: 5px; 
+      border-radius: 5px; 
+      background-color: #095484;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      }
+
+      .backbutton:hover {
+      background-color: #0666a3;
+      font-size: 16px;
+      color: #fff;
+  }
+
+  .btn-block {
+      margin-top: 20px;
+      text-align: center;
+      }
+
+      .back {
+      	margin-top: 20px;
+      	margin-left: 20px;
+      }
+
+  
+    </style>
 	{% endblock %}
 	{% block style %}
 	{% endblock %}
