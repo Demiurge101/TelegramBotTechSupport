@@ -86,8 +86,12 @@ def document_add_form(request, text=""):
 def document_edit_form(request, uuid):
 	if not request.user.is_authenticated:
 		return index(request)
-	files = Files.objects.all()
-	return render(request, 'showdb/documents.html', {'files': files})
+	form = AddDocument()
+	if request.method == 'POST':
+		form = AddDocument(request.POST)
+		if form.is_valid():
+			print(f"form.cleaned_data: {form.cleaned_data}")
+	return render(request, 'showdb/add_document_form.html', {'form': form, 'text': text})
 
 def documents(request):
 	if not request.user.is_authenticated:
@@ -255,10 +259,13 @@ def devices(request):
 			devices = devices.filter(device_name=request.POST['device_name'])
 	return render(request, 'showdb/devices.html', {'devices': devices, 'filter_form': filter_form})
 
-def form_add_device(request):
+def form_add_device(request, number=None):
 	if not request.user.is_authenticated:
 		return index(request)
+	print(f"form_add_device({number})")
 	form = AddDeviceForm()
+	if number:
+		form.set_station(number)
 	if request.method == 'POST':
 		form = AddDeviceForm(request.POST)
 		if form.is_valid():
@@ -362,7 +369,7 @@ def edit_station_form(request, number):
 		files.append(file)
 		print(f"file: {file}")
 	file_form = AddDocument()
-	return render(request, 'showdb/edit_station_form.html', {'file_form': file_form, 'station': station, 'devices': devices, 'files':files})
+	return render(request, 'showdb/edit_station_form.html', {'device_form': AddDeviceForm(),'file_form': file_form, 'station': station, 'devices': devices, 'files':files})
 
 
 def edit_station(request):

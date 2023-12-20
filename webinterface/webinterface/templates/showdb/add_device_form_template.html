@@ -1,0 +1,15 @@
+
+<div class="main-div-form">
+	<form action="{% url 'showdb:add_device_form' number %}" method="POST">
+		{% csrf_token %}
+		<div class="form-error">{{ text }}</div>
+			{% for field in form %}
+				<div>
+					{{ field.label}}<br>
+					{{ field }}
+				</div>
+			{% endfor %}
+		<button class="backbutton" type="submit">Добавить</button>
+
+	</form>
+</div>

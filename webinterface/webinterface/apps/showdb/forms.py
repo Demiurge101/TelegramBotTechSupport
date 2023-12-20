@@ -122,6 +122,12 @@ class AddDeviceForm(forms.ModelForm):
     def clean_mkcb(self):
         return self.cleaned_data.get('mkcb').mkcb
 
+    def set_station(self, number):
+        self.fields['station_number'] = forms.ModelChoiceField(to_field_name='serial_number', queryset=Stations.objects.filter(serial_number=number), empty_label=None)
+        self.fields['org'].empty_label = None
+        org = Stations.objects.get(serial_number=number).org
+        print(f"ORG: {org}")
+        self.fields['org'].queryset = Clients.objects.filter(org=org)
     # def clean_org(self):
     #     return self.cleaned_data.get('org').org
 

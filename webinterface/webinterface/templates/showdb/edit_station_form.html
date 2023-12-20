@@ -6,25 +6,50 @@
 <a class="btn" href="{% url 'showdb:stations' %}">Станции</a>
 {% endblock %}
 
+{% block style %}
+<style type="text/css">
+	.device-block {
+		border: 1px solid #ccc;
+		border-radius: 1px;
+		padding: 8px;
+		margin-top: 4px;
+		margin-left: 8px;
+		min-width: 200px;
+		max-width: 600px;
+/*		box-shadow: 0 2px 5px #ccc;*/
+	}
+</style>
+{% endblock %}
+
 {% block content %}
 	{% if station %}
 		<p>
 			Номер: {{station.serial_number}}<br>
-			МКЦБ: {{station.mkcb}}<br>
+			МКЦБ: <a href="{% url 'showdb:edit_mkcb_form' station.mkcb %}">{{station.mkcb}}</a><br>
 			Отгружен: {{ station.org }}, {{ station.date_out }}<br>
 			Описание: {{ station.description_field }}<br>
 			<br>
 			<a class="btn" href="{% url 'showdb:delete_station' station.serial_number %}">Удалить станцию</a>
 		</p>
-		<p>
+		<div>
 			{% if devices %}
+			<div>
 				Устройства:<br>
 				{% for device in devices %}
-					<p><a href="{% url 'showdb:edit_device_form' device.serial_number %}">{{ device.serial_number }}</a> {{ device.device_name }}</p>
+					<div class="device-block"><a href="{% url 'showdb:edit_device_form' device.serial_number %}">{{ device.serial_number }}</a>: {{ device.device_name }}</div>
 				{% endfor %}
+			</div><br>
 				
 			{% endif %}
+
+			<div>
+				<a class="backbutton" href="{% url 'showdb:add_device_form' station.serial_number %}">Добавить устройство</a>
+			</div><br>
+
+			<!-- {% include 'add_device_form_template.html' with form=device_form number=station.serial_number %} -->
+
 			{% if files %}
+			<div>
 				<table>
 				<tr><th>Название</th><th>Тип документа</th><th>Автор</th><th>Дата загрузки</th></tr>
 				{% for file in files %}
@@ -32,10 +57,11 @@
 						<td><a href="{% url 'showdb:delete_document' file.uuid %}">Delete</a></td></tr>
 				{% endfor %}
 				</table>
+			</div>
 			{% else %}
 				Нет файлов для этой станции.
 			{% endif %}
-		</p>
+		</div>
 
 
 
