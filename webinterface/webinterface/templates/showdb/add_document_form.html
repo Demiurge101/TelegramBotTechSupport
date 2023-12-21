@@ -71,7 +71,11 @@
 
 {% block content %}
 <div class="main-div-form">
+      {% if uuid %}
+      <form action="{% url 'showdb:update_file' uuid %}" method="POST" enctype="multipart/form-data">
+      {% else %}
 	<form action="{% url 'showdb:upload_file' %}" method="POST" enctype="multipart/form-data">
+      {% endif %}
 		{% csrf_token %}
 		<div class="form-error">{{ text }}</div>
 		{% for field in form %}
@@ -80,8 +84,7 @@
 				{{ field }}
 			</div>
 		{% endfor %}
-		<button class="backbutton" type="submit">Добавить</button>
-
+		<button class="backbutton" type="submit">{% if uuid %}Сохранить{% else %}Добавить{% endif %}</button>
 	</form>
 </div>
 

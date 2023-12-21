@@ -23,6 +23,8 @@ path('delete_document/<uuid>', views.delete_file, name='delete_document'),
 path('upload_file', views.upload_file, name='upload_file'),
 path('upload_file/<number>', views.upload_file, name='upload_file'),
 path('upload_file/<number>/<backlink>', views.upload_file, name='upload_file'),
+path('update_file/<uuid>', views.update_file, name='update_file'),
+path('update_file/<uuid>/<backlink>', views.update_file, name='update_file'),
 
 path('stations', views.stations, name = 'stations'),
 path('add_station_form', views.form_add_station, name = 'add_station_form'),

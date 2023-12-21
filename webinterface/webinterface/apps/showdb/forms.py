@@ -36,9 +36,25 @@ class UploadFileForm(forms.Form):
 
 class AddDocument(forms.Form):
     global decimal_file_types
-    file_type = forms.ChoiceField(label="Тип документа", choices = decimal_file_types)
+    file_type = forms.ChoiceField(label="Тип документа", choices = decimal_file_types, initial = ('и','Прочие инструкции (И)'))
+    # self.fields['file_type'].initial = ('и','Прочие инструкции (И)')
     file = forms.FileField(label="Файл", )
     file_name = forms.CharField(label="Новое имя файла", max_length=255, required=False)
+
+    def for_update(self, uuid):
+        print(f"for_update({uuid})")
+        # for f in self.fields:
+        #     print(f)
+        #     print(self.fields[f])
+        file_obj = Files.objects.get(uuid =  uuid)
+        # for tp in decimal_file_types:
+        #     print(tp)
+        # print(decimal_file_types[0])
+        self.fields['file'].required = False
+        self.fields['file_type'].initial = ('и','Прочие инструкции (И)')
+        # self.initial['file_type'] = decimal_file_types[2]
+        # file_type.initial = 'default value'
+        # file.required = False
 
 
 class AddDecimalNumber(forms.Form):

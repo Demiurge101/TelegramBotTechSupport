@@ -90,6 +90,9 @@ class Files(models.Model):
         managed = False
         db_table = 'files'
 
+    def set_name(self, name):
+        self.fields['namef'] = name
+
 
 
 class Users(models.Model):

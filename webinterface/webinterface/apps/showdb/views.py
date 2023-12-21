@@ -91,7 +91,10 @@ def document_edit_form(request, uuid):
 		form = AddDocument(request.POST)
 		if form.is_valid():
 			print(f"form.cleaned_data: {form.cleaned_data}")
-	return render(request, 'showdb/add_document_form.html', {'form': form, 'text': text})
+			for i in form.cleaned_data:
+				print(i)
+	form.for_update(uuid)
+	return render(request, 'showdb/add_document_form.html', {'form': form, 'uuid': uuid})
 
 def documents(request):
 	if not request.user.is_authenticated:
@@ -146,6 +149,42 @@ def upload_file(request, number="", backlink=""):
 		if number[:4] == 'МКЦБ':
 			return edit_mkcb_form(request, number)
 	return render(request, 'showdb/add_document_form.html', {'form': file_form, 'number': number})
+
+def update_file(request, uuid="", backlink="", number=""):
+	print(f"UPDATE_FILE({uuid})")
+	if not request.user.is_authenticated:
+		return index(request)
+	form = AddDocument()
+	if request.method == 'POST':
+		form = AddDocument(request.POST)
+		if form.is_valid():
+			print(f"form.cleaned_data: {form.cleaned_data}")
+		# else:
+		# 	print(form.non_field_errors)
+		# 	for field in form.cleaned_data:
+		# 		print(field)
+		# 		print(form.cleaned_data[field])
+		file_type = form.cleaned_data['file_type']
+		file_name = form.cleaned_data['file_name']
+		file = Files.objects.get(uuid=uuid)
+		if file_type:
+			file.file_type = file_type
+		if file_name:
+			file.namef = file_name
+		file.save()
+	else:
+		print("NOT")
+	form.for_update(uuid)
+	if backlink == 'docs':
+		return documents(request)
+	elif backlink == 'device':
+		return edit_device_form(request, number)
+	elif backlink == 'mkcb':
+		return edit_mkcb_form(request, number)
+	elif backlink == 'station':
+		return edit_station_form(request, number)
+	return render(request, 'showdb/edit_document_form.html', {'form': form})
+
 
 
 def delete_file(request, uuid):
