@@ -300,7 +300,7 @@ def devices(request):
 	if not request.user.is_authenticated:
 		return index(request)
 	filter_form = DeviceFilterForm()
-	devices = Devices.objects.all()
+	devices = Devices.objects.all()[:100]
 	if request.method == 'POST':
 		filter_form = DeviceFilterForm(request.POST)
 		if request.POST['date_out']:

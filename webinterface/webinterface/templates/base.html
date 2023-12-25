@@ -53,23 +53,44 @@
 			.btn:hover {
 				background: white;
 			}
+
+
 			.logout {
-				border: 2px solid darkblue;
-				border-radius: 8px;
-				text-align: right;
-				margin-top: 10px;
-				margin-right: 10px;
-				font-size: 20px;
-				padding: 5px;
-			}
+/*				border: 0px;*/
+        text-decoration: none;
+        color: #8f8f8f;
+        font-size: 26px;
+        font-weight: 400;
+        transition: all 0.5s ease-in-out;
+/*        transition-property: width;*/
+        position: relative;
+        text-transform: uppercase;
+        margin-top: 7px;
+        margin-right: 12px;
+        padding: 2px;
 
-			.logout:hover {
-				color: blue;
-				border-color: blue;
-				background: white;
-			}
+        &::before {
+          content: attr(data-item);
+          transition: 0.5s;
+          color: #1818af;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          width: 0;
+          overflow: hidden;
+        }
 
-			button {
+        &:hover {
+          &::before {
+            width: 100%;
+            transition: all 0.5s ease-in-out;
+          }
+        }
+      }
+
+			/*button {
 				border:1px solid darkblue;
 				border-radius: 4px;
 				background: #ccf;
@@ -80,7 +101,7 @@
 
 			button:hover {
 				background: white;
-			}
+			}*/
 
 			a:hover {
 				color: darkblue;
@@ -92,24 +113,32 @@
 			}
 
 			#menu_block {
-				margin-top: 30px;
-				padding-left: 10px;
-				background: #6868ff;
-				border-radius: 6px;
+/*				margin-top: 30px;*/
+				padding: 10px;
+/*				background: #6868ff;*/
+/*				border-radius: 6px;*/
 			}
 
-			.menu {
+
+      .menu {
+      	padding: 5px;
+      	text-decoration: none;
+      	font-size: 28px;
+      }
+
+
+			.menus {
 				font-size: 28px;
 /*				color: black;*/
 				text-decoration: none;
 				background: #ccf;
 				padding: 8px;
 				margin-left: 3px;
-				border-radius: 8px;
+				border-radius: 0px;
 				border: 1px solid #ccf;
 			}
 
-			.menu:hover {
+			.menus:hover {
 				font-size: 28px;
 				color: darkblue;
 				font-weight: normal;
@@ -323,6 +352,57 @@
       	margin-left: 20px;
       }
 
+
+
+
+
+
+nav {
+  margin: 5px;
+  background: #f9f9f9;
+  padding: 5px;
+  .menuItems {
+    list-style: none;
+    display: flex;
+
+    .menu-li {
+      margin: 16px;
+
+      .menu-a {
+        text-decoration: none;
+        color: #8f8f8f;
+        font-size: 26px;
+        font-weight: 400;
+        transition: all 0.5s ease-in-out;
+/*        transition-property: width;*/
+        position: relative;
+        text-transform: uppercase;
+
+        &::before {
+          content: attr(data-item);
+          transition: 0.5s;
+          color: #1818af;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          width: 0;
+          overflow: hidden;
+        }
+
+        &:hover {
+          &::before {
+            width: 100%;
+            transition: all 0.5s ease-in-out;
+          }
+        }
+      }
+    }
+  }
+}
+
+      
   
     </style>
 	{% endblock %}
@@ -335,19 +415,20 @@
 				<div id="logout_block">
 					<form action="{% url 'showdb:logout' %}" method="POST">
 						{% csrf_token %}
-						<button class="btn logout" type="submit">Выйти</button>
+						<button class="logout" type="submit">Выйти</button>
 					</form>
 				</div>
-				<div id="menu_block">
-					<p>
-						<a class="menu" href="{% url 'showdb:orgs' %}">Организации </a>
-						<!-- <a class="menu" href="">Даты </a> -->
-						<a class="menu" href="{% url 'showdb:mkcb' %}">МКЦБ </a>
-						<a class="menu" href="{% url 'showdb:stations' %}">Станции </a>
-						<a class="menu" href="{% url 'showdb:devices' %}">Датчики </a>
-						<a class="menu" href="{% url 'showdb:documents' %}">Документы </a>
-					</p>
-				</div>
+					<nav>
+						<ul class="menuItems">
+							<li class="menu-li"><a class="menu-a" href="{% url 'showdb:orgs' %}" data-item="Организации">Организации</a></li>
+							<!-- <li><a class="menu" href="">Даты </a></li> -->
+							<li class="menu-li"><a class="menu-a" href="{% url 'showdb:mkcb' %}"data-item="МКЦБ">МКЦБ</a></li>
+							<li class="menu-li"><a class="menu-a" href="{% url 'showdb:stations' %}"data-item="Станции">Станции</a></li>
+							<li class="menu-li"><a class="menu-a" href="{% url 'showdb:devices' %}"data-item="Датчики">Датчики</a></li>
+							<li class="menu-li"><a class="menu-a" href="{% url 'showdb:documents' %}"data-item="Документы">Документы</a></li>
+						</ul>
+					</nav>
+					<hr>
 			{% endblock %}
 		</div>
 		<div>

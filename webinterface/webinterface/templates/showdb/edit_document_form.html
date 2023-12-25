@@ -2,7 +2,7 @@
 {% block title %}Редактирование документа{% endblock %}
 
 {% block menu %}
-<a class="btn" href="{% url 'showdb:documents' %}">Назад</a>
+<a class="backbutton" href="{% url 'showdb:documents' %}">Назад</a>
 {% endblock %}
 
 
@@ -13,7 +13,7 @@
 		<p>
 			{{decimal_obj.mkcb}}<br>
 			{{decimal_obj.field_name}}<br><br>
-			<a class="btn" href="{% url 'showdb:delete_mkcb' decimal_obj.mkcb %}">Удалить децимальный номер</a>
+			<a class="backbutton" href="{% url 'showdb:delete_mkcb' decimal_obj.mkcb %}">Удалить децимальный номер</a>
 		</p>
 		<p>
 			{% if files %}
