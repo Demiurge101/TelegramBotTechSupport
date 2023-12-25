@@ -12,6 +12,7 @@
 	<p>
 		{{decimal_obj.mkcb}}<br>
 		{{decimal_obj.field_name}}<br><br>
+		{% include 'edit_mkcb_name_form.html' with form=mkcb_form number=decimal_obj.mkcb %}<br>
 		<a class="btn" href="{% url 'showdb:delete_mkcb' decimal_obj.mkcb %}">Удалить децимальный номер</a>
 	</p>
 	<p>

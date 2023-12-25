@@ -29,6 +29,7 @@
 			Отгружен: {{ station.org }}, {{ station.date_out }}<br>
 			Описание: {{ station.description_field }}<br>
 			<br>
+			{% include 'edit_station_fields.html' with form=station_form number=station.serial_number %}<br>
 			<a class="btn" href="{% url 'showdb:delete_station' station.serial_number %}">Удалить станцию</a>
 		</p>
 		<div>

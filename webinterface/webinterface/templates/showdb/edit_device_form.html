@@ -21,6 +21,7 @@
 		Отгружен: {{ device.org }}, {{ device.date_out }}<br>
 		Описание: {{ device.description_field }}<br>
 		<br>
+		{% include 'edit_device_fields.html' with form=device_form number=device.serial_number %}<br>
 		<a class="btn" href="{% url 'showdb:delete_device' device.serial_number %}">Удалить устройство</a>
 	</p>
 	<p>

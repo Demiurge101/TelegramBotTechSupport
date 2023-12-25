@@ -1,0 +1,15 @@
+
+<div class="div-form">
+	<form action="{% url 'showdb:update_mkcb' number %}" method="POST">
+		{% csrf_token %}
+		<div class="form-error">{{ text }}</div>
+			{% for field in form %}
+				<div>
+					{{ field.label}}<br>
+					{{ field }}<br>
+				</div>
+			{% endfor %}
+		<button class="backbutton" type="submit">Сохранить</button>
+
+	</form><br>
+</div>

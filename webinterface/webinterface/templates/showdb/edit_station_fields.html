@@ -1,0 +1,16 @@
+
+
+<div class="div-form">
+	<form action="{% url 'showdb:update_station' number %}" method="POST">
+		{% csrf_token %}
+		<div class="form-error">{{ text }}</div>
+			{% for field in form %}
+				<div>
+					{{ field.label}}<br>
+					{{ field }}
+				</div>
+			{% endfor %}
+		<button class="backbutton" type="submit">Применить</button>
+
+	</form>
+</div>

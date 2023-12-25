@@ -61,6 +61,15 @@ class AddDecimalNumber(forms.Form):
     number = forms.CharField(label="Децимальный номер", max_length=25)
     name = forms.CharField(label="Название", max_length=255)
 
+class EditDecimalNumber(forms.Form):
+    field_name = forms.CharField(label="Название", max_length=255)
+
+    def set_name(self, current_name):
+        # print(f"set_name({current_name})")
+        # for field in self.fields:
+        #     print(field)
+        self.fields['field_name'].initial = current_name
+
 
 # class AddStationForm(forms.Form):
 #     number = forms.CharField(label="Номер", min_length=8, max_length=8)
@@ -93,6 +102,17 @@ class AddStationForm(forms.ModelForm):
 
     def clean_mkcb(self):
         return self.cleaned_data.get('mkcb').mkcb
+
+    def test(self):
+        self.fields['serial_number'] = None
+
+    def set_station(self, station):
+        self.fields['serial_number'].initial = station.serial_number
+        self.fields['serial_number'].disabled = True
+        self.fields['org'].initial = station.org
+        self.fields['mkcb'].initial = station.mkcb
+        self.fields['date_out'].initial = station.date_out
+        self.fields['description_field'].initial = station.description_field
 
     # def clean_org(self):
     #     return self.cleaned_data.get('org').org
@@ -144,6 +164,20 @@ class AddDeviceForm(forms.ModelForm):
         org = Stations.objects.get(serial_number=number).org
         print(f"ORG: {org}")
         self.fields['org'].queryset = Clients.objects.filter(org=org)
+
+
+    def set_device(self, device):
+        self.fields['serial_number'].initial = device.serial_number
+        self.fields['serial_number'].disabled = True
+        self.fields['station_number'].initial = device.station_number
+        self.fields['org'].initial = device.org
+        self.fields['device_name'].initial = device.device_name
+        self.fields['mkcb'].initial = device.mkcb
+        self.fields['date_out'].initial = device.date_out
+        self.fields['description_field'].initial = device.description_field
+
+
+
     # def clean_org(self):
     #     return self.cleaned_data.get('org').org
 

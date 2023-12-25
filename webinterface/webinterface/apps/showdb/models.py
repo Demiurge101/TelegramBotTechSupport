@@ -49,7 +49,7 @@ class Devices(models.Model):
         db_table = 'devices'
 
 class Stations(models.Model):
-    serial_number = models.IntegerField(primary_key=True)
+    serial_number = models.IntegerField(primary_key=True, verbose_name="Серийный номер")
     org = models.ForeignKey(Clients, models.DO_NOTHING, verbose_name="Организация")
     mkcb = models.CharField(max_length=25, verbose_name="Децимальный номер")
     date_out = models.DateField(blank=True, null=True, verbose_name="Дата")

@@ -233,7 +233,9 @@ def edit_mkcb_form(request, decimal_number):
 		files.append(file)
 		print(f"file: {file}")
 	file_form = AddDocument()
-	return render(request, 'showdb/edit_mkcb_form.html', {'file_form': file_form, 'decimal_obj': number, 'files':files})
+	mkcb_form = EditDecimalNumber()
+	mkcb_form.set_name(number.field_name)
+	return render(request, 'showdb/edit_mkcb_form.html', {'mkcb_form': mkcb_form, 'file_form': file_form, 'decimal_obj': number, 'files':files})
 
 def add_mkcb(request):
 	if not request.user.is_authenticated:
@@ -264,15 +266,28 @@ def add_mkcb(request):
 
 	return HttpResponseRedirect( reverse('showdb:mkcb'))
 
-def edit_mkcb(request, decimal_number):
-	if not request.user.is_authenticated:
-		return index(request)
 
 def delete_mkcb(request, decimal_number):
 	if not request.user.is_authenticated:
 		return index(request)
 	DecimalNumbers.objects.filter(mkcb=decimal_number).delete()
 	return HttpResponseRedirect( reverse('showdb:mkcb'))
+
+
+def update_mkcb(request, decimal_number):
+	if not request.user.is_authenticated:
+		return index(request)
+	form = EditDecimalNumber()
+	if request.method == 'POST':
+		form = EditDecimalNumber(request.POST)
+		if form.is_valid():
+			print(f"form.cleaned_data: {form.cleaned_data}")
+		mkcb_name = form.cleaned_data['field_name']
+		decimal_obj = DecimalNumbers.objects.get(mkcb=decimal_number)
+		if mkcb_name:
+			decimal_obj.field_name = mkcb_name
+		decimal_obj.save()
+	return edit_mkcb_form(request, decimal_number)
 
 
 
@@ -339,17 +354,42 @@ def edit_device_form(request, number):
 		files.append(file)
 		print(f"file: {file}")
 	file_form = AddDocument()
-	return render(request, 'showdb/edit_device_form.html', {'file_form': file_form, 'device': device, 'files':files})
+	device_form = AddDeviceForm()
+	device_form.set_device(device)
+	return render(request, 'showdb/edit_device_form.html', {'device_form': device_form,'file_form': file_form, 'device': device, 'files':files})
 
 
-def edit_device(request):
+def update_device(request, number):
 	if not request.user.is_authenticated:
 		return index(request)
+	form = AddDeviceForm()
+	if request.method == 'POST':
+		form = AddDeviceForm(request.POST)
+		if form.is_valid():
+			print(f"form.cleaned_data: {form.cleaned_data}")
+		device = Devices.objects.get(serial_number=number)
+		if device:
+			if form.cleaned_data['station_number']:
+				device.station_number = form.cleaned_data['station_number']
+			if form.cleaned_data['device_name']:
+				device.device_name = form.cleaned_data['device_name']
+			if form.cleaned_data['org']:
+				device.org = form.cleaned_data['org']
+			if form.cleaned_data['mkcb']:
+				device.mkcb = form.cleaned_data['mkcb']
+			if form.cleaned_data['date_out']:
+				device.date_out = form.cleaned_data['date_out']
+			if form.cleaned_data['description_field']:
+				device.description_field = form.cleaned_data['description_field']
+			device.save()
+	return edit_device_form(request, number)
+
 
 def delete_device(request, number):
 	if not request.user.is_authenticated:
 		return index(request)
 	Devices.objects.filter(serial_number=number).delete()
+	Filebond.objects.filter(snumber=number).delete()
 	return HttpResponseRedirect( reverse('showdb:devices'))
 
 
@@ -408,16 +448,37 @@ def edit_station_form(request, number):
 		files.append(file)
 		print(f"file: {file}")
 	file_form = AddDocument()
-	return render(request, 'showdb/edit_station_form.html', {'device_form': AddDeviceForm(),'file_form': file_form, 'station': station, 'devices': devices, 'files':files})
+	station_form = AddStationForm()
+	station_form.set_station(station)
+	return render(request, 'showdb/edit_station_form.html', {'station_form': station_form,'file_form': file_form, 'station': station, 'devices': devices, 'files':files})
 
 
-def edit_station(request):
+def update_station(request, number):
 	if not request.user.is_authenticated:
 		return index(request)
+	form = AddStationForm()
+	if request.method == 'POST':
+		form = AddStationForm(request.POST)
+		if form.is_valid():
+			print(f"form.cleaned_data: {form.cleaned_data}")
+		station = Stations.objects.get(serial_number=number)
+		if station:
+			if form.cleaned_data['org']:
+				station.org = form.cleaned_data['org']
+			if form.cleaned_data['mkcb']:
+				station.mkcb = form.cleaned_data['mkcb']
+			if form.cleaned_data['date_out']:
+				station.date_out = form.cleaned_data['date_out']
+			if form.cleaned_data['description_field']:
+				station.description_field = form.cleaned_data['description_field']
+			station.save()
+	return edit_station_form(request, number)
+
 
 def delete_station(request, number):
 	if not request.user.is_authenticated:
 		return index(request)
 	Devices.objects.filter(station_number=number).delete()
 	Stations.objects.filter(serial_number=number).delete()
+	Filebond.objects.filter(snumber=number).delete()
 	return HttpResponseRedirect( reverse('showdb:stations'))
