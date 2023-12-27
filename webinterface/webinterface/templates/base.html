@@ -56,8 +56,9 @@
 
 
 			.logout {
-/*				border: 0px;*/
+				border: 0px;
         text-decoration: none;
+        background: #f9f9f9;
         color: #8f8f8f;
         font-size: 26px;
         font-weight: 400;
@@ -65,8 +66,8 @@
 /*        transition-property: width;*/
         position: relative;
         text-transform: uppercase;
-        margin-top: 7px;
-        margin-right: 12px;
+        margin-top: 35px;
+        margin-right: 35px;
         padding: 2px;
 
         &::before {
@@ -86,6 +87,7 @@
           &::before {
             width: 100%;
             transition: all 0.5s ease-in-out;
+            color: #11c;
           }
         }
       }
@@ -415,7 +417,7 @@ nav {
 				<div id="logout_block">
 					<form action="{% url 'showdb:logout' %}" method="POST">
 						{% csrf_token %}
-						<button class="logout" type="submit">Выйти</button>
+						<button class="logout" type="submit" data-item="Выйти">Выйти</button>
 					</form>
 				</div>
 					<nav>
