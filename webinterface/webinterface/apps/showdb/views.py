@@ -96,11 +96,22 @@ def document_edit_form(request, uuid):
 	form.for_update(uuid)
 	return render(request, 'showdb/add_document_form.html', {'form': form, 'uuid': uuid})
 
-def documents(request):
+def documents(request, pos=0):
+	step = 1000
 	if not request.user.is_authenticated:
 		return index(request)
-	files = Files.objects.all()
-	return render(request, 'showdb/documents.html', {'files': files})
+	files = Files.objects.all()[pos*step:(pos+1)*step]
+	count_files = Files.objects.count()
+	if pos < 0:
+		pos = 0
+	if pos > count_files:
+		pos = count_files
+	pages = []
+	k = 0
+	while k * step < count_files:
+		pages.append(k)
+		k += 1
+	return render(request, 'showdb/documents.html', {'files': files, 'pos':pos, 'pages': pages, 'count_files':count_files})
 
 def save_uploaded_file(request, number = ""):
 	if not request.user.is_authenticated:
@@ -296,11 +307,22 @@ def update_mkcb(request, decimal_number):
 
 
 
-def devices(request):
+def devices(request, pos=1):
+	step = 500
 	if not request.user.is_authenticated:
 		return index(request)
 	filter_form = DeviceFilterForm()
-	devices = Devices.objects.all()[:100]
+	devices = Devices.objects.all()[pos*step:(pos+1)*step]
+	count_devices = Devices.objects.count()
+	if pos < 0:
+		pos = 0
+	if pos > count_devices:
+		pos = count_devices
+	pages = []
+	k = 0
+	while k * step < count_devices:
+		pages.append(k)
+		k += 1
 	if request.method == 'POST':
 		filter_form = DeviceFilterForm(request.POST)
 		if request.POST['date_out']:
@@ -311,7 +333,7 @@ def devices(request):
 			devices = devices.filter(mkcb=request.POST['mkcb'])
 		if request.POST['device_name']:
 			devices = devices.filter(device_name=request.POST['device_name'])
-	return render(request, 'showdb/devices.html', {'devices': devices, 'filter_form': filter_form})
+	return render(request, 'showdb/devices.html', {'devices': devices, 'filter_form': filter_form, 'count': count_devices, 'pos': pos, 'pages':pages})
 
 def form_add_device(request, number=None):
 	if not request.user.is_authenticated:

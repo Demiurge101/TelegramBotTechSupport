@@ -11,7 +11,16 @@
 
 	{% if files %}
 		{% with count_row=0 %}
-		<p>Количество: {{ files|length }}</p>
+		<p>Количество: {{ count_files }}</p>
+		<div>
+				{% for lnk in pages %}
+					{% if lnk != pos %}
+					<a class="pages" href="{% url 'showdb:documents' lnk %}">{{lnk}}</a>
+					{% else %}
+					<a class="current-page">{{lnk}}</a>
+					{% endif %}
+				{% endfor %}
+			</div><br>
 		<table>
 		<tr><th>Название</th><th>Тип документа</th><th>Автор</th><th>Дата загрузки</th></tr>
 		{% for file in files %}

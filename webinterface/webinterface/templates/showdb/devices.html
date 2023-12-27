@@ -32,7 +32,16 @@
 
 	{% if devices %}
 		<div class="content">
-			<p>Количество: {{ devices|length }}</p>
+			<p>Количество: {{ count }}</p>
+			<div>
+				{% for lnk in pages %}
+					{% if lnk != pos %}
+					<a class="pages" href="{% url 'showdb:devices' lnk %}">{{lnk}}</a>
+					{% else %}
+					<a class="current-page">{{lnk}}</a>
+					{% endif %}
+				{% endfor %}
+			</div><br>
 			{% for device in devices %}
 				<div class="cell">
 					Заводской номер: <a href="{% url 'showdb:edit_device_form' device.serial_number %}">{{device.serial_number}}</a><br>
