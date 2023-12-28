@@ -71,6 +71,17 @@ def log_out(request):
 
 
 
+def redirect_back(request, backlink="", number=""):
+	if backlink == 'docs':
+		return documents(request)
+	elif backlink == 'device':
+		return edit_device_form(request, number)
+	elif backlink == 'mkcb':
+		return edit_mkcb_form(request, number)
+	elif backlink == 'station':
+		return edit_station_form(request, number)
+	return index(request)
+
 
 def document_add_form(request, text=""):
 	if not request.user.is_authenticated:
@@ -83,7 +94,7 @@ def document_add_form(request, text=""):
 	return render(request, 'showdb/add_document_form.html', {'form': form, 'text': text})
 
 
-def document_edit_form(request, uuid):
+def document_edit_form(request, uuid, backlink="", number=""):
 	if not request.user.is_authenticated:
 		return index(request)
 	form = AddDocument()
@@ -94,6 +105,8 @@ def document_edit_form(request, uuid):
 			for i in form.cleaned_data:
 				print(i)
 	form.for_update(uuid)
+	if backlink:
+		return redirect_back(request, backlink, number)
 	return render(request, 'showdb/add_document_form.html', {'form': form, 'uuid': uuid})
 
 def documents(request, pos=0):
@@ -148,17 +161,8 @@ def upload_file(request, number="", backlink=""):
 			save_uploaded_file(request, number)
 	else:
 		file_form = AddDocument()
-	if backlink == 'docs':
-		return documents(request)
-	elif backlink == 'device':
-		return edit_device_form(request, number)
-	elif backlink == 'mkcb':
-		return edit_mkcb_form(request, number)
-	elif backlink == 'station':
-		return edit_station_form(request, number)
-	elif number:
-		if number[:4] == 'МКЦБ':
-			return edit_mkcb_form(request, number)
+	if backlink:
+		return redirect_back(request, backlink, number)
 	return render(request, 'showdb/add_document_form.html', {'form': file_form, 'number': number})
 
 def update_file(request, uuid="", backlink="", number=""):
@@ -186,23 +190,45 @@ def update_file(request, uuid="", backlink="", number=""):
 	else:
 		print("NOT")
 	form.for_update(uuid)
-	if backlink == 'docs':
-		return documents(request)
-	elif backlink == 'device':
-		return edit_device_form(request, number)
-	elif backlink == 'mkcb':
-		return edit_mkcb_form(request, number)
-	elif backlink == 'station':
-		return edit_station_form(request, number)
+	if backlink:
+		return redirect_back(request, backlink, number)
 	return render(request, 'showdb/edit_document_form.html', {'form': form})
 
 
+def bond_file(request, backlink="", number=""):
+	print("Bond file")
+	form = SelectFileForm()
+	if request.method == 'POST':
+		form = SelectFileForm(request.POST)
+		if form.is_valid():
+			print(f"uuid: {form.cleaned_data['file']}")
+			files = Filebond.objects.filter(snumber=number, uuid=form.cleaned_data['file'])
+			print(f"Files: {files}")
+			print(len(files))
+			if len(files) == 0:
+				fb = Filebond.objects.create(snumber=number, uuid=form.cleaned_data['file'])
+				fb.save()
+	if backlink:
+		return redirect_back(request, backlink, number)
+	return index(request)
 
-def delete_file(request, uuid):
+def unbound_file(request, uuid, backlink="", number=""):
+	if not request.user.is_authenticated:
+		return index(request)
+	print("Unbond file")
+	Filebond.objects.filter(snumber=number, uuid=uuid).delete()
+	return redirect_back(request, backlink, number)
+
+
+
+
+def delete_file(request, uuid, backlink="", number=""):
 	if not request.user.is_authenticated:
 		return index(request)
 	Files.objects.filter(uuid=uuid).delete()
 	Filebond.objects.filter(uuid=uuid).delete()
+	if backlink:
+		return redirect_back(request, backlink, number)
 	return HttpResponseRedirect( reverse('showdb:documents'))
 
 
@@ -244,9 +270,10 @@ def edit_mkcb_form(request, decimal_number):
 		files.append(file)
 		print(f"file: {file}")
 	file_form = AddDocument()
+	select_form = SelectFileForm()
 	mkcb_form = EditDecimalNumber()
 	mkcb_form.set_name(number.field_name)
-	return render(request, 'showdb/edit_mkcb_form.html', {'mkcb_form': mkcb_form, 'file_form': file_form, 'decimal_obj': number, 'files':files})
+	return render(request, 'showdb/edit_mkcb_form.html', {'mkcb_form': mkcb_form, 'file_form': file_form, 'select_form': select_form, 'decimal_obj': number, 'files':files})
 
 def add_mkcb(request):
 	if not request.user.is_authenticated:
@@ -376,9 +403,10 @@ def edit_device_form(request, number):
 		files.append(file)
 		print(f"file: {file}")
 	file_form = AddDocument()
+	select_form = SelectFileForm()
 	device_form = AddDeviceForm()
 	device_form.set_device(device)
-	return render(request, 'showdb/edit_device_form.html', {'device_form': device_form,'file_form': file_form, 'device': device, 'files':files})
+	return render(request, 'showdb/edit_device_form.html', {'device_form': device_form,'file_form': file_form, 'select_form': select_form, 'device': device, 'files':files})
 
 
 def update_device(request, number):
@@ -470,9 +498,10 @@ def edit_station_form(request, number):
 		files.append(file)
 		print(f"file: {file}")
 	file_form = AddDocument()
+	select_form = SelectFileForm()
 	station_form = AddStationForm()
 	station_form.set_station(station)
-	return render(request, 'showdb/edit_station_form.html', {'station_form': station_form,'file_form': file_form, 'station': station, 'devices': devices, 'files':files})
+	return render(request, 'showdb/edit_station_form.html', {'station_form': station_form,'file_form': file_form, 'select_form': select_form, 'station': station, 'devices': devices, 'files':files})
 
 
 def update_station(request, number):

@@ -17,11 +17,14 @@
 	</p>
 	<p>
 		{% if files %}
-			<table>
+			<table class="file-table">
 			<tr><th>Название</th><th>Тип документа</th><th>Автор</th><th>Дата загрузки</th></tr>
 			{% for file in files %}
 				<tr><td>{{ file.namef }}</td><td>{{ file.typef }}</td><td>{{ file.author }}</td><td>{{ file.load_date }}</td>
-					<td><a href="{% url 'showdb:delete_document' file.uuid %}">Delete</a></td></tr>
+					<td><a href="{% url 'showdb:edit_document' 'mkcb' decimal_obj.mkcb file.uuid %}">Редактировать</a></td>
+					<td><a href="{% url 'showdb:unbound_file' 'mkcb' decimal_obj.mkcb file.uuid %}">Открепить</a></td>
+					<td><a href="{% url 'showdb:delete_document' 'mkcb' decimal_obj.mkcb file.uuid %}">Удалить</a></td>
+				</tr>
 			{% endfor %}
 			</table>
 		{% else %}
@@ -29,7 +32,7 @@
 		{% endif %}
 	</p>
 
-	{% include 'add_file_form.html' with file_form=file_form number=decimal_obj.mkcb backlink='mkcb' %}
+	{% include 'add_file_form.html' with file_form=file_form select_form=select_form number=decimal_obj.mkcb backlink='mkcb' %}
 
 	<!-- <div class="main-div-form">
 		<form action="{% url 'showdb:upload_file' decimal_obj.mkcb %}" method="POST" enctype="multipart/form-data">

@@ -1,6 +1,59 @@
+<style type="text/css">
+	#bond-form {
+		display: none;
+	}
+
+	.form-radio {
+	margin-bottom: 10px;
+
+	& input[type=radio] {
+		width: 15px;
+	}
+	& label {
+		display: inline-block;
+		cursor: pointer;
+		position: relative;
+		line-height: 18px;
+		user-select: none;
+		}
+	}
+</style>
+
+<script language="javascript">
+function switch_form(kf){
+	var bond_form = document.getElementById("bond-form");
+	var load_form = document.getElementById("load-form");
+	if (kf == 1){
+		bond_form.style.display = "none";
+		load_form.style.display = "inline";
+	} else if (kf == 2){
+		bond_form.style.display = "inline";
+		load_form.style.display = "none";
+	}
+
+}
+
+
+</script>
 
 <div class="main-div-form">
-	<form action="{% url 'showdb:upload_file' number backlink %}" method="POST" enctype="multipart/form-data">
+	<table><tr><td>
+	<div class="form-radio">
+		<legend>Добавить файл</legend><hr>
+		<div>
+			<input type="radio" id="lf" name="af" value="lf" checked onclick="switch_form(1)"/>
+			<label for="lf">Загрузить новый</label>
+		</div>
+		<div>
+			<input type="radio" id="bf" name="af" value="bf" onclick="switch_form(2)"/>
+			<label for="bf">Привязать существующий</label>
+		</div>
+	</div>
+	<hr>
+	</td></tr>
+
+	<tr><td>
+	<form id="load-form" action="{% url 'showdb:upload_file' number backlink %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
 		<h4>Добавить файл</h4>
 		<div class="form-error">{{ file_form.non_field_errors }}</div>
@@ -11,6 +64,20 @@
 			</div>
 		{% endfor %}
 		<button class="backbutton" type="submit">Добавить</button>
-
 	</form>
+	</td></tr>
+	<tr><td>
+	<form id="bond-form" action="{% url 'showdb:bond_file' number backlink %}" method="POST">
+		{% csrf_token %}
+		<h4>Добавить файл</h4>
+		<div class="form-error">{{ select_form.non_field_errors }}</div>
+		{% for field in select_form %}
+			<div>
+				{{ field.label}}<br>
+				{{ field }}
+			</div>
+		{% endfor %}
+		<button class="backbutton" type="submit">Добавить</button>
+	</form>
+	</td></tr></table>
 </div>

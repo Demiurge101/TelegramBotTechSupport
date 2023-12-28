@@ -51,11 +51,14 @@
 
 			{% if files %}
 			<div>
-				<table>
+				<table class="file-table">
 				<tr><th>Название</th><th>Тип документа</th><th>Автор</th><th>Дата загрузки</th></tr>
 				{% for file in files %}
 					<tr><td>{{ file.namef }}</td><td>{{ file.typef }}</td><td>{{ file.author }}</td><td>{{ file.load_date }}</td>
-						<td><a href="{% url 'showdb:delete_document' file.uuid %}">Delete</a></td></tr>
+					<td><a href="{% url 'showdb:edit_document' 'station' station.serial_number file.uuid %}">Редактировать</a></td>
+					<td><a href="{% url 'showdb:unbound_file' 'station' station.serial_number file.uuid %}">Открепить</a></td>
+					<td><a href="{% url 'showdb:delete_document' 'station' station.serial_number file.uuid %}">Удалить</a></td>
+				</tr>
 				{% endfor %}
 				</table>
 			</div>
@@ -66,7 +69,7 @@
 
 
 
-		{% include 'add_file_form.html' with file_form=file_form number=station.serial_number backlink='station' %}
+		{% include 'add_file_form.html' with file_form=file_form select_form=select_form number=station.serial_number backlink='station' %}
 
 
 		<!-- <div class="main-div-form">

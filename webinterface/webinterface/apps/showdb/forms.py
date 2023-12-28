@@ -249,3 +249,10 @@ class DeviceFilterForm(forms.ModelForm):
         # widgets = {
         #     'mkcb' : forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
         # }
+
+
+class SelectFileForm(forms.Form):
+    file = forms.ModelChoiceField(queryset=Files.objects.all(), empty_label=None)
+
+    def clean_file(self):
+        return self.cleaned_data.get('file').uuid

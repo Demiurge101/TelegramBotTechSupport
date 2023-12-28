@@ -18,13 +18,12 @@
 		      color: #666;
 		      line-height: 22px;
 		      }*/
-			table {
+			.file-table {
 			   border: 0px solid black;
 			   border-radius: 4px;
 			   background: darkblue;
-			}
-			/* границы ячеек первого ряда таблицы */
-			th {
+			
+			& th {
 			   border: 0px solid darkblue;
 			   color: darkblue;
 			   border-radius: 1px;
@@ -32,7 +31,8 @@
 			   background: lightblue;
 			}
 			/* границы ячеек тела таблицы */
-			td {
+			
+			& td {
 				background: lightblue;
 			   border: 0px solid darkblue;
 			   border-radius: 1px;
@@ -40,6 +40,7 @@
 			   padding-right: 8px;
 			   color: darkblue;
 			}
+		}
 
 			.btn {
 				border:1px solid darkblue;
