@@ -94,7 +94,7 @@ def document_add_form(request, text=""):
 	return render(request, 'showdb/add_document_form.html', {'form': form, 'text': text})
 
 
-def document_edit_form(request, uuid, backlink="", number=""):
+def document_edit_form(request, uuid, backlink="docs", number="0"):
 	if not request.user.is_authenticated:
 		return index(request)
 	form = AddDocument()
@@ -105,9 +105,9 @@ def document_edit_form(request, uuid, backlink="", number=""):
 			for i in form.cleaned_data:
 				print(i)
 	form.for_update(uuid)
-	if backlink:
-		return redirect_back(request, backlink, number)
-	return render(request, 'showdb/add_document_form.html', {'form': form, 'uuid': uuid})
+	# if backlink:
+	# 	return redirect_back(request, backlink, number)
+	return render(request, 'showdb/add_document_form.html', {'form': form, 'backlink': backlink, 'number':number, 'uuid': uuid})
 
 def documents(request, pos=0):
 	step = 1000

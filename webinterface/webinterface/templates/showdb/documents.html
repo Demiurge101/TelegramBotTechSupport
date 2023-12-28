@@ -29,8 +29,8 @@
 				<td>{{ file.typef }}</td>
 				<td>{{ file.author }}</td>
 				<td>{{ file.load_date }}</td>
-				<td><a href="{% url 'showdb:edit_document' file.uuid %}">edit</a></td>
-				<td><a href="{% url 'showdb:delete_document' file.uuid %}">delete</a></td>
+				<td><a href="{% url 'showdb:edit_document' file.uuid %}">Редактировать</a></td>
+				<td><a href="{% url 'showdb:delete_document' file.uuid %}">Удалить</a></td>
 			</tr>
 		{% endfor %}
 		</table>

@@ -39,7 +39,7 @@ class AddDocument(forms.Form):
     file_type = forms.ChoiceField(label="Тип документа", choices = decimal_file_types, initial = ('и','Прочие инструкции (И)'))
     # self.fields['file_type'].initial = ('и','Прочие инструкции (И)')
     file = forms.FileField(label="Файл", )
-    file_name = forms.CharField(label="Новое имя файла", max_length=255, required=False)
+    file_name = forms.CharField(label="Имя файла", max_length=255, required=False)
 
     def for_update(self, uuid):
         print(f"for_update({uuid})")
@@ -50,8 +50,21 @@ class AddDocument(forms.Form):
         # for tp in decimal_file_types:
         #     print(tp)
         # print(decimal_file_types[0])
+        self.fields['file'].widget = forms.HiddenInput()
+        self.fields['file'].label = ""
         self.fields['file'].required = False
-        self.fields['file_type'].initial = ('и','Прочие инструкции (И)')
+        self.fields['file'].disabled = True
+        file_type = file_obj.typef
+        initial_file_type = ('и','Прочие инструкции (И)')
+        for t in decimal_file_types:
+            if file_type == t[0]:
+                initial_file_type = t
+        for t in serial_file_types:
+            if file_type == t[0]:
+                initial_file_type = t
+        self.fields['file_type'].initial = initial_file_type
+        self.fields['file_name'].initial = file_obj.namef
+
         # self.initial['file_type'] = decimal_file_types[2]
         # file_type.initial = 'default value'
         # file.required = False
