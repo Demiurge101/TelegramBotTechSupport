@@ -535,7 +535,7 @@ def son(message, menu_id=0, overcount=0):
     son_stat.fromMessage(message)
     # SN.test(number, client_id)
     # print("Parsed:", son_controller.parse_type(message.text.lower()))
-    if(message.text in return_keys) or (overcount > 5):
+    if(message.text in return_keys) or message.text == '/start' or (overcount > 5):
         if(overcount > 5):
             bot.send_message(message.chat.id, "Слишком большое количество ошибок.")
         menu_position[message.from_user.id] = main_menu_id
@@ -552,6 +552,8 @@ def son(message, menu_id=0, overcount=0):
         son_controller.deleteUser(message.from_user.id)
         son_controller.deleteUserLocation(message.from_user.id)
         return
+    elif message.text == '/help':
+        return navigation(message)
     # parsed_type = son_controller.parseType(message.text)
     codes_location = son_controller.getLocation()
     mkcb_location = ''
