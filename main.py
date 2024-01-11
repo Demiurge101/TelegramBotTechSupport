@@ -237,12 +237,14 @@ def send_message_to_user(message):
     stat.fromMessage(message)
     if message.from_user.id in admins:
         print(message.text)
-        mdata = message.text.lower().split()
+        mdata = message.text.split()
+        for i in mdata:
+            print(f"- {i}")
         if len(mdata) >= 3:
             user_id = mdata[1]
             beginid = message.text.find(mdata[2])
-            # print(beginid)
-            # print(message.text[beginid:])
+            print(beginid)
+            print(message.text[beginid:])
             try:
                 bot.send_message(user_id, message.text[beginid:])
             except Exception as e:
