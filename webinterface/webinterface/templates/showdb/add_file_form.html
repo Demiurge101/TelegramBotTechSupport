@@ -146,23 +146,37 @@ function test() {
 		$("#filter-field").keyup( function (){
 			var filter_text = this.value;
 			console.log(filter_text);
-			$.ajax({
-			    url: "/ajax_filter_files",
-			    type: "POST",
-			    data: {
-			    	text: filter_text,
-					csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-				},
-			    // cache:false,
-			    // dataType: "json",
-			    success: function(resp){
-			        console.log ("resp: " + resp);
-			        console.log ("---")
-			        console.log ($("#filter-input").val())
-			    },
-			    error: function(resp){
-			    	alert ("Something wrong.")
-			    }
+			// $.ajax({
+			//     url: "/ajax_filter_files",
+			//     type: "POST",
+			//     data: {
+			//     	text: filter_text,
+			// 		csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+			// 	},
+			//     // cache:false,
+			//     // dataType: "json",
+			//     success: function(resp){
+			//         console.log ("resp: " + resp);
+			//         console.log ("---")
+			//         console.log ($("#filter-input").val())
+			//     },
+			//     error: function(resp){
+			//     	console.log ("(ajax) Something went wrong.")
+			//     }
+			// });
+			// console.log ($("#filter-input").text())
+			$("#filter-input > option").each(function() {
+				if (this.text.indexOf(filter_text) >= 0){
+					// console.log (this.text + ' ' + this.value);
+					// this.css('display', 'block');
+					// this.show();
+					// console.log(this);
+					this.style.display = "block";
+				} else {
+					// this.css('display', 'none');
+					// this.hide();
+					this.style.display = "none";
+				}
 			});
 		});
 	}); 
@@ -203,14 +217,15 @@ function test() {
 		{% csrf_token %}
 
 		<h4>Добавить файл</h4>
+		<div><input id='filter-field' type="text" placeholder="Filter"></div>
+		<label>Выберите файл:</label>
 		<div class="form-error">{{ select_form.non_field_errors }}</div>
 		{% for field in select_form %}
 			<div>
-				{{ field.label}}<br>
+				<!-- {{ field.label}}<br> -->
 				{{ field }}
 			</div>
 		{% endfor %}
-		<div><input id='filter-field' type="text"></div>
 		<button class="backbutton" type="submit">Добавить</button>
 	</form>
 	</td></tr></table>
