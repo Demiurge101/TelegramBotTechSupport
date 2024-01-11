@@ -30,7 +30,8 @@ path('update_file/<uuid>', views.update_file, name='update_file'),
 path('update_file/<backlink>/<number>/<uuid>', views.update_file, name='update_file'),
 path('bond_file/<number>/<backlink>', views.bond_file, name='bond_file'),
 path('unbound_file/<backlink>/<number>/<uuid>', views.unbound_file, name='unbound_file'),
-
+path('ajax_filter_files', views.ajax_filter_files, name="ajax_filter_files"),
+path('ajax_filter_files/<val>', views.ajax_filter_files, name="ajax_filter_files"),
 
 path('stations', views.stations, name = 'stations'),
 path('add_station_form', views.form_add_station, name = 'add_station_form'),

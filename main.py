@@ -430,7 +430,7 @@ def project_map(message, *args):
         /reconnect - reconnect DB
         /drop - stop bot
         /update_ts - обновить базу данных техподдержки
-        update_son - обновить базу данных системы одного номера
+        /update_son - обновить базу данных системы одного номера
         /info (|son) (|detailed)
         /send <id> <text>"""
         bot.send_message(message.chat.id, text)
@@ -552,7 +552,7 @@ def son(message, menu_id=0, overcount=0):
         son_controller.deleteUser(message.from_user.id)
         son_controller.deleteUserLocation(message.from_user.id)
         return
-    elif message.text == '/help':
+    elif message.text[0] == '/':
         return navigation(message)
     # parsed_type = son_controller.parseType(message.text)
     codes_location = son_controller.getLocation()

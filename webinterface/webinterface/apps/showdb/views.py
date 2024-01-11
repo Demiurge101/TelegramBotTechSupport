@@ -1,7 +1,9 @@
 from django.shortcuts import render
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
+
+import json
 
 from uuid import uuid4
 from datetime import datetime
@@ -232,7 +234,31 @@ def delete_file(request, uuid, backlink="", number=""):
 	return HttpResponseRedirect( reverse('showdb:documents'))
 
 
+def ajax_post_parser(request):
+	pass
 
+def ajax_filter_files(request):
+	if not request.user.is_authenticated:
+		return index(request)
+	if request.method == 'POST':
+		filter_text = request.POST.get('text')
+		# filter_name = request.POST.get('name')
+		# filter_type = request.POST.get('type')
+		# filter_date = request.POST.get('date')
+		files = {}
+		if filter_text:
+			if len(filter_text) < 4:
+				filess = Files.objects.filter(typef=filter_text.lower())
+			elif '-' in filter_text:
+				filess = Files.objects.filter(load_date=filter_text)
+			else:
+				filess = Files.objects.filter(namef=filter_text) 
+			print(f"Count: {filess.count()}")
+			return HttpResponse(filess)
+		return HttpResponse(json.dumps({'text': f"Another {filter_text}", 'files':files}), content_type="application/json")
+	else :
+		print("Stay out")
+		return render_to_response('index.html', locals())
 
 
 

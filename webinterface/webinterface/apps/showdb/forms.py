@@ -265,7 +265,6 @@ class DeviceFilterForm(forms.ModelForm):
 
 
 class SelectFileForm(forms.Form):
-    file = forms.ModelChoiceField(queryset=Files.objects.all(), empty_label=None)
-
+    file = forms.ModelChoiceField(queryset=Files.objects.all(), empty_label=None, label="Файл", widget=forms.Select(attrs={'id':'filter-input'}))
     def clean_file(self):
         return self.cleaned_data.get('file').uuid
