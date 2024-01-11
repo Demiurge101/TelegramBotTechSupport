@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Редактирование Устройства{% endblock %}
+{% block title %}Добавление Устройства{% endblock %}
 {% block style %}
 <style>
       body, div, form, input, select { 
@@ -76,6 +76,27 @@
 					{{ field }}
 				</div>
 			{% endfor %}
+            <script>
+                  $(document).ready(function () {
+                        $("#station-field").change(function(){
+                              var name = this.value;
+                              // console.log (name);
+                              if (name) {
+                                    $("#org-field").prop("disabled",true);
+                                    station_text = $('option[value='+name+']').text()
+                                    id_colon = station_text.indexOf(':');
+                                    id_comma = station_text.indexOf(',');
+                                    if (id_colon >= 0 && id_comma >= 0){
+                                          org_text = station_text.substring(id_colon+2, id_comma);
+                                          // console.log(org_text);
+                                          $("#org-field").val(org_text).change();
+                                    }
+                              } else {
+                                    $("#org-field").prop("disabled",false);
+                              }
+                        });
+                  });
+            </script>
 		<button class="backbutton" type="submit">Добавить</button>
 
 	</form>

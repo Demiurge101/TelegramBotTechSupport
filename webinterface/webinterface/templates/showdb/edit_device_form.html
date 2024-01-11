@@ -13,11 +13,11 @@
 		{{device.serial_number}}<br>
 		{{device.device_name}}<br>
 		{% if device.station_number %}
-		Station: <a href="{% url 'showdb:edit_station_form' device.station_number.serial_number %}"> {{device.station_number}}</a><br>
+		Станция: <a href="{% url 'showdb:edit_station_form' device.station_number.serial_number %}"> {{device.station_number}}</a><br>
 		{% else %}
 		Без станции.<br>
 		{% endif %}
-		mkcb: <a href="{% url 'showdb:edit_mkcb_form' device.mkcb %}">{{device.mkcb}}</a><br>
+		МКЦБ: <a href="{% url 'showdb:edit_mkcb_form' device.mkcb %}">{{device.mkcb}}</a><br>
 		Отгружен: {{ device.org }}, {{ device.date_out }}<br>
 		Описание: {{ device.description_field }}<br>
 		<br>

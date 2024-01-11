@@ -63,6 +63,9 @@
     </style>
 {% endblock %}
 
+
+
+
 {% block menu %}
 <div class="back">
 	<a class='backbutton' href="{% url 'showdb:documents' %}">Документы</a>
@@ -84,6 +87,18 @@
 				{{ field }}
 			</div>
 		{% endfor %}
+            <script>
+                  $(document).ready(function () {
+                        $("#select-file").change(function(){
+                              var name = this.value;
+                              islash = name.lastIndexOf('\\');
+                              console.log(islash);
+                              name = name.substring(islash+1);
+                              console.log(name);
+                              $("#name-selected-file").val(name);
+                        });
+                  });
+            </script>
 		<button class="backbutton" type="submit">{% if uuid %}Сохранить{% else %}Добавить{% endif %}</button>
 	</form>
 </div>

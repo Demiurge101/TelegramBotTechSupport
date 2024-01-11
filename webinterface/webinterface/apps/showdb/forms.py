@@ -38,8 +38,8 @@ class AddDocument(forms.Form):
     global decimal_file_types
     file_type = forms.ChoiceField(label="Тип документа", choices = decimal_file_types, initial = ('и','Прочие инструкции (И)'))
     # self.fields['file_type'].initial = ('и','Прочие инструкции (И)')
-    file = forms.FileField(label="Файл", )
-    file_name = forms.CharField(label="Имя файла", max_length=255, required=False)
+    file = forms.FileField(label="Файл", widget = forms.ClearableFileInput(attrs={'id':'select-file'}), )
+    file_name = forms.CharField(widget=forms.TextInput(attrs={'id':'name-selected-file'}), label="Имя файла", max_length=255, required=False)
 
     def for_update(self, uuid):
         print(f"for_update({uuid})")
@@ -101,10 +101,10 @@ class AddStationForm(forms.ModelForm):
                 'class': 'form-control'
                 }
             )
-        self.fields['serial_number'] = forms.CharField(min_length=4, max_length=8)
+        self.fields['serial_number'] = forms.CharField(min_length=4, max_length=8, label='Серийный номер')
         # self.fields['serial_number'].max_length = 8
         # self.fields['serial_number'].min_length = 4
-        self.fields['mkcb'] = forms.ModelChoiceField(to_field_name='mkcb', queryset=DecimalNumbers.objects.all(), empty_label='Не выбрано')
+        self.fields['mkcb'] = forms.ModelChoiceField(to_field_name='mkcb', label='МКЦБ', queryset=DecimalNumbers.objects.all(), empty_label='Не выбрано')
         self.fields['date_out'].required = True
         self.fields['org'].empty_label = "Не выбрано"
         # self.fields['org'].attrs = {'class':'form-common'}
@@ -155,13 +155,15 @@ class AddDeviceForm(forms.ModelForm):
                 'class': 'form-control'
                 }
             )
-        self.fields['serial_number'] = forms.CharField(min_length=4, max_length=8)
-        self.fields['station_number'] = forms.ModelChoiceField(to_field_name='serial_number', queryset=Stations.objects.all(), empty_label='Не выбрано')
+        self.fields['serial_number'] = forms.CharField(min_length=4, max_length=8, label='Серийный номер')
+        self.fields['station_number'] = forms.ModelChoiceField(to_field_name='serial_number', queryset=Stations.objects.all(), empty_label='Не выбрано', widget=forms.Select(attrs={'id':'station-field'}), label='Станция')
         self.fields['station_number'].required = False
         # self.fields['serial_number'].max_length = 8
         # self.fields['serial_number'].min_length = 4
-        self.fields['mkcb'] = forms.ModelChoiceField(to_field_name="mkcb", queryset=DecimalNumbers.objects.all(), empty_label='Не выбрано')
+        self.fields['mkcb'] = forms.ModelChoiceField(to_field_name="mkcb", queryset=DecimalNumbers.objects.all(), empty_label='Не выбрано', label='МКЦБ')
         self.fields['date_out'].required = True
+        self.fields['org'] = forms.ModelChoiceField(to_field_name='org', label='Организация', queryset=Clients.objects.all(), widget = forms.Select(attrs={'id':'org-field'}), empty_label='Не выбрано')
+        # self.fields['org'].widget = forms.Select(attrs={'id':'org-field'})
         self.fields['org'].empty_label = "Не выбрано"
 
     class Meta:
@@ -177,12 +179,15 @@ class AddDeviceForm(forms.ModelForm):
         org = Stations.objects.get(serial_number=number).org
         print(f"ORG: {org}")
         self.fields['org'].queryset = Clients.objects.filter(org=org)
+        # self.fields['org'].disabled = True
 
 
     def set_device(self, device):
         self.fields['serial_number'].initial = device.serial_number
         self.fields['serial_number'].disabled = True
         self.fields['station_number'].initial = device.station_number
+        if device.station_number:
+            self.fields['org'].disabled = True
         self.fields['org'].initial = device.org
         self.fields['device_name'].initial = device.device_name
         self.fields['mkcb'].initial = device.mkcb
