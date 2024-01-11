@@ -236,11 +236,14 @@ def info(message):
 def send_message_to_user(message):
     stat.fromMessage(message)
     if message.from_user.id in admins:
+        print(message.text)
         mdata = message.text.lower().split()
         if len(mdata) >= 3:
             user_id = mdata[1]
-            text = mdata[2]
-            bot.send_message(user_id, text)
+            beginid = message.text.find(mdata[2])
+            # print(beginid)
+            # print(message.text[beginid:])
+            bot.send_message(user_id, message.text[beginid:])
 
 
 @bot.message_handler(commands=['start'])
