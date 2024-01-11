@@ -243,7 +243,10 @@ def send_message_to_user(message):
             beginid = message.text.find(mdata[2])
             # print(beginid)
             # print(message.text[beginid:])
-            bot.send_message(user_id, message.text[beginid:])
+            try:
+                bot.send_message(user_id, message.text[beginid:])
+            except Exception as e:
+                print(e)
 
 
 @bot.message_handler(commands=['start'])
