@@ -511,9 +511,27 @@ def navigation(message, menu_id=0):
             # bot.send_message(message.chat.id, content['content_text'])
             text = content['content_text']
             # print(text)
+        files = TSDB.get_files(menu_id)
+        print("Files:")
+        for f in files:
+            # print(f)
+            flct = f"{files_location}/{f['uuid']}"
+            print(f['file_id'])
+            sended = False
+            if f['file_id'] != None:
+                try:
+                    print(f"Try send old file (file_id: {f['file_id']})")
+                    bot.send_document(message.chat.id, f['file_id'])
+                    sended = True
+                except Exception as e:
+                    print(e)
+            if not sended:
+                print('Sending new file...')
+                file_id = sendFileByRequest(message.chat.id, f['uuid'], files_location, f['namef'])
+                TSDB.set_file_id(f['uuid'], file_id)
         if content['location'] != "" and content['location'] != None:
             location = content['location']
-            print(content['location'])
+            print("Location:", content['location'])
             # sendFromFolder(message, content['location'], False)
     if message.text.lower() == "система одного номера":
         menu_id = TSDB.getIdByTitle(message.text)

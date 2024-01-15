@@ -47,17 +47,41 @@ def makeNode(location, title = "", parent_id=0):
 			content = TS.getContent(title_id)
 			if content:   # if content exist
 				if have_files:
-					TS.setContentLocation(title_id, source_location)
+					# TS.setContentLocation(title_id, source_location)
+					s_list = os.listdir(source_location)
+					for file_name in s_list:
+						print(f"file_name: {file_name}")
+						print(file_name[-4:])
+						if file_name[-4:] == '.cnt':
+							continue
+						full_file_name = os.path.abspath(source_location + '/' + file_name)
+						if os.path.isfile(full_file_name):
+							print("Adding")
+							TS.add_file_from_location(title_id, source_location, file_name, 'ts_parser')
 			else:         # if content doesn't exist
 				if have_files:
-					TS.addContent(title_id, title, source_location)
+					TS.addContent(title_id, title)
+					s_list = os.listdir(source_location)
+					for file_name in s_list:
+						if file_name[-4:] == '.cnt':
+							continue
+						full_file_name = os.abspath(source_location + '/' + file_name)
+						if os.path.isfile(full_file_name):
+							TS.add_file_from_location(title_id, source_location, file_name, 'ts_parser')
 				else:
 					TS.addContent(title_id, title)
 		else:
 			TS.addTitle(parent_id, title, 1)
 			title_id = TS.getIdByTitle(title)
 			if have_files:
-				TS.addContent(title_id, title, source_location)
+				TS.addContent(title_id, title)
+				s_list = os.listdir(source_location)
+				for file_name in s_list:
+					if file_name[-4:] == '.cnt':
+							continue
+					full_file_name = os.path.abspath(source_location + '/' + file_name)
+					if os.path.isfile(full_file_name):
+						TS.add_file_from_location(title_id, source_location, file_name, 'ts_parser')
 			else:
 				TS.addContent(title_id, title)
 

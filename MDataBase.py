@@ -351,6 +351,7 @@ class SonDB(Database):
 class TSDB(Database):
     dblocation = Config.tsDBfiles
     get_access_to_path(dblocation)
+    common_location = Config.uuid_files_location
 
     def init(self):
         self.main_menu_id = 0
@@ -473,3 +474,46 @@ class TSDB(Database):
         if self.main_menu_id < 0:
             self.main_menu_id = 1
         return self.main_menu_id
+
+
+
+
+
+
+
+
+    def add_file_from_location(self, title_id, location, name, author='Unknown by TSDB class'):
+        print(green_text(f"add file:  {location}  {name}"))
+        uuid = uuid4()
+        date = datetime.now().strftime("%Y-%m-%d")
+        # copy(location, common_location)
+        shutil.copyfile(f"{location}/{name}", f"{self.common_location}/{uuid}")
+        self._commit(f"insert into files(uuid, namef, author, load_date) value (\"{uuid}\", \"{name}\", \"{author}\", \"{date}\")")
+        self._commit(f"insert into filebond(title_id, uuid) value (\"{title_id}\", \"{uuid}\")")
+        return uuid
+
+    def add_file_bond(self, title_id, uuid):
+        self._commit(f"insert into filebond(title_id, uuid) value(\"{title_id}\", \"{uuid}\")")
+
+    def delete_file(self, uuid):
+        print(f"delete_file({uuid})")
+        if uuid:
+            print("Deleting...")
+            self._commit(f"delete from files where uuid = \"{uuid}\"")
+            self._commit(f"delete from filebond where uuid = \"{uuid}\"")
+            os.remove(f"{self.common_location}/{uuid}")
+
+
+    def set_file_id(self, uuid, file_id):
+        self._commit(f"update files set file_id = \"{file_id}\" where uuid = \"{uuid}\"")
+
+    def get_files(self, title_id):
+        print(f'get_files({title_id})')
+        res = []
+        filebonds = self._fetchall(f"select * from filebond where title_id = \"{title_id}\"")
+        print("filebonds:", filebonds)
+        for filebond in filebonds:
+            file = self._fetchall(f"select * from files where uuid = \"{filebond['uuid']}\"")
+            print("file:", file)
+            res += file
+        return res

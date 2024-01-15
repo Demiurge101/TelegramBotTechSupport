@@ -8,8 +8,8 @@ USE TS_Dispatcher;
 
 CREATE TABLE titles
 (
-  id INT(4) NOT NULL AUTO_INCREMENT UNIQUE,
-    parent_id INT(4) NOT NULL,
+  id INT NOT NULL AUTO_INCREMENT UNIQUE,
+    parent_id INT NOT NULL,
     title varchar(100) NOT NULL,
     command varchar(50) unique,
     title_type tinyint(1) NOT NULL,
@@ -20,8 +20,8 @@ CREATE TABLE titles
 
 CREATE TABLE contents
 (
-	id INT(4) NOT NULL AUTO_INCREMENT UNIQUE,
-	parent_id INT(4) NOT NULL UNIQUE,
+	id INT NOT NULL AUTO_INCREMENT UNIQUE,
+	parent_id INT NOT NULL UNIQUE,
 	content_text varchar(3000) NOT NULL,
 	location varchar(255),
 	CONSTRAINT pk_contents
@@ -30,4 +30,28 @@ CREATE TABLE contents
     FOREIGN KEY(parent_id)
         REFERENCES titles(id)
         ON UPDATE CASCADE
+);
+
+
+CREATE TABLE files
+(
+    uuid varchar(64) unique not null,
+    namef varchar(128) not null,
+    file_id varchar(128) unique,
+    author varchar(50),
+    load_date date,
+    CONSTRAINT PK_files
+        primary key(uuid)
+);
+
+CREATE TABLE filebond
+(
+  id int NOT NULL AUTO_INCREMENT, 
+    title_id INT not null,
+    uuid varchar(64) not null,
+    CONSTRAINT PK_filebond
+    primary key(id)
+   --  CONSTRAINT FK_files
+--         FOREIGN KEY(uuid)
+--             REFERENCES files(uuid)
 );

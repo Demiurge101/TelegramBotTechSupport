@@ -1,0 +1,135 @@
+<style type="text/css">
+	#bond-form {
+		display: none;
+	}
+
+	.form-radio {
+	margin-bottom: 10px;
+
+	& input[type=radio] {
+		width: 15px;
+	}
+	& label {
+		display: inline-block;
+		cursor: pointer;
+		position: relative;
+		line-height: 18px;
+		user-select: none;
+		}
+	}
+</style>
+
+<script language="javascript">
+function switch_form(kf){
+	var bond_form = document.getElementById("bond-form");
+	var load_form = document.getElementById("load-form");
+	if (kf == 1){
+		bond_form.style.display = "none";
+		load_form.style.display = "inline";
+	} else if (kf == 2){
+		bond_form.style.display = "inline";
+		load_form.style.display = "none";
+	}
+
+}
+</script>
+
+
+<script>
+	$(document).ready(function () { 
+		$("#filter-field").keyup( function (){
+			var filter_text = this.value;
+			console.log(filter_text);
+			// $.ajax({
+			//     url: "/ajax_filter_files",
+			//     type: "POST",
+			//     data: {
+			//     	text: filter_text,
+			// 		csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+			// 	},
+			//     // cache:false,
+			//     // dataType: "json",
+			//     success: function(resp){
+			//         console.log ("resp: " + resp);
+			//         console.log ("---")
+			//         console.log ($("#filter-input").val())
+			//     },
+			//     error: function(resp){
+			//     	console.log ("(ajax) Something went wrong.")
+			//     }
+			// });
+			// console.log ($("#filter-input").text())
+			$("#filter-input > option").each(function() {
+				if (this.text.indexOf(filter_text) >= 0){
+					// console.log (this.text + ' ' + this.value);
+					// this.css('display', 'block');
+					// this.show();
+					// console.log(this);
+					this.style.display = "block";
+				} else {
+					// this.css('display', 'none');
+					// this.hide();
+					this.style.display = "none";
+				}
+			});
+		});
+
+		$("#select-file").change(function(){
+			var name = this.value;
+			islash = name.lastIndexOf('\\');
+			console.log(islash);
+			name = name.substring(islash+1);
+			console.log(name);
+			$("#name-selected-file").val(name);
+		});
+	}); 
+</script>
+
+<div class="main-div-form">
+	<table><tr><td>
+	<div class="form-radio">
+		<legend>Добавить файл</legend><hr>
+		<div>
+			<input type="radio" id="lf" name="af" value="lf" checked onclick="switch_form(1)"/>
+			<label for="lf">Загрузить новый</label>
+		</div>
+		<div>
+			<input type="radio" id="bf" name="af" value="bf" onclick="switch_form(2)"/>
+			<label for="bf">Прикрепить существующий</label>
+		</div>
+	</div>
+	<hr>
+	</td></tr>
+
+	<tr><td>
+	<form id="load-form" action="{% url 'showdb:upload_file' number backlink %}" method="POST" enctype="multipart/form-data">
+		{% csrf_token %}
+		<h4>Добавить файл</h4>
+		<div class="form-error">{{ file_form.non_field_errors }}</div>
+		{% for field in file_form %}
+			<div>
+				{{ field.label}}<br>
+				{{ field }}
+			</div>
+		{% endfor %}
+		<button class="backbutton" type="submit">Добавить</button>
+	</form>
+	</td></tr>
+	<tr><td>
+	<form id="bond-form" action="{% url 'showdb:bond_file' number backlink %}" method="POST">
+		{% csrf_token %}
+
+		<h4>Добавить файл</h4>
+		<div><input id='filter-field' type="text" placeholder="Фильтр"></div>
+		<label>Выберите файл:</label>
+		<div class="form-error">{{ select_form.non_field_errors }}</div>
+		{% for field in select_form %}
+			<div>
+				<!-- {{ field.label}}<br> -->
+				{{ field }}
+			</div>
+		{% endfor %}
+		<button class="backbutton" type="submit">Добавить</button>
+	</form>
+	</td></tr></table>
+</div><br>

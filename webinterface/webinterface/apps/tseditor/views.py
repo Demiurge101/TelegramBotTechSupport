@@ -16,3 +16,8 @@ def index(request):
 	# devices = Devices.objects.all()
 	# orgs = Clients.objects.all()
 	return render(request, 'tseditor/titles.html', {'titles': titles})
+
+
+def title(request, title_id):
+	titles = Titles.objects.filter(parent_id = title_id)
+	return render(request, 'tseditor/titles.html', {'titles': titles})
