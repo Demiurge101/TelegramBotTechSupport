@@ -31,7 +31,28 @@
 		{% else %}
 			No titles.
 		{% endif %}
-	</div>
+	</div><br>
+	{% if title %}
+		{% if files %}
+			<div>
+				<table class="file-table">
+				<tr><th>Название</th><th>Автор</th><th>Дата загрузки</th></tr>
+				{% for file in files %}
+					<tr><td>{{ file.namef }}</td><td>{{ file.author }}</td><td>{{ file.load_date }}</td>
+					<td><a href="{% url 'tseditor:edit_document' title.title_id file.uuid %}">Редактировать</a></td>
+					<td><a href="{% url 'tseditor:unbound_file' title.title_id file.uuid %}">Открепить</a></td>
+					<td><a href="{% url 'tseditor:delete_file' file.uuid title.title_id %}">Удалить</a></td>
+				</tr>
+				{% endfor %}
+				</table>
+			</div>
+		{% else %}
+			Нет файлов для этого пункта меню.
+		{% endif %}
+		<br>
+		{% include 'tseditor/add_file_form.html' with file_form=file_form select_form=select_form titleid=title.title_id %}
+		<br>
+	{% endif %}
 
 
 

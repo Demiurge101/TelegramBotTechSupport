@@ -9,7 +9,7 @@ from .models  import *
 
 
 class UploadFileForm(forms.Form):
-    global decimal_file_types
+    # global decimal_file_types
     file = forms.FileField(label="Файл")
 
 
@@ -41,7 +41,7 @@ class AddDocument(forms.Form):
         self.fields['file'].label = ""
         self.fields['file'].required = False
         self.fields['file'].disabled = True
-        file_type = file_obj.typef
+        # file_type = file_obj.typef
         self.fields['file_name'].initial = file_obj.namef
 
         # self.initial['file_type'] = decimal_file_types[2]

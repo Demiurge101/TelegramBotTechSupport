@@ -102,7 +102,7 @@ function switch_form(kf){
 	</td></tr>
 
 	<tr><td>
-	<form id="load-form" action="{% url 'showdb:upload_file' number backlink %}" method="POST" enctype="multipart/form-data">
+	<form id="load-form" action="{% url 'tseditor:upload_file' titleid %}" method="POST" enctype="multipart/form-data">
 		{% csrf_token %}
 		<h4>Добавить файл</h4>
 		<div class="form-error">{{ file_form.non_field_errors }}</div>
@@ -116,7 +116,7 @@ function switch_form(kf){
 	</form>
 	</td></tr>
 	<tr><td>
-	<form id="bond-form" action="{% url 'showdb:bond_file' number backlink %}" method="POST">
+	<form id="bond-form" action="{% url 'tseditor:bond_file' titleid %}" method="POST">
 		{% csrf_token %}
 
 		<h4>Добавить файл</h4>

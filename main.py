@@ -180,7 +180,7 @@ def update_ts(message):
     if not message.from_user.id in admins:
         return
     # print(yellow_text(get_time()), f"DB TS has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
-    bot.send_message(message.chat.id, "This function obsolete! Use WEB-interface by http://192.168.0.55.")
+    bot.send_message(message.chat.id, "This function obsolete! Use WEB-interface by http://192.168.0.55/tseditor.")
     # os.system("python.exe build_tree.py")
     # reconnect_DB(message)
 
@@ -439,8 +439,6 @@ def project_map(message, *args):
         /reborn
         /reconnect - reconnect DB
         /drop - stop bot
-        /update_ts - обновить базу данных техподдержки
-        /update_son - обновить базу данных системы одного номера
         /info (|son) (|detailed)
         /send <id> <text>"""
         bot.send_message(message.chat.id, text)

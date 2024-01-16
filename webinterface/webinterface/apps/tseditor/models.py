@@ -45,7 +45,7 @@ class Files(models.Model):
     load_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.namef}: {self.typef.upper()} {self.author} ({self.load_date})"
+        return f"{self.namef}: {self.author} ({self.load_date})"
 
     class Meta:
         managed = False
