@@ -1,0 +1,111 @@
+<style>
+	.main-div-form {
+      display: flex;
+      float: left;
+      justify-content: center;
+      align-items: center;
+      height: inherit;
+      padding: 3px;
+      margin-top: 10px;
+      margin-left: 10px;
+      margin-bottom: 110px;
+      padding: 8px;
+      }
+
+      .backbutton {
+      text-decoration: none;
+/*      	font-weight: bold;*/
+      }
+
+      .backbutton {
+      width: 150px;
+      padding: 10px;
+      border: none;
+      -webkit-border-radius: 5px; 
+      -moz-border-radius: 5px; 
+      border-radius: 5px; 
+      background-color: #095484;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      }
+
+      .backbutton:hover {
+      background-color: #0666a3;
+      font-size: 16px;
+      color: #fff;
+  }
+
+     
+</style>
+<style>
+      body, div, form, input, select { 
+      padding: 0;
+      margin: 0;
+      outline: none;
+      font-family: Roboto, Arial, sans-serif;
+      font-size: 14px;
+      color: #666;
+      line-height: 22px;
+      }
+
+      form {
+      width: 100%;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 2px 5px #ccc; 
+      }
+      input {
+      width: calc(100% - 10px);
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      vertical-align: middle;
+      }
+      input:hover, textarea:hover, select:hover {
+      outline: none;
+      border: 1px solid #095484;
+      background: #e6eef7;
+      }
+      .title-block select, .title-block input {
+      margin-bottom: 10px;
+      }
+      select {
+      padding: 7px 0;
+      border-radius: 3px;
+      border: 1px solid #ccc;
+      background: transparent;
+      }
+      select, table {
+      width: 100%;
+      }
+
+      select, input {
+      	margin-bottom: 10px;
+      }
+      option {
+      background: #f8f8ff;
+      border-radius: 8px;
+      }
+
+      textarea {
+      width: calc(100% - 6px);
+      }
+
+    </style>
+<div class="main-div-form">
+	<form action="{% url 'tseditor:add_title' title_id%}" method="POST">
+		{% csrf_token %}
+		<div class="form-error">{{ text }}</div>
+			{% for field in form %}
+				<div>
+					{{ field.label}}<br>
+					{{ field }}
+				</div>
+			{% endfor %}
+		<button class="backbutton" type="submit">Добавить</button>
+
+	</form>
+</div>
+
+		

@@ -390,30 +390,30 @@ class TSDB(Database):
             return {}
 
     def getTitle(self, id):
-        res = self._fetchall(f"select * from titles where id = {id}", f"getTitle({id})")
+        res = self._fetchall(f"select * from titles where title_id = {id}", f"getTitle({id})")
         return res[0]
 
     def getTitlesByParentId(self, id):
         return self._fetchall(f"select * from titles where parent_id = {id}")
 
     def getIdByTitle(self, text):
-        res = self._fetchall(f"select id from titles where title = \'{text}\'", f"getIdByTitle(\"{text}\")")
+        res = self._fetchall(f"select title_id from titles where title = \'{text}\'", f"getIdByTitle(\"{text}\")")
         print("have RES")
         print(res)
         if(len(res) > 0):
-            return res[0]['id']
+            return res[0]['title_id']
         else:
             return -1
 
     def getIdByCommand(self, text):
-        res = self._fetchall(f"select id from titles where command = \"{text}\"", f"getIdByCommand(\"{text}\")")
+        res = self._fetchall(f"select title_id from titles where command = \"{text}\"", f"getIdByCommand(\"{text}\")")
         if len(res) > 0:
-            return res[0]['id']
+            return res[0]['title_id']
         else:
             return -1
 
     def getParentId(self, id):
-        res = self._fetchall(f"select parent_id from titles where id = {id}", f"getParentId({id})")
+        res = self._fetchall(f"select parent_id from titles where title_id = {id}", f"getParentId({id})")
         return res[0]['parent_id']
 
     def addTitle(self, parent_id, title, title_type, command = None):
@@ -446,20 +446,20 @@ class TSDB(Database):
 
     def setTitleCommand(self, id, command):
         if self.getTitle(id):
-            self._commit(f"update titles set command = \"{command}\" where id = \"{id}\" ")
+            self._commit(f"update titles set command = \"{command}\" where title_id = \"{id}\" ")
 
     def deleteTitle(self, id):
-        self._commit(f"delete from titles where id = {id}")
+        self._commit(f"delete from titles where title_id = {id}")
 
     def deleteTitleCommand(self, id):
         if self.getTitle(id):
-            self._commit(f"update titles set command = NULL where id = {id}")
+            self._commit(f"update titles set command = NULL where title_id = {id}")
 
     def deleteContent(self, parent_id):
         self._commit(f"delete from contents where parent_id = {parent_id}")
 
     def deleteContentById(self, id):
-        self._commit(f"delete from contents where id = {id}")
+        self._commit(f"delete from contents where title_id = {id}")
 
     def setContentText(self, parent_id, text):
         if self.getContent(parent_id):

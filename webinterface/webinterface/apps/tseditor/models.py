@@ -13,8 +13,10 @@ class Contents(models.Model):
     content_text = models.CharField(max_length=3000)
     location = models.CharField(max_length=255, blank=True, null=True)
 
+
     def __str__(self):
-    	return f"{self.parent}: {self.content_text} ({self.location})"
+        return f"{self.parent}: {self.content_text} ({self.location})"
+
 
 
     class Meta:
@@ -22,15 +24,46 @@ class Contents(models.Model):
         db_table = 'contents'
 
 
+class Filebond(models.Model):
+    bond_id = models.AutoField(primary_key=True)
+    title_id = models.IntegerField()
+    uuid = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f"{self.uuid}"
+
+    class Meta:
+        managed = False
+        db_table = 'filebond'
+
+
+class Files(models.Model):
+    uuid = models.CharField(primary_key=True, max_length=64)
+    namef = models.CharField(max_length=128)
+    file_id = models.CharField(unique=True, max_length=128, blank=True, null=True)
+    author = models.CharField(max_length=50, blank=True, null=True)
+    load_date = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.namef}: {self.typef.upper()} {self.author} ({self.load_date})"
+
+    class Meta:
+        managed = False
+        db_table = 'files'
+
+    # def set_name(self, name):
+    #     self.fields['namef'] = name
+
+
 class Titles(models.Model):
+    title_id = models.AutoField(primary_key=True)
     parent_id = models.IntegerField()
     title = models.CharField(max_length=100)
     command = models.CharField(unique=True, max_length=50, blank=True, null=True)
     title_type = models.IntegerField()
 
     def __str__(self):
-    	return f"{self.title} ({self.parent_id}): {self.command} <{self.title_type}>"
-
+        return f"{self.title_id}){self.title} ({self.parent_id}): {self.command} <{self.title_type}>"
 
     class Meta:
         managed = False

@@ -6,7 +6,7 @@
 
 	{% if titles %}
 		{% for title in titles %}
-			<a href="">{{title.title}}</a><br>
+			<a href="{% url 'tseditor:title' title.title_id %}">{{title.title}}</a><br>
 		{% endfor %}
 	{% else %}
 		No titles.

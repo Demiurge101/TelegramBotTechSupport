@@ -6,5 +6,47 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-# Unable to inspect table 'database=TS_Dispatcher'
-# The error was: Table database=TS_Dispatcher does not exist (empty pragma).
+
+
+class Contents(models.Model):
+    parent = models.OneToOneField('Titles', models.DO_NOTHING)
+    content_text = models.CharField(max_length=3000)
+    location = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'contents'
+
+
+class Filebond(models.Model):
+    bond_id = models.AutoField(primary_key=True)
+    title_id = models.IntegerField()
+    uuid = models.CharField(max_length=64)
+
+    class Meta:
+        managed = False
+        db_table = 'filebond'
+
+
+class Files(models.Model):
+    uuid = models.CharField(primary_key=True, max_length=64)
+    namef = models.CharField(max_length=128)
+    file_id = models.CharField(unique=True, max_length=128, blank=True, null=True)
+    author = models.CharField(max_length=50, blank=True, null=True)
+    load_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'files'
+
+
+class Titles(models.Model):
+    title_id = models.AutoField(primary_key=True)
+    parent_id = models.IntegerField()
+    title = models.CharField(max_length=100)
+    command = models.CharField(unique=True, max_length=50, blank=True, null=True)
+    title_type = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'titles'

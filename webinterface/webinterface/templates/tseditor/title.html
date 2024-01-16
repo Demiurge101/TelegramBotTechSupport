@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %} {{title.title}} {% endblock %}
+
+{% block content %}
+	{% if title %}
+		<div>
+			<a href="{% url 'tseditor:title' title.parent_id %}">Назад</a><br><br>
+			{{title.title}}<br>
+			{% if title.command %}
+				Команда: {{ title.command }}
+			{% else %}
+				Команда не задана
+			{% endif %}<br>
+			{% if content.content_text %}
+				Текст сообщения: <i>{{ content.content_text }}</i>
+			{% else %}
+				Без текста
+			{% endif %}<br>
+			{% include 'update_title_form.html' with form=title_form title_id=title.title_id %}<br>
+			<a class="backbutton" href="{% url 'tseditor:delete_title' title.title_id %}">Удалить</a>
+			<a class="backbutton" href="{% url 'tseditor:add_title' title.title_id%}">Новый пункт</a><br>
+			
+		</div><hr>
+	{% endif %}
+	<div>
+		{% if subtitles %}
+			{% for subtitle in subtitles %}
+				<a href="{% url 'tseditor:title' subtitle.title_id %}">{{subtitle.title}}</a><br>
+			{% endfor %}
+		{% else %}
+			No titles.
+		{% endif %}
+	</div>
+
+
+
+
+{% endblock %}

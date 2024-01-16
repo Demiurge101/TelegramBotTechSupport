@@ -8,13 +8,13 @@ USE TS_Dispatcher;
 
 CREATE TABLE titles
 (
-  id INT NOT NULL AUTO_INCREMENT UNIQUE,
+  title_id INT NOT NULL AUTO_INCREMENT UNIQUE,
     parent_id INT NOT NULL,
     title varchar(100) NOT NULL,
     command varchar(50) unique,
     title_type tinyint(1) NOT NULL,
     CONSTRAINT pk_points
-    PRIMARY KEY(id)
+    PRIMARY KEY(title_id)
 );
 
 
@@ -28,7 +28,7 @@ CREATE TABLE contents
 		PRIMARY KEY(id),
 	CONSTRAINT fk_contents
     FOREIGN KEY(parent_id)
-        REFERENCES titles(id)
+        REFERENCES titles(title_id)
         ON UPDATE CASCADE
 );
 
@@ -46,11 +46,11 @@ CREATE TABLE files
 
 CREATE TABLE filebond
 (
-  id int NOT NULL AUTO_INCREMENT, 
+  bond_id int NOT NULL AUTO_INCREMENT, 
     title_id INT not null,
     uuid varchar(64) not null,
     CONSTRAINT PK_filebond
-    primary key(id)
+    primary key(bond_id)
    --  CONSTRAINT FK_files
 --         FOREIGN KEY(uuid)
 --             REFERENCES files(uuid)
