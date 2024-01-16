@@ -42,7 +42,7 @@ def index(request):
 	titles = Titles.objects.all()
 	# devices = Devices.objects.all()
 	# orgs = Clients.objects.all()
-	return render(request, 'tseditor/titles.html', {'titles': titles})
+	return render(request, 'tseditor/titles.html', {'titles': titles, 'techsupport': 'techsupport'})
 
 
 def title(request, titleid=0):
@@ -71,7 +71,7 @@ def title(request, titleid=0):
 			file = Files.objects.get(uuid = bond)
 			files.append(file)
 	subtitles = Titles.objects.filter(parent_id = titleid)
-	return render(request, 'tseditor/title.html', {'title': title, 'content':content, 'title_form': title_form,'subtitles': subtitles, 'file_form': file_form, 'select_form': select_form, 'files':files})
+	return render(request, 'tseditor/title.html', {'techsupport': 'techsupport', 'title': title, 'content':content, 'title_form': title_form,'subtitles': subtitles, 'file_form': file_form, 'select_form': select_form, 'files':files})
 
 # def form_add_title(request, parentid=0):
 # 	if not check_user_access_to_group(request):

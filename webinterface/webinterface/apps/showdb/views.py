@@ -51,7 +51,11 @@ def orgs(request):
 		return index(request)
 	print(f"Authenticated: {request.user}")
 	orgs = Clients.objects.all()
-	return render(request, 'showdb/orgs.html', {'orgs': orgs})
+	techsupport = ''
+	if check_user_access_to_group(request):
+		techsupport = 'techsupport'
+
+	return render(request, 'showdb/orgs.html', {'orgs': orgs, 'techsupport': techsupport})
 
 def dates(request):
 	if not request.user.is_authenticated:
@@ -137,7 +141,10 @@ def documents(request, pos=0):
 	while k * step < count_files:
 		pages.append(k)
 		k += 1
-	return render(request, 'showdb/documents.html', {'files': files, 'pos':pos, 'pages': pages, 'count_files':count_files})
+	techsupport = ''
+	if check_user_access_to_group(request):
+		techsupport = 'techsupport'
+	return render(request, 'showdb/documents.html', {'techsupport':techsupport, 'files': files, 'pos':pos, 'pages': pages, 'count_files':count_files})
 
 def save_uploaded_file(request, number = ""):
 	if not request.user.is_authenticated:
@@ -282,7 +289,10 @@ def mkcb(request):
 	if not request.user.is_authenticated:
 		return index(request)
 	mkcb = DecimalNumbers.objects.all()
-	return render(request, 'showdb/mkcb.html', {'mkcb': mkcb})
+	techsupport = ''
+	if check_user_access_to_group(request):
+		techsupport = 'techsupport'
+	return render(request, 'showdb/mkcb.html', {'mkcb': mkcb, 'techsupport': techsupport})
 
 
 def form_add_mkcb(request, text=""):
@@ -398,7 +408,10 @@ def devices(request, pos=1):
 			devices = devices.filter(mkcb=request.POST['mkcb'])
 		if request.POST['device_name']:
 			devices = devices.filter(device_name=request.POST['device_name'])
-	return render(request, 'showdb/devices.html', {'devices': devices, 'filter_form': filter_form, 'count': count_devices, 'pos': pos, 'pages':pages})
+	techsupport = ''
+	if check_user_access_to_group(request):
+		techsupport = 'techsupport'
+	return render(request, 'showdb/devices.html', {'devices': devices, 'filter_form': filter_form, 'count': count_devices, 'pos': pos, 'pages':pages, 'techsupport': techsupport})
 
 def form_add_device(request, number=None):
 	if not request.user.is_authenticated:
@@ -500,8 +513,10 @@ def stations(request):
 			stations = stations.filter(org=request.POST['org'])
 		if request.POST['mkcb']:
 			stations = stations.filter(mkcb=request.POST['mkcb'])
-	
-	return render(request, 'showdb/stations.html', {'stations': stations, 'filter_form' : filter_form})
+	techsupport = ''
+	if check_user_access_to_group(request):
+		techsupport = 'techsupport'
+	return render(request, 'showdb/stations.html', {'stations': stations, 'filter_form' : filter_form, 'techsupport': techsupport})
 
 def form_add_station(request):
 	if not request.user.is_authenticated:

@@ -459,7 +459,9 @@ nav {
 							<li class="menu-li"><a class="menu-a" href="{% url 'showdb:stations' %}"data-item="Станции">Станции</a></li>
 							<li class="menu-li"><a class="menu-a" href="{% url 'showdb:devices' %}"data-item="Датчики">Датчики</a></li>
 							<li class="menu-li"><a class="menu-a" href="{% url 'showdb:documents' %}"data-item="Документы">Документы</a></li>
-							<li class="menu-li"><a class="menu-a" href="{% url 'tseditor:index' %}"data-item="TechSupport">TechSupport</a></li>
+							{% if techsupport %}
+							<li class="menu-li"><a class="menu-a" href="{% url 'tseditor:index' %}"data-item="{{techsupport}}">{{techsupport}}</a></li>
+							{% endif %}
 						</ul>
 					</nav>
 					<hr>
