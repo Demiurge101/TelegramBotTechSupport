@@ -5,7 +5,7 @@
 {% block content %}
 	{% if title %}
 		<div>
-			<a href="{% url 'tseditor:title' title.parent_id %}">Назад</a><br><br>
+			<a class="backbutton" href="{% url 'tseditor:title' title.parent_id %}">Назад</a><br><br>
 			{{title.title}}<br>
 			{% if title.command %}
 				Команда: {{ title.command }}
@@ -24,12 +24,26 @@
 		</div><hr>
 	{% endif %}
 	<div>
+
+		{% if devices %}
+			<div>
+				Устройства:<br>
+				{% for device in devices %}
+					<div class="device-block"><a href="{% url 'showdb:edit_device_form' device.serial_number %}">{{ device.serial_number }}</a>: {{ device.device_name }}</div>
+				{% endfor %}
+			</div><br>
+				
+			{% endif %}
+
 		{% if subtitles %}
-			{% for subtitle in subtitles %}
-				<a href="{% url 'tseditor:title' subtitle.title_id %}">{{subtitle.title}}</a><br>
-			{% endfor %}
+			<div>
+				Подпункты меню:<br>
+				{% for subtitle in subtitles %}
+					<div class="subtitle-block"><a href="{% url 'tseditor:title' subtitle.title_id %}">{{subtitle.title}}</a><br> Команда: {{ subtitle.command }}</div>
+				{% endfor %}
+			</div>
 		{% else %}
-			No titles.
+			Нет подпунктов меню.
 		{% endif %}
 	</div><br>
 	{% if title %}

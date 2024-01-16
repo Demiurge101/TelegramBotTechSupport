@@ -21,6 +21,17 @@ import Config
 
 # Create your views here.
 
+
+def check_user_access_to_group(request, target_group="editor"):
+	if not request.user.is_authenticated:
+		return False
+	groups = request.user.groups.all()
+	for group in groups:
+		if str(group) == target_group:
+			return True
+	return False
+
+
 def index(request):
 	# data = Botool.objects.all()[:10]
 	# data = {'one', 'two', 'three'}
@@ -198,7 +209,8 @@ def update_file(request, uuid="", backlink="", number=""):
 
 
 def bond_file(request, backlink="", number=""):
-	print("Bond file")
+	if not request.user.is_authenticated:
+		return index(request)
 	form = SelectFileForm()
 	if request.method == 'POST':
 		form = SelectFileForm(request.POST)

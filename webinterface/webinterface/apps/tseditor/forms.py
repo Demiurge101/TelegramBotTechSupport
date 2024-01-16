@@ -83,6 +83,7 @@ class AddTitleForm(forms.Form):
         self.fields['title_name'].initial = title.title
         if title.title == '0_main':
             self.fields['title_name'].disabled = True
+            self.fields['command'].disabled = True
         self.fields['command'].initial = title.command
         self.fields['command'].required = False
 

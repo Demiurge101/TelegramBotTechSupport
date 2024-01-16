@@ -408,10 +408,29 @@ nav {
   }
 }
 
+	.device-block {
+		border: 1px solid #ccc;
+		border-radius: 1px;
+		padding: 8px;
+		margin-top: 4px;
+		margin-left: 8px;
+		min-width: 200px;
+		max-width: 600px;
+/*		box-shadow: 0 2px 5px #ccc;*/
+	}
 
-      
-  
-    </style>
+	.subtitle-block {
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		padding: 8px;
+		margin-top: 4px;
+		margin-left: 8px;
+		min-width: 200px;
+		max-width: 600px;
+/*		box-shadow: 0 2px 5px #ccc;*/
+	}
+
+</style>
 	{% endblock %}
 	{% block style %}
 	{% endblock %}
@@ -440,6 +459,7 @@ nav {
 							<li class="menu-li"><a class="menu-a" href="{% url 'showdb:stations' %}"data-item="Станции">Станции</a></li>
 							<li class="menu-li"><a class="menu-a" href="{% url 'showdb:devices' %}"data-item="Датчики">Датчики</a></li>
 							<li class="menu-li"><a class="menu-a" href="{% url 'showdb:documents' %}"data-item="Документы">Документы</a></li>
+							<li class="menu-li"><a class="menu-a" href="{% url 'tseditor:index' %}"data-item="TechSupport">TechSupport</a></li>
 						</ul>
 					</nav>
 					<hr>

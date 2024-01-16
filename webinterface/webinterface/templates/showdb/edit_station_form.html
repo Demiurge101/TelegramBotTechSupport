@@ -6,20 +6,6 @@
 <a class="backbutton" href="{% url 'showdb:stations' %}">Станции</a>
 {% endblock %}
 
-{% block style %}
-<style type="text/css">
-	.device-block {
-		border: 1px solid #ccc;
-		border-radius: 1px;
-		padding: 8px;
-		margin-top: 4px;
-		margin-left: 8px;
-		min-width: 200px;
-		max-width: 600px;
-/*		box-shadow: 0 2px 5px #ccc;*/
-	}
-</style>
-{% endblock %}
 
 {% block content %}
 	{% if station %}

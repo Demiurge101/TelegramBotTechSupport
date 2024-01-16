@@ -16,6 +16,17 @@ from datetime import datetime
 
 import Config
 
+
+
+def check_user_access_to_group(request, target_group="editor"):
+	if not request.user.is_authenticated:
+		return False
+	groups = request.user.groups.all()
+	for group in groups:
+		if str(group) == target_group:
+			return True
+	return False
+
 def index(request):
 	if not request.user.is_authenticated:
 		form = LoginForm()
@@ -24,6 +35,8 @@ def index(request):
 			if form.is_valid():
 				print(form.cleaned_data)
 		return render(request, 'showdb/auth.html', {"form": form})
+	if not check_user_access_to_group(request):
+		return HttpResponseRedirect( reverse('showdb:orgs'))
 	# data = Botool.objects.all()[:10]
 	# data = {'one', 'two', 'three'}
 	titles = Titles.objects.all()
@@ -33,7 +46,8 @@ def index(request):
 
 
 def title(request, titleid=0):
-	if not request.user.is_authenticated:
+	print(f"User: {request.user}")
+	if not check_user_access_to_group(request):
 		return index(request)
 	# if titleid<1:
 	# 	return index(request)
@@ -43,6 +57,7 @@ def title(request, titleid=0):
 	file_form = AddDocument()
 	select_form = SelectFileForm()
 	title_form = AddTitleForm()
+	files = []
 	if titleid > 0:
 		title = Titles.objects.get(title_id = titleid)
 		content = Contents.objects.get(parent_id = titleid)
@@ -51,7 +66,6 @@ def title(request, titleid=0):
 		if content:
 			title_form.set_content(content)
 		bonds = Filebond.objects.filter(title_id=titleid)
-		files = []
 		print(f"Filebonds: \r\n{bonds}")
 		for bond in bonds:
 			file = Files.objects.get(uuid = bond)
@@ -60,13 +74,13 @@ def title(request, titleid=0):
 	return render(request, 'tseditor/title.html', {'title': title, 'content':content, 'title_form': title_form,'subtitles': subtitles, 'file_form': file_form, 'select_form': select_form, 'files':files})
 
 # def form_add_title(request, parentid=0):
-# 	if not request.user.is_authenticated:
+# 	if not check_user_access_to_group(request):
 # 		return index(request)
 # 	title_form = AddTitleForm()
 # 	return render(request, 'tseditor/add_title_form.html', {'form': title_form, 'title_id': parentid})
 
 def add_title(request, parentid=0):
-	if not request.user.is_authenticated:
+	if not check_user_access_to_group(request):
 		return index(request)
 	if request.method == 'POST':
 		form = AddTitleForm(request.POST)
@@ -92,7 +106,7 @@ def add_title(request, parentid=0):
 
 
 def update_title(request, titleid):
-	if not request.user.is_authenticated:
+	if not check_user_access_to_group(request):
 		return index(request)
 	if request.method == 'POST':
 		form = AddTitleForm(request.POST)
@@ -121,7 +135,7 @@ def update_title(request, titleid):
 
 
 def delete_title(request, titleid=0):
-	if not request.user.is_authenticated:
+	if not check_user_access_to_group(request):
 		return index(request)
 	if titleid > 0:
 		title_obj = Titles.objects.get(title_id=titleid)
@@ -148,7 +162,7 @@ def delete_title(request, titleid=0):
 
 
 def document_edit_form(request, titleid, uuid):
-	if not request.user.is_authenticated:
+	if not check_user_access_to_group(request):
 		return index(request)
 	form = AddDocument()
 	if request.method == 'POST':
@@ -164,7 +178,7 @@ def document_edit_form(request, titleid, uuid):
 
 
 def save_uploaded_file(request,  titleid=0):
-	if not request.user.is_authenticated:
+	if not check_user_access_to_group(request):
 		return index(request)
 	print(f"save file.")
 	location = Config.files_location
@@ -190,7 +204,7 @@ def save_uploaded_file(request,  titleid=0):
 
 def upload_file(request, titleid=0):
 	print(f"upload_file({titleid})")
-	if not request.user.is_authenticated:
+	if not check_user_access_to_group(request):
 		return index(request)
 	if request.method == "POST":
 		file_form = AddDocument(request.POST, request.FILES)
@@ -202,7 +216,7 @@ def upload_file(request, titleid=0):
 
 def update_file(request, titleid=0, uuid=""):
 	print(f"UPDATE_FILE({uuid})")
-	if not request.user.is_authenticated:
+	if not check_user_access_to_group(request):
 		return index(request)
 	form = AddDocument()
 	if request.method == 'POST':
@@ -226,7 +240,8 @@ def update_file(request, titleid=0, uuid=""):
 
 
 def bond_file(request, titleid=0):
-	print("Bond file")
+	if not check_user_access_to_group(request):
+		return index(request)
 	form = SelectFileForm()
 	if request.method == 'POST':
 		form = SelectFileForm(request.POST)
@@ -241,7 +256,7 @@ def bond_file(request, titleid=0):
 	return title(request, titleid)
 
 def unbound_file(request, titleid, uuid):
-	if not request.user.is_authenticated:
+	if not check_user_access_to_group(request):
 		return index(request)
 	print("Unbond file")
 	Filebond.objects.filter(title_id=titleid, uuid=uuid).delete()
@@ -251,7 +266,7 @@ def unbound_file(request, titleid, uuid):
 
 
 def delete_file(request, uuid, titleid=0):
-	if not request.user.is_authenticated:
+	if not check_user_access_to_group(request):
 		return index(request)
 	Filebond.objects.filter(uuid=uuid).delete()
 	Files.objects.filter(uuid=uuid).delete()

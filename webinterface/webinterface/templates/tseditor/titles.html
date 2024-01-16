@@ -3,13 +3,15 @@
 {% block title %}Titles{% endblock %}
 
 {% block content %}
-
 	{% if titles %}
-		{% for title in titles %}
-			<a href="{% url 'tseditor:title' title.title_id %}">{{title.title}}</a><br>
-		{% endfor %}
+		<div>
+			Полный список меню:<br>
+			{% for title in titles %}
+				<div class="subtitle-block"><a href="{% url 'tseditor:title' title.title_id %}">{{title.title}}</a><br> Команда: {{ title.command }}</div>
+			{% endfor %}
+		</div>
 	{% else %}
-		No titles.
+		Нет ни одного пункта в меню.
 	{% endif %}
 
 

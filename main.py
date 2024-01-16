@@ -423,7 +423,7 @@ def getStrMap(parent_id, pre=""):
             cmd = f" ({title['command']})"
 
         row = f"{pre}{title['title']}{cmd}"
-        table = getStrMap(title['id'], pre + '   ')
+        table = getStrMap(title['title_id'], pre + '   ')
         res += f"{row}\r\n{table}"
     return res
 
