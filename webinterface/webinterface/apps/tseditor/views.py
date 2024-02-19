@@ -128,15 +128,13 @@ def update_title(request, titleid):
 				content.content_text = content_text
 				content.save()
 			return title(request, title_obj.title_id)
-		return title(request, parentid)
+		return title(request, titleid)
 	else:
 		title_form = AddTitleForm()
-		return render(request, 'tseditor/add_title_form.html', {'form': title_form, 'title_id': parentid})
+		return render(request, 'tseditor/add_title_form.html', {'form': title_form, 'title_id': titleid})
 
 
-def delete_title(request, titleid=0):
-	if not check_user_access_to_group(request):
-		return index(request)
+def del_sutitle(request, titleid=0):
 	if titleid > 0:
 		title_obj = Titles.objects.get(title_id=titleid)
 		parentid = title_obj.parent_id
@@ -144,8 +142,16 @@ def delete_title(request, titleid=0):
 		Contents.objects.filter(parent=title_obj).delete()
 		subtitles = Titles.objects.filter(parent_id=titleid)
 		for subtitle in subtitles:
-			delete_title(request, subtitle.title_id)
+			del_sutitle(request, subtitle.title_id)
 		Titles.objects.filter(title_id=titleid).delete()
+		return parentid
+
+
+def delete_title(request, titleid=0):
+	if not check_user_access_to_group(request):
+		return index(request)
+	parentid = del_sutitle(request, titleid)
+	if parentid:
 		return title(request, parentid)
 	return title(request, titleid)
 
