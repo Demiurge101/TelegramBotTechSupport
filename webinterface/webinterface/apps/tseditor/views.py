@@ -232,6 +232,7 @@ def update_file(request, titleid=0, uuid=""):
 		file = Files.objects.get(uuid=uuid)
 		if file_name:
 			file.namef = file_name
+			file.file_id = None
 		file.save()
 	else:
 		print("NOT")
