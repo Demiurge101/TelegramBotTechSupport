@@ -110,23 +110,27 @@ def update_title(request, titleid):
 		return index(request)
 	if request.method == 'POST':
 		form = AddTitleForm(request.POST)
-		title_obj = Titles.objects.get(title_id=titleid)
-		title_name = form.cleaned_data['title_name']
-		command = form.cleaned_data['command']
-		content_text = form.cleaned_data['content_text']
-		if title_name:
-			title_obj.title = title_name
-		if command:
-			print(f'command: <{command}>')
-			title_obj.command = command
-		else:
-			title_obj.command = None
-		title_obj.save()
-		if content_text:
-			content = Contents.objects.get(parent=title_obj)
-			content.content_text = content_text
-			content.save()
-		return title(request, title_obj.title_id)
+		if form.is_valid():
+			print("Form is valid")
+			title_obj = Titles.objects.get(title_id=titleid)
+			title_name = form.cleaned_data['title_name']
+			command = form.cleaned_data['command']
+			content_text = form.cleaned_data['content_text']
+			if title_name:
+				title_obj.title = title_name
+			if command:
+				print(f'command: <{command}>')
+				title_obj.command = command
+			else:
+				title_obj.command = None
+			title_obj.save()
+			if content_text:
+				content = Contents.objects.get(parent=title_obj)
+				content.content_text = content_text
+				content.save()
+			return title(request, title_obj.title_id)
+		print("NOT valid")
+		return title(request, titleid)
 	else:
 		title_form = AddTitleForm()
 		print("not post")
@@ -152,7 +156,7 @@ def delete_title(request, titleid=0):
 	parentid = del_sutitle(request, titleid)
 	if parentid:
 		return title(request, parentid)
-	return title(request, titleid)
+	return title(request, 0)
 
 
 
