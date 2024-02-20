@@ -110,27 +110,23 @@ def update_title(request, titleid):
 		return index(request)
 	if request.method == 'POST':
 		form = AddTitleForm(request.POST)
-		if form.is_valid():
-			print("Form is valid")
-			title_obj = Titles.objects.get(title_id=titleid)
-			title_name = form.cleaned_data['title_name']
-			command = form.cleaned_data['command']
-			content_text = form.cleaned_data['content_text']
-			if title_name:
-				title_obj.title = title_name
-			if command:
-				print(f'command: <{command}>')
-				title_obj.command = command
-			else:
-				title_obj.command = None
-			title_obj.save()
-			if content_text:
-				content = Contents.objects.get(parent=title_obj)
-				content.content_text = content_text
-				content.save()
-			return title(request, title_obj.title_id)
-		print("Return 2")
-		return title(request, titleid)
+		title_obj = Titles.objects.get(title_id=titleid)
+		title_name = form.cleaned_data['title_name']
+		command = form.cleaned_data['command']
+		content_text = form.cleaned_data['content_text']
+		if title_name:
+			title_obj.title = title_name
+		if command:
+			print(f'command: <{command}>')
+			title_obj.command = command
+		else:
+			title_obj.command = None
+		title_obj.save()
+		if content_text:
+			content = Contents.objects.get(parent=title_obj)
+			content.content_text = content_text
+			content.save()
+		return title(request, title_obj.title_id)
 	else:
 		title_form = AddTitleForm()
 		print("not post")
