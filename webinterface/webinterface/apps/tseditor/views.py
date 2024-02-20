@@ -111,6 +111,7 @@ def update_title(request, titleid):
 	if request.method == 'POST':
 		form = AddTitleForm(request.POST)
 		if form.is_valid():
+			print("Form is valid")
 			title_obj = Titles.objects.get(title_id=titleid)
 			title_name = form.cleaned_data['title_name']
 			command = form.cleaned_data['command']
@@ -128,9 +129,11 @@ def update_title(request, titleid):
 				content.content_text = content_text
 				content.save()
 			return title(request, title_obj.title_id)
+		print("Return 2")
 		return title(request, titleid)
 	else:
 		title_form = AddTitleForm()
+		print("not post")
 		return render(request, 'tseditor/add_title_form.html', {'form': title_form, 'title_id': titleid})
 
 

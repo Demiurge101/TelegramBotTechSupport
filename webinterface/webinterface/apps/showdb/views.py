@@ -388,32 +388,29 @@ def devices(request, pos=1):
 		return index(request)
 	filter_form = DeviceFilterForm()
 	devices = Devices.objects.all()
+	pages = []
+	count_devices = Devices.objects.count()
 	if request.method == 'POST':
 		filter_form = DeviceFilterForm(request.POST)
 		if request.POST['date_out']:
 			devices = devices.filter(date_out=request.POST['date_out'])
-			pos = 0
 		if request.POST['org']:
 			devices = devices.filter(org=request.POST['org'])
-			pos = 0
 		if request.POST['mkcb']:
 			devices = devices.filter(mkcb=request.POST['mkcb'])
-			pos = 0
 		if request.POST['device_name']:
 			devices = devices.filter(device_name=request.POST['device_name'])
-			pos = 0
 	else:
 		devices = devices[pos*step:(pos+1)*step]
-	count_devices = Devices.objects.count()
-	if pos < 0:
-		pos = 0
-	if pos > count_devices:
-		pos = count_devices
-	pages = []
-	k = 0
-	while k * step < count_devices:
-		pages.append(k)
-		k += 1
+		count_devices = Devices.objects.count()
+		if pos < 0:
+			pos = 0
+		if pos > count_devices:
+			pos = count_devices
+		k = 0
+		while k * step < count_devices:
+			pages.append(k)
+			k += 1
 	techsupport = ''
 	if check_user_access_to_group(request):
 		techsupport = 'techsupport'
