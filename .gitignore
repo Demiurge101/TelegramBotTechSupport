@@ -6,3 +6,5 @@ Config.py
 /son
 /BOT 
 /webinterface/db.sqlite3
+/webinterface/webinterface/apps/tseditor/__pycache__
+/webinterface/webinterface/apps/showdb/__pycache__
