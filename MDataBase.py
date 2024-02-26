@@ -396,7 +396,21 @@ class TSDB(Database):
     def getTitlesByParentId(self, id):
         return self._fetchall(f"select * from titles where parent_id = {id}")
 
+    def checkSlach(self, text):
+        print(f"checkSlach({text})")
+        res = ""
+        for i in text:
+            print(i)
+            if i == '"':
+                print("spy")
+            elif i == "'":
+                print("spy")
+            else:
+                res += i
+        return res
+
     def getIdByTitle(self, text):
+        text = checkSlach(text)
         res = self._fetchall(f"select title_id from titles where title = \'{text}\'", f"getIdByTitle(\"{text}\")")
         print("have RES")
         print(res)
@@ -406,6 +420,7 @@ class TSDB(Database):
             return -1
 
     def getIdByCommand(self, text):
+        text = checkSlach(text)
         res = self._fetchall(f"select title_id from titles where command = \"{text}\"", f"getIdByCommand(\"{text}\")")
         if len(res) > 0:
             return res[0]['title_id']
