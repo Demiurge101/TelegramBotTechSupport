@@ -411,6 +411,7 @@ def devices(request, pos=1):
 		while k * step < count_devices:
 			pages.append(k)
 			k += 1
+	count_devices = devices.count()
 	techsupport = ''
 	if check_user_access_to_group(request):
 		techsupport = 'techsupport'
