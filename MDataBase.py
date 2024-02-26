@@ -403,8 +403,10 @@ class TSDB(Database):
             print(i)
             if i == '"':
                 print("spy")
+                res += "\\\""
             elif i == "'":
                 print("spy")
+                res += "\\\'"
             else:
                 res += i
         return res
