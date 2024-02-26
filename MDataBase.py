@@ -410,7 +410,7 @@ class TSDB(Database):
         return res
 
     def getIdByTitle(self, text):
-        text = checkSlash(text)
+        text = self.checkSlash(text)
         res = self._fetchall(f"select title_id from titles where title = \'{text}\'", f"getIdByTitle(\"{text}\")")
         print("have RES")
         print(res)
@@ -420,7 +420,7 @@ class TSDB(Database):
             return -1
 
     def getIdByCommand(self, text):
-        text = checkSlash(text)
+        text = self.checkSlash(text)
         res = self._fetchall(f"select title_id from titles where command = \"{text}\"", f"getIdByCommand(\"{text}\")")
         if len(res) > 0:
             return res[0]['title_id']
