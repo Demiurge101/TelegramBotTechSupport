@@ -130,6 +130,7 @@ def update_title(request, titleid):
 				content.save()
 			return title(request, title_obj.title_id)
 		print("NOT valid")
+		print(form.cleaned_data)
 		return title(request, titleid)
 	else:
 		title_form = AddTitleForm()

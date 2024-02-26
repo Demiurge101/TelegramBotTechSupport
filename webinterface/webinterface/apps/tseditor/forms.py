@@ -81,12 +81,14 @@ class AddTitleForm(forms.Form):
 
     def clean_title_name(self):
         tn = self.cleaned_data.get('title_name')
+        print(f"tn: {tn}")
         if tn:
             return tn
         return ""
 
     def clean_content_text(self):
         ct = self.cleaned_data.get('content_text')
+        print(f"ct: {ct}")
         if ct:
             return ct
         return ""
@@ -102,3 +104,5 @@ class AddTitleForm(forms.Form):
     def set_content(self, content):
         self.fields['content_text'].initial = content.content_text
         self.fields['content_text'].required = False
+
+
