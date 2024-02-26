@@ -67,7 +67,7 @@ class SelectFileForm(forms.Form):
 class AddTitleForm(forms.Form):
     title_name = forms.CharField(widget=forms.TextInput(attrs={'id':'title-name'}), max_length=65, label='Заголовок', required=True)
     command = forms.CharField(widget=forms.TextInput(attrs={'id':'command'}), max_length=65, label='Команда', required = False)
-    content_text = forms.CharField(widget=forms.Textarea(attrs={'id':'content-text'}), max_length=3000, label='Текст', required=True)
+    content_text = forms.CharField(widget=forms.Textarea(attrs={'id':'content-text', 'cols':20}), max_length=3000, label='Текст', required=True)
 
 
     def clean_command(self):
