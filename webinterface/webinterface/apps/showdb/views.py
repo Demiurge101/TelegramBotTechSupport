@@ -400,6 +400,7 @@ def devices(request, pos=1):
 			devices = devices.filter(mkcb=request.POST['mkcb'])
 		if request.POST['device_name']:
 			devices = devices.filter(device_name=request.POST['device_name'])
+		count_devices = devices.count()
 	else:
 		devices = devices[pos*step:(pos+1)*step]
 		count_devices = Devices.objects.count()
@@ -411,7 +412,6 @@ def devices(request, pos=1):
 		while k * step < count_devices:
 			pages.append(k)
 			k += 1
-	count_devices = devices.count()
 	techsupport = ''
 	if check_user_access_to_group(request):
 		techsupport = 'techsupport'
