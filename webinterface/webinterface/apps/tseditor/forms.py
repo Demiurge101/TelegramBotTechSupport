@@ -79,6 +79,18 @@ class AddTitleForm(forms.Form):
             cm = None
         return cm
 
+    def clean_title_name(self):
+        tn = self.cleaned_data.get('title_name')
+        if tn:
+            return tn
+        return ""
+
+    def clean_content_text(self):
+        ct = self.cleaned_data.get('content_text')
+        if ct:
+            return ct
+        return ""
+
     def set_title(self, title):
         self.fields['title_name'].initial = title.title
         if title.title == '0_main':
