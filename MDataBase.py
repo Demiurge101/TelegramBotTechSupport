@@ -409,6 +409,7 @@ class TSDB(Database):
                 res += "\\\'"
             else:
                 res += i
+        print("res:", res)
         return res
 
     def getIdByTitle(self, text):
