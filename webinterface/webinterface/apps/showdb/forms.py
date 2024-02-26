@@ -232,10 +232,11 @@ class StationFilterForm(forms.ModelForm):
         self.fields['org'].empty_label = 'Все'
         self.fields['org'].required = False
         self.fields['date_out'].required = False
+        self.fields['serial_number'].required = False
 
     class Meta:
         model = Stations
-        fields = ['org', 'mkcb', 'date_out']
+        fields = ['org', 'mkcb', 'date_out', 'serial_number']
         # widgets = {
         #     'mkcb' : forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
         # }

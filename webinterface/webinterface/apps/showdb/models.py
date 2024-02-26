@@ -33,7 +33,7 @@ class DecimalNumbers(models.Model):
 
 
 class Devices(models.Model):
-    serial_number = models.IntegerField(primary_key=True, verbose_name="Номер")
+    serial_number = models.IntegerField(primary_key=True, verbose_name="Серийный номер")
     station_number = models.ForeignKey('Stations', models.DO_NOTHING, db_column='station_number', blank=True, null=True, verbose_name="Номер станции")
     org = models.ForeignKey(Clients, models.DO_NOTHING, verbose_name="Организация")
     device_name = models.CharField(max_length=80, verbose_name="Название")

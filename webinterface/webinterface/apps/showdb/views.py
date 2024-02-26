@@ -519,6 +519,8 @@ def stations(request):
 			stations = stations.filter(org=request.POST['org'])
 		if request.POST['mkcb']:
 			stations = stations.filter(mkcb=request.POST['mkcb'])
+		if request.POST['serial_number']:
+			stations = stations.filter(serial_number=request.POST['serial_number'])
 	techsupport = ''
 	if check_user_access_to_group(request):
 		techsupport = 'techsupport'
