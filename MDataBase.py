@@ -54,6 +54,7 @@ class Database:
     def _commit(self, cmd, err="commit error"):
         with self.connection.cursor() as cursor:
             try:
+                print(f"_commit({cmd})")
                 cursor.execute(cmd)
                 self.connection.commit()
                 return True
@@ -70,11 +71,11 @@ class Database:
          with self.connection.cursor() as cursor:
             try:
                 print(f"_fetchall({cmd})")
-                cursor.execute(self._checkQuote(cmd))
+                cursor.execute(cmd)
                 return cursor.fetchall()
             except Exception as ex:
                 print(red_text("Error:"), err)
-                print(self._checkQuote(cmd))
+                print(cmd)
                 print(ex)
                 self.__status = 0
                 self.heal()
