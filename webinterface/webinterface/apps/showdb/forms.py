@@ -260,10 +260,11 @@ class DeviceFilterForm(forms.ModelForm):
         self.fields['org'].required = False
         self.fields['date_out'].required = False
         self.fields['device_name'].required = False
+        self.fields['serial_number'].required = False
 
     class Meta:
         model = Devices
-        fields = ['org', 'mkcb', 'date_out', 'device_name']
+        fields = ['org', 'mkcb', 'date_out', 'device_name', 'serial_number']
         # widgets = {
         #     'mkcb' : forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
         # }

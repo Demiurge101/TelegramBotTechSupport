@@ -400,6 +400,8 @@ def devices(request, pos=1):
 			devices = devices.filter(mkcb=request.POST['mkcb'])
 		if request.POST['device_name']:
 			devices = devices.filter(device_name=request.POST['device_name'])
+		if request.POST['serial_number']:
+			devices = devices.filter(serial_number=request.POST['serial_number'])
 		count_devices = devices.count()
 	else:
 		devices = devices[pos*step:(pos+1)*step]
