@@ -69,7 +69,7 @@ class Database:
     def _fetchall(self, cmd, err="fetch error"):
          with self.connection.cursor() as cursor:
             try:
-                # print(f"_fetchall({cmd})")
+                print(f"_fetchall({cmd})")
                 cursor.execute(self._checkQuote(cmd))
                 return cursor.fetchall()
             except Exception as ex:
