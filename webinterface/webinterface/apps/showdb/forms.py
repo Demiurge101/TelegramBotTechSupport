@@ -273,7 +273,7 @@ class DeviceFilterForm(forms.ModelForm):
 
     class Meta:
         model = Devices
-        fields = ['org', 'mkcb', 'date_out', 'date_to', 'device_name', 'serial_number']
+        fields = ['org', 'mkcb', 'date_out', 'device_name', 'serial_number']
         # widgets = {
         #     'mkcb' : forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
         # }
