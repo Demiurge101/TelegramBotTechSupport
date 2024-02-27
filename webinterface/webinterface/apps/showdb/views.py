@@ -517,14 +517,16 @@ def stations(request):
 	stations = Stations.objects.all()
 	if request.method == 'POST':
 		filter_form = StationFilterForm(request.POST)
-		if request.POST['date_out']:
-			stations = stations.filter(date_out=request.POST['date_out'])
 		if request.POST['org']:
 			stations = stations.filter(org=request.POST['org'])
 		if request.POST['mkcb']:
 			stations = stations.filter(mkcb=request.POST['mkcb'])
 		if request.POST['serial_number']:
 			stations = stations.filter(serial_number=request.POST['serial_number'])
+		if request.POST['date_from']:
+			stations = stations.filter(date_out__gte=request.POST['date_from'])
+		if request.POST['date_to']:
+			stations = stations.filter(date_out__lte=request.POST['date_to'])
 	techsupport = ''
 	if check_user_access_to_group(request):
 		techsupport = 'techsupport'
