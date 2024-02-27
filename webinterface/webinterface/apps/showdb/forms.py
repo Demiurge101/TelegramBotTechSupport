@@ -252,6 +252,13 @@ class DeviceFilterForm(forms.ModelForm):
                 'class': 'form-control'
                 }
             )
+        self.fields['date_to'].widget = forms.widgets.DateInput(
+            attrs={
+                'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
+                'class': 'form-control',
+                'label': 'Date to'
+                }
+            )
 
         self.fields['mkcb'] = forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
         self.fields['mkcb'].required = False
@@ -260,12 +267,13 @@ class DeviceFilterForm(forms.ModelForm):
         self.fields['org'].empty_label = 'Все'
         self.fields['org'].required = False
         self.fields['date_out'].required = False
+        self.fields['date_to'].required = False
         self.fields['device_name'].required = False
         self.fields['serial_number'].required = False
 
     class Meta:
         model = Devices
-        fields = ['org', 'mkcb', 'date_out', 'device_name', 'serial_number']
+        fields = ['org', 'mkcb', 'date_out', 'date_to', 'device_name', 'serial_number']
         # widgets = {
         #     'mkcb' : forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
         # }

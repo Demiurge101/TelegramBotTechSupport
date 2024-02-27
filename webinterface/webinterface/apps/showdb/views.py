@@ -396,6 +396,8 @@ def devices(request, pos=1):
 			# devices = devices.filter(date_out=request.POST['date_out'])
 			# gte lte and range
 			devices = devices.filter(date_out__gte=request.POST['date_out'])
+		if request.POST['date_to']:
+			devices = devices.filter(date_out__lte=request.POST['date_to'])
 		if request.POST['org']:
 			devices = devices.filter(org=request.POST['org'])
 		if request.POST['mkcb']:
