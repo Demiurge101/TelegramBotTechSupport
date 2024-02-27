@@ -246,7 +246,7 @@ class DeviceFilterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['date_from'] =  = forms.CharField( widget = forms.widgets.DateInput(
+        self.fields['date_from'] = forms.CharField( widget = forms.widgets.DateInput(
             attrs={
                 'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
                 'class': 'form-control'
