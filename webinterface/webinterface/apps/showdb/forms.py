@@ -252,13 +252,14 @@ class DeviceFilterForm(forms.ModelForm):
                 'class': 'form-control'
                 }
             )
-        self.fields['date_to'].widget = forms.widgets.DateInput(
+        self.fields['date_to'] = forms.CharField( widget = forms.widgets.DateInput(
             attrs={
                 'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
-                'class': 'form-control',
-                'label': 'Date to'
+                'class': 'form-control'
                 }
-            )
+            ),
+            label='Date to'
+        )
 
         self.fields['mkcb'] = forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
         self.fields['mkcb'].required = False
