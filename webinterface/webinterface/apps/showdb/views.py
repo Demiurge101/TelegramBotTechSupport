@@ -393,7 +393,9 @@ def devices(request, pos=1):
 	if request.method == 'POST':
 		filter_form = DeviceFilterForm(request.POST)
 		if request.POST['date_out']:
-			devices = devices.filter(date_out=request.POST['date_out'])
+			# devices = devices.filter(date_out=request.POST['date_out'])
+			# gte lte and range
+			devices = devices.filter(date_out__gte=request.POST['date_out'])
 		if request.POST['org']:
 			devices = devices.filter(org=request.POST['org'])
 		if request.POST['mkcb']:
