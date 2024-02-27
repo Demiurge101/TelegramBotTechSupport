@@ -246,19 +246,21 @@ class DeviceFilterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['date_out'].widget = forms.widgets.DateInput(
+        self.fields['date_from'] =  = forms.CharField( widget = forms.widgets.DateInput(
             attrs={
                 'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
                 'class': 'form-control'
                 }
-            )
+            ),
+            label='Начальная дата'
+        )
         self.fields['date_to'] = forms.CharField( widget = forms.widgets.DateInput(
             attrs={
                 'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
                 'class': 'form-control'
                 }
             ),
-            label='Date to'
+            label='Конечная дата'
         )
 
         self.fields['mkcb'] = forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
@@ -267,14 +269,14 @@ class DeviceFilterForm(forms.ModelForm):
         self.fields['mkcb'].max_length = 255
         self.fields['org'].empty_label = 'Все'
         self.fields['org'].required = False
-        self.fields['date_out'].required = False
+        self.fields['date_from'].required = False
         self.fields['date_to'].required = False
         self.fields['device_name'].required = False
         self.fields['serial_number'].required = False
 
     class Meta:
         model = Devices
-        fields = ['org', 'mkcb', 'date_out', 'device_name', 'serial_number']
+        fields = ['org', 'mkcb', 'device_name', 'serial_number']
         # widgets = {
         #     'mkcb' : forms.ModelChoiceField(queryset=DecimalNumbers.objects.all())
         # }
