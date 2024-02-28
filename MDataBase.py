@@ -606,15 +606,26 @@ class statDB(Database):
             __fname = user['fname']
             __lname = user['sname']
             req_info = f"({self.CountRequestsForUser(__id)} requests, {round(self.__percent(self.CountRequestsForUser(__id), self.CountRequests()), 2)}%)"
+            if detailed:
+                subcounter = 0
+                # for request in self.__users[user]['requests']:
+                #     subcounter += 1
+                #     req_info += f"\r\n   {subcounter}) {request}: {self.__users[user]['requests'][request]}"
             res += f"<b>{counter}.</b> {__id}:  <b>{user['nick']},  {__fname} {__lname}</b>  {req_info}\r\n"
         return res
 
     def getRequestsInfo(self):
         res = ""
         counter = 0
-        # for request in self._fetchall(f"select * from requests"):
-        #     counter += 1
-        #     res += f"{counter}) '{request}':  {self.__requests[request]}  ({round(self.__percent(self.__requests[request], self.__sum_requests), 2)}%)\r\n"
+        data = {}
+        for request in self._fetchall(f"select * from requests"):
+            if not request['request'] in data:
+                data[request['request']] = 1
+            else:
+                data[request['request']] += 1
+        for request in data:
+            counter += 1
+            res += f"{counter}) '{request}':  {data[request]}  ({round(self.__percent(data[request], len(data)), 2)}%)\r\n"
         return res
 
     def CountUsers(self):
