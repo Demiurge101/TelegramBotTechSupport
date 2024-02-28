@@ -261,7 +261,7 @@ def control_command(message):
         print(f"Command: {message.text[4:]}")
         status = os.system(message.text[4:])
         print(status)
-        bot.send_message(message.chat.id, f"Done! (status {status}) \r\ncommand: {message.text[4:]}", reply_markup=TSDB.getSubMenu(get_pos(0)))
+        bot.send_message(message.chat.id, f"Done! (status {status}) \r\ncommand: {message.text[4:]}", reply_markup=TSDB.getSubMenu())
 
 
 @bot.message_handler(commands=['start'])

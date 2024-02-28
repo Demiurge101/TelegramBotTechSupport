@@ -608,9 +608,15 @@ class statDB(Database):
             req_info = f"({self.CountRequestsForUser(__id)} requests, {round(self.__percent(self.CountRequestsForUser(__id), self.CountRequests()), 2)}%)"
             if detailed:
                 subcounter = 0
-                # for request in self.__users[user]['requests']:
-                #     subcounter += 1
-                #     req_info += f"\r\n   {subcounter}) {request}: {self.__users[user]['requests'][request]}"
+                data = {}
+                for request in self._fetchall(f"select * from requests where user_id = {__id}"):
+                    if not request['request'] in data:
+                        data[request['request']] = 1
+                    else:
+                        data[request['request']] += 1
+                for request in data:
+                    subcounter += 1
+                    req_info += f"\r\n   {subcounter}) {request}: {data[request]}"
             res += f"<b>{counter}.</b> {__id}:  <b>{user['nick']},  {__fname} {__lname}</b>  {req_info}\r\n"
         return res
 
@@ -618,6 +624,7 @@ class statDB(Database):
         res = ""
         counter = 0
         data = {}
+        count_requests = self.CountRequests()
         for request in self._fetchall(f"select * from requests"):
             if not request['request'] in data:
                 data[request['request']] = 1
@@ -625,7 +632,7 @@ class statDB(Database):
                 data[request['request']] += 1
         for request in data:
             counter += 1
-            res += f"{counter}) '{request}':  {data[request]}  ({round(self.__percent(data[request], len(data)), 2)}%)\r\n"
+            res += f"{counter}) '{request}':  {data[request]}  ({round(self.__percent(data[request], count_requests), 2)}%)\r\n"
         return res
 
     def CountUsers(self):
