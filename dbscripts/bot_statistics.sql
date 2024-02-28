@@ -19,7 +19,7 @@ CREATE TABLE users
 CREATE TABLE requests
 (
   id bigint NOT NULL AUTO_INCREMENT,
-  rdate date NOT NULL,
+  rdate datetime NOT NULL,
   request varchar(128) NOT NULL,
   user_id bigint NOT NULL,
   CONSTRAINT PK_requests

@@ -221,13 +221,13 @@ def info(message):
         if mtext.find('detailed') > -1 or mtext.find('detail') > -1 or mtext.find('d') > -1:
             detailed = True
         # if mtext.find('son') > -1 or mtext.find('s') > -1:
-        #     info_text = f'\r\nSON stat ({son_stat.getSum()} requests, {son_stat.getCountUsers()} users):\r\n\r\n'
+        #     info_text = f'\r\nSON stat ({son_stat.CountRequests()} requests, {son_stat.CountUsers()} users):\r\n\r\n'
         #     info_text += son_stat.getUsersInfo(detailed=detailed)
         #     info_send(message.chat.id, info_text, 'a')
         #     info_text = son_stat.getRequestsInfo()
         #     info_send(message.chat.id, info_text, 'a')
         # else:
-        info_text = f'Menu stat ({stat.getSum()} requests, {stat.getCountUsers()} users):\r\n\r\n'
+        info_text = f'Menu stat ({stat.CountRequests()} requests, {stat.CountUsers()} users):\r\n\r\n'
         info_text += stat.getUsersInfo(detailed=detailed)
         info_send(message.chat.id, info_text, 'a')
         info_text = stat.getRequestsInfo()

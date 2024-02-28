@@ -555,9 +555,9 @@ class statDB(Database):
         self.update_user(userid, usertag, username, userlastname)
 
     def update_user(self, userid, usertag=None, username=None, userlastname=None):
-        self.set_user_tag(usertag)
-        self.set_user_name(username)
-        self.set_user_last_name(userlastname)
+        self.set_user_tag(userid, usertag)
+        self.set_user_name(userid, username)
+        self.set_user_last_name(userid, userlastname)
 
     def set_user_tag(self, userid, usertag=None):
         self._commit(f"update users set nick = \'{usertag}\' where user_id = {userid}")
@@ -597,23 +597,44 @@ class statDB(Database):
 
 
     def getUsersInfo(self, detailed=False):
-        return "in developing"
+        res = ""
+        counter = 0
+        users = self._fetchall(f"select * from users")
+        for user in users:
+            counter += 1
+            __id = user['user_id']
+            __fname = user['fname']
+            __lname = user['sname']
+            req_info = f"({self.CountRequestsForUser(__id)} requests, {round(self.__percent(self.CountRequestsForUser(__id), self.CountRequests()), 2)}%)"
+            res += f"<b>{counter}.</b> {__id}:  <b>{user['nick']},  {__fname} {__lname}</b>  {req_info}\r\n"
+        return res
 
     def getRequestsInfo(self):
-        return "in developing"
+        res = ""
+        counter = 0
+        # for request in self._fetchall(f"select * from requests"):
+        #     counter += 1
+        #     res += f"{counter}) '{request}':  {self.__requests[request]}  ({round(self.__percent(self.__requests[request], self.__sum_requests), 2)}%)\r\n"
+        return res
 
-    def getCountUsers(self):
+    def CountUsers(self):
         res = self._fetchall(f"select count(*) from users")
-        print("getSum() = ")
-        print(res)
-        return 0
+        print("getCountUsers() = ")
+        print(res[0]['count(*)'])
+        return res[0]['count(*)']
 
-    def getSum(self):
+    def CountRequests(self):
         res = self._fetchall(f"select count(*) from requests")
         print("getSum() = ")
-        print(res[0])
-        return 0
+        print(res[0]['count(*)'])
+        return res[0]['count(*)']
 
+    def CountRequestsForUser(self, userid):
+        res = self._fetchall(f"seelct count(*) from requests where user_id = {userid}")
+        return res[0]['count(*)']
+
+    def __percent(self, c, a):
+        return c * 100 / a
 
 
 
