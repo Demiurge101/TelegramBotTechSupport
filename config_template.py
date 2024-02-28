@@ -10,6 +10,7 @@ db_name_ts = ""
 db_name_son = ""
 db_name_dispatcher_son = ""
 db_name_dispatcher_ts = ""
+db_name_statistics = ""
 
 Token = ""
 MyToken = ""

@@ -18,7 +18,7 @@ from statistics import Statistics
 print('init...')
 TSDB = MDataBase.TSDB(host=Config.db_host, user=Config.db_login, password=Config.db_password, db_name=Config.db_name_dispatcher_ts)
 SN = MDataBase.SonDB(host=Config.db_host, user=Config.db_login, password=Config.db_password, db_name=Config.db_name_dispatcher_son)
-stat = MDataBase.statDB(host=Config., user=Config., password=Config., db_name=Config.)
+stat = MDataBase.statDB(host=Config.db_host, user=Config.db_login, password=Config.db_password, db_name=Config.db_name_statistics)
 
 
 # admins
