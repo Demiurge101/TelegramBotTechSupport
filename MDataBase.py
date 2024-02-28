@@ -91,6 +91,10 @@ class Database:
         self.connection.close()
 
 
+    def get_current_time(self):
+        return datetime.now().strftime("%Y-%m-%d, %H:%M:%S.%f")[:-3]
+
+
 
 
 
@@ -398,19 +402,19 @@ class TSDB(Database):
         return self._fetchall(f"select * from titles where parent_id = {id}")
 
     def checkSlash(self, text):
-        print(f"checkSlach({text})")
+        # print(f"checkSlach({text})")
         res = ""
         for i in text:
-            print(i)
+            # print(i)
             if i == '"':
-                print("spy")
+                # print("spy")
                 res += "\\\""
             elif i == "'":
-                print("spy")
+                # print("spy")
                 res += "\\\'"
             else:
                 res += i
-        print("res:", res)
+        # print("res:", res)
         return res
 
     def getIdByTitle(self, text):
@@ -536,3 +540,93 @@ class TSDB(Database):
             print("file:", file)
             res += file
         return res
+
+
+
+
+
+
+
+
+class statDB(Database):
+
+    def create_user(self, userid, usertag=None, username=None, userlastname=None):
+        self._commit(f"insert into users(user_id) value ({userid})")
+        self.update_user(userid, usertag, username, userlastname)
+
+    def update_user(self, userid, usertag=None, username=None, userlastname=None):
+        self.set_user_tag(usertag)
+        self.set_user_name(username)
+        self.set_user_last_name(userlastname)
+
+    def set_user_tag(self, userid, usertag=None):
+        self._commit(f"update users set nick = \'{usertag}\' where user_id = {userid}")
+
+    def set_user_name(self, userid, name=None):
+        self._commit(f"update users set fname = \'{name}\' where user_id = {userid}")
+
+    def set_user_last_name(self, userid, lastname=None):
+        self._commit(f"update users set sname = \'{lastname}\' where user_id = {userid}")
+
+    def get_user(self, userid):
+        res = self._fetchall(f"select * from users where user_id = {userid}")
+        if len(res):
+            return res[0]
+        return None
+
+    def delete_user(self, userid):
+        self._commit(f"delete from requests where user_id = {userid}")
+        self._commit(f"delete from users where user_id = {userid}")
+
+
+
+
+    def add_request(self, userid, request, date_time = None):
+        if not date_time:
+            date_time = self.get_current_time()
+        self._commit(f"insert into requests(rdate, request, user_id) value (\'{date_time}\', \'{request}\', {userid})")
+
+
+    def fromMessage(self, m):
+        # print(f"about user: {m.from_user}")
+        if not self.get_user(m.from_user.id):
+            self.create_user(m.from_user.id, m.from_user.username, m.from_user.first_name, m.from_user.last_name)
+        # self.update_user(m.from_user.id, m.from_user.username, m.from_user.first_name, m.from_user.last_name)
+        self.add_request(m.from_user.id, m.text)
+
+
+
+    def getUsersInfo(self, detailed=False):
+        return "in developing"
+
+    def getRequestsInfo(self):
+        return "in developing"
+
+    def getCountUsers(self):
+        res = self._fetchall(f"select count(*) from users")
+        print("getSum() = ")
+        print(res)
+        return 0
+
+    def getSum(self):
+        res = self._fetchall(f"select count(*) from requests")
+        print("getSum() = ")
+        print(res[0])
+        return 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
