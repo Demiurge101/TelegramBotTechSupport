@@ -625,13 +625,7 @@ class statDB(Database):
         counter = 0
         data = {}
         count_requests = self.CountRequests()
-        filters = ""
-        if from_datetime:
-            filters = f" where rdate >= \'{from_datetime}\'"
-        if to_datetime:
-            if not filters:
-                filters = " where"
-            filters += f" rdate <= \'{to_datetime}\'" 
+        filters = self.__datetime_filters(from_datetime, to_datetime)
         for request in self._fetchall(f"select * from requests{filters}"):
             if not request['request'] in data:
                 data[request['request']] = 1
@@ -648,8 +642,9 @@ class statDB(Database):
         print(res[0]['count(*)'])
         return res[0]['count(*)']
 
-    def CountRequests(self):
-        res = self._fetchall(f"select count(*) from requests")
+    def CountRequests(self, from_datetime="", to_datetime=""):
+        filters = self.__datetime_filters(from_datetime, to_datetime)
+        res = self._fetchall(f"select count(*) from requests{filters}")
         print("getSum() = ")
         print(res[0]['count(*)'])
         return res[0]['count(*)']
@@ -660,6 +655,16 @@ class statDB(Database):
 
     def __percent(self, c, a):
         return c * 100 / a
+
+    def __datetime_filters(self, from_datetime="", to_datetime=""):
+        filters = ""
+        if from_datetime:
+            filters = f" where rdate >= \'{from_datetime}\'"
+        if to_datetime:
+            if not filters:
+                filters = " where"
+            filters += f" rdate <= \'{to_datetime}\'" 
+        return filters
 
 
 
