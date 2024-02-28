@@ -201,7 +201,7 @@ def parse_date_value(raw_data):
     if bindex >= 0:
         eindex = raw_data[bindex:].find(')')
         if eindex >= 0:
-            return raw_data[bindex+1:eindex]
+            return raw_data[bindex+1:bindex+eindex]
     return ""
 
 
