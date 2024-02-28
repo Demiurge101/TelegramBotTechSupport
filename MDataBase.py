@@ -630,7 +630,7 @@ class statDB(Database):
         return res[0]['count(*)']
 
     def CountRequestsForUser(self, userid):
-        res = self._fetchall(f"seelct count(*) from requests where user_id = {userid}")
+        res = self._fetchall(f"select count(*) from requests where user_id = {userid}")
         return res[0]['count(*)']
 
     def __percent(self, c, a):
