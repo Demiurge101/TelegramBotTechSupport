@@ -596,7 +596,7 @@ class statDB(Database):
 
 
 
-    def getUsersInfo(self, detailed=False):
+    def getUsersInfo(self, detailed=False, from_datetime="", to_datetime=""):
         res = ""
         counter = 0
         users = self._fetchall(f"select * from users")
@@ -620,12 +620,19 @@ class statDB(Database):
             res += f"<b>{counter}.</b> {__id}:  <b>{user['nick']},  {__fname} {__lname}</b>  {req_info}\r\n"
         return res
 
-    def getRequestsInfo(self):
+    def getRequestsInfo(self, from_datetime="", to_datetime=""):
         res = ""
         counter = 0
         data = {}
         count_requests = self.CountRequests()
-        for request in self._fetchall(f"select * from requests"):
+        filters = ""
+        if from_datetime:
+            filters = f" where rdate >= \'{from_datetime}\'"
+        if to_datetime:
+            if not filters:
+                filters = " where"
+            filters += f" rdate <= \'{to_datetime}\'" 
+        for request in self._fetchall(f"select * from requests{filters}"):
             if not request['request'] in data:
                 data[request['request']] = 1
             else:

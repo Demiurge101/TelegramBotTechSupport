@@ -196,6 +196,14 @@ def update_son(message):
     # os.system("python.exe build_DB.py")
     # reconnect_DB(message)
 
+def parse_date_value(raw_data):
+    bindex = raw_data.find('(')
+    if bindex >= 0:
+        eindex = raw_data[bindex:].find(')')
+        if eindex >= 0:
+            return raw_data[bindex+1:eindex]
+    return ""
+
 
 def info_send(chat_id, data, do='w', output='info_output'):
     if data:
@@ -220,6 +228,14 @@ def info(message):
         detailed = False
         if mtext.find('detailed') > -1 or mtext.find('detail') > -1 or mtext.find('d') > -1:
             detailed = True
+        from_date = ""
+        to_date = ""
+        from_index =  mtext.find('from')
+        if from_index >= 0:
+            from_date = parse_date_value(mtext[from_index:])
+        to_index = mtext.find('to')
+        if to_index >= 0:
+            to_date = parse_date_value(mtext[to_index:])
         # if mtext.find('son') > -1 or mtext.find('s') > -1:
         #     info_text = f'\r\nSON stat ({son_stat.CountRequests()} requests, {son_stat.CountUsers()} users):\r\n\r\n'
         #     info_text += son_stat.getUsersInfo(detailed=detailed)
@@ -228,9 +244,9 @@ def info(message):
         #     info_send(message.chat.id, info_text, 'a')
         # else:
         info_text = f'Menu stat ({stat.CountRequests()} requests, {stat.CountUsers()} users):\r\n\r\n'
-        info_text += stat.getUsersInfo(detailed=detailed)
+        info_text += stat.getUsersInfo(detailed=detailed, from_datetime=from_date, to_datetime=to_date)
         info_send(message.chat.id, info_text, 'a')
-        info_text = stat.getRequestsInfo()
+        info_text = stat.getRequestsInfo(from_datetime=from_date, to_datetime=to_date)
         info_send(message.chat.id, info_text, 'a')
 
         # bot.send_message(message.chat.id, info_text, parse_mode='HTML')
