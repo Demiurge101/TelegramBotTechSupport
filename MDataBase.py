@@ -603,7 +603,7 @@ class statDB(Database):
         users = self._fetchall(f"select * from users")
         for user in users:
             if filters:
-                u = self._fetchall(f"select * from requests{filters} and user_id == {user['user_id']}")
+                u = self._fetchall(f"select * from requests{filters} and user_id = {user['user_id']}")
                 if not len(u):
                     continue
             counter += 1
@@ -642,10 +642,14 @@ class statDB(Database):
         return res
 
     def CountUsers(self, from_datetime="", to_datetime=""):
-        res = self._fetchall(f"select count(*) from users")
         filters = self.__datetime_filters(from_datetime, to_datetime)
         if filters:
-            pass
+            data = set()
+            reqs = self._fetchall(f"select * from requests{filters}")
+            for req in reqs:
+                data.add(req['user_id'])
+            return len(data)
+        res = self._fetchall(f"select count(*) from users")
         return res[0]['count(*)']
 
     def CountRequests(self, from_datetime="", to_datetime=""):
