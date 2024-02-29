@@ -594,9 +594,10 @@ class statDB(Database):
         # self.update_user(m.from_user.id, m.from_user.username, m.from_user.first_name, m.from_user.last_name)
         if m.text[0] == '/':
             cm_index = m.text.find(' ')
-            self.add_request(m.from_user.id, m.text[:cm_index])
-        else:
-            self.add_request(m.from_user.id, m.text)
+            if cm_index >= 0:
+                self.add_request(m.from_user.id, m.text[:cm_index])
+            else:
+                self.add_request(m.from_user.id, m.text)
 
 
 
