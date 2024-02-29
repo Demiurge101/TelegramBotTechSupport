@@ -92,7 +92,7 @@ class Database:
 
 
     def get_current_time(self):
-        return datetime.now().strftime("%Y-%m-%d, %H:%M:%S.%f")[:-3]
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
 
 

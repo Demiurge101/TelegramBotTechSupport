@@ -205,7 +205,7 @@ def parse_date_value(raw_data):
     return ""
 
 def is_number(text):
-    alphabet = set('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+    alphabet = set({'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'})
     for c in text:
         if not c in alphabet:
             return False
@@ -243,10 +243,10 @@ def info(message):
                 number = int(d)
                 if not from_date:
                     today = datetime.datetime.today() - datetime.timedelta(days=number)
-                    from_date = today.strftime("%Y-%m-%d, %H:%M:%S.%f")[:-3]
+                    from_date = today.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
                 elif not to_date:
                     today += datetime.timedelta(days=number)
-                    to_date = today.strftime("%Y-%m-%d, %H:%M:%S.%f")[:-3]
+                    to_date = today.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
                     break
         from_index =  mtext.find('from')
         if from_index >= 0:
