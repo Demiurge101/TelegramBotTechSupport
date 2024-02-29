@@ -243,7 +243,7 @@ def info(message):
         #     info_text = son_stat.getRequestsInfo()
         #     info_send(message.chat.id, info_text, 'a')
         # else:
-        info_text = f'Menu stat ({stat.CountRequests(from_datetime=from_date, to_datetime=to_date)} requests, {stat.CountUsers()} users):\r\n\r\n'
+        info_text = f'Menu stat ({stat.CountRequests(from_datetime=from_date, to_datetime=to_date)} requests, {stat.CountUsers(from_datetime=from_date, to_datetime=to_date)} users):\r\n\r\n'
         info_text += stat.getUsersInfo(detailed=detailed, from_datetime=from_date, to_datetime=to_date)
         info_send(message.chat.id, info_text, 'a')
         info_text = stat.getRequestsInfo(from_datetime=from_date, to_datetime=to_date)
