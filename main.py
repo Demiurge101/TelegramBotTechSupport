@@ -204,6 +204,12 @@ def parse_date_value(raw_data):
             return raw_data[bindex+1:bindex+eindex]
     return ""
 
+def is_number(text):
+    alphabet = set('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+    for c in text:
+        if not c in alphabet:
+            return False
+    return True
 
 def info_send(chat_id, data, do='w', output='info_output'):
     if data:
@@ -230,19 +236,26 @@ def info(message):
             detailed = True
         from_date = ""
         to_date = ""
+        dmtext = mtext.split()
+        today = None
+        for d in dmtext:
+            if is_number(d):
+                number = int(d)
+                if not from_date:
+                    today = datetime.datetime.today() - datetime.timedelta(days=number)
+                    from_date = today.strftime("%Y-%m-%d, %H:%M:%S.%f")[:-3]
+                elif not to_date:
+                    today += datetime.timedelta(days=number)
+                    to_date = today.strftime("%Y-%m-%d, %H:%M:%S.%f")[:-3]
+                    break
         from_index =  mtext.find('from')
         if from_index >= 0:
             from_date = parse_date_value(mtext[from_index:])
         to_index = mtext.find('to')
         if to_index >= 0:
             to_date = parse_date_value(mtext[to_index:])
-        # if mtext.find('son') > -1 or mtext.find('s') > -1:
-        #     info_text = f'\r\nSON stat ({son_stat.CountRequests()} requests, {son_stat.CountUsers()} users):\r\n\r\n'
-        #     info_text += son_stat.getUsersInfo(detailed=detailed)
-        #     info_send(message.chat.id, info_text, 'a')
-        #     info_text = son_stat.getRequestsInfo()
-        #     info_send(message.chat.id, info_text, 'a')
-        # else:
+        print(f"From: {from_date}")
+        print(f"To: {to_date}")
         info_text = f'Menu stat ({stat.CountRequests(from_datetime=from_date, to_datetime=to_date)} requests, {stat.CountUsers(from_datetime=from_date, to_datetime=to_date)} users):\r\n\r\n'
         info_text += stat.getUsersInfo(detailed=detailed, from_datetime=from_date, to_datetime=to_date)
         info_send(message.chat.id, info_text, 'a')
