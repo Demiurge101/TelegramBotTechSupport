@@ -256,7 +256,16 @@ def info(message):
             to_date = parse_date_value(mtext[to_index:])
         print(f"From: {from_date}")
         print(f"To: {to_date}")
-        info_text = f'Menu stat ({stat.CountRequests(from_datetime=from_date, to_datetime=to_date)} requests, {stat.CountUsers(from_datetime=from_date, to_datetime=to_date)} users):\r\n\r\n'
+        info_text = "Статистика "
+        if from_date:
+            info_text = f" с {from_date}"
+        if to_date: 
+            info_text += f" до {to_date}"
+        if not from_date and not to_date:
+            info_text += " за все время."
+        else:
+            info_text += "."
+        info_text += f' ({stat.CountRequests(from_datetime=from_date, to_datetime=to_date)} requests, {stat.CountUsers(from_datetime=from_date, to_datetime=to_date)} users):\r\n\r\n'
         info_text += stat.getUsersInfo(detailed=detailed, from_datetime=from_date, to_datetime=to_date)
         info_send(message.chat.id, info_text, 'a')
         info_text = stat.getRequestsInfo(from_datetime=from_date, to_datetime=to_date)
