@@ -218,7 +218,7 @@ def info(message):
     global last_err_time
     print(yellow_text(get_time()), f"'{message.text}': {message.from_user.id} ({green_text(str(message.from_user.username))})")
     # thr.show()
-    # stat.fromMessage(message)
+    stat.fromMessage(message)
     if message.from_user.id in admins:
         mtext = message.text.lower()
         # message_text = str(message.text).lower()
