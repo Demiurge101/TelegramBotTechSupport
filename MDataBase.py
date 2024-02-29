@@ -599,13 +599,18 @@ class statDB(Database):
     def getUsersInfo(self, detailed=False, from_datetime="", to_datetime=""):
         res = ""
         counter = 0
+        filters = self.__datetime_filters(from_datetime, to_datetime)
         users = self._fetchall(f"select * from users")
         for user in users:
+            if filters:
+                u = self._fetchall(f"select * from requests{filters} and user_id == {user['user_id']}")
+                if not len(u):
+                    continue
             counter += 1
             __id = user['user_id']
             __fname = user['fname']
             __lname = user['sname']
-            req_info = f"({self.CountRequestsForUser(__id)} requests, {round(self.__percent(self.CountRequestsForUser(__id), self.CountRequests()), 2)}%)"
+            req_info = f"({self.CountRequestsForUser(__id)} requests, {round(self.__percent(self.CountRequestsForUser(__id), self.CountRequests(from_datetime, to_datetime)), 2)}%)"
             if detailed:
                 subcounter = 0
                 data = {}
@@ -636,10 +641,11 @@ class statDB(Database):
             res += f"{counter}) '{request}':  {data[request]}  ({round(self.__percent(data[request], count_requests), 2)}%)\r\n"
         return res
 
-    def CountUsers(self):
+    def CountUsers(self, from_datetime="", to_datetime=""):
         res = self._fetchall(f"select count(*) from users")
-        print("getCountUsers() = ")
-        print(res[0]['count(*)'])
+        filters = self.__datetime_filters(from_datetime, to_datetime)
+        if filters:
+            pass
         return res[0]['count(*)']
 
     def CountRequests(self, from_datetime="", to_datetime=""):
@@ -649,20 +655,26 @@ class statDB(Database):
         print(res[0]['count(*)'])
         return res[0]['count(*)']
 
-    def CountRequestsForUser(self, userid):
-        res = self._fetchall(f"select count(*) from requests where user_id = {userid}")
+    def CountRequestsForUser(self, userid, from_datetime="", to_datetime=""):
+        filters = self.__datetime_filters(from_datetime, to_datetime, " ")
+        res = self._fetchall(f"select count(*) from requests where user_id = {userid}{filters}")
         return res[0]['count(*)']
 
     def __percent(self, c, a):
         return c * 100 / a
 
-    def __datetime_filters(self, from_datetime="", to_datetime=""):
-        filters = ""
+    def __datetime_filters(self, from_datetime="", to_datetime="", filters=""):
         if from_datetime:
-            filters = f" where rdate >= \'{from_datetime}\'"
+            if not filters:
+                filters = " where"
+            else:
+                filters += " and"
+            filters += f" rdate >= \'{from_datetime}\'"
         if to_datetime:
             if not filters:
                 filters = " where"
+            else:
+                filters += " and"
             filters += f" rdate <= \'{to_datetime}\'" 
         return filters
 
