@@ -134,10 +134,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
-STATICFILES_DIRS = [
-    # BASE_DIR / "static" ,
-    ("img", BASE_DIR + '/static/img'),
-]
+# STATICFILES_DIRS = [
+#     # BASE_DIR / "static" ,
+#     STATIC_ROOT / 'img',
+# ]
 # STATICFILES_DIR=[
 # os.path.join(PROJECT_ROOT,"static"),
 # os.path.join(STATIC_ROOT, 'css')
