@@ -136,7 +136,7 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 STATICFILES_DIRS = [
     # BASE_DIR / "static" ,
-    ("img", STATIC_ROOT / 'img'),
+    ("img", BASE_DIR + '/static/img'),
 ]
 # STATICFILES_DIR=[
 # os.path.join(PROJECT_ROOT,"static"),
