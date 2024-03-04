@@ -597,7 +597,7 @@ class statDB(Database):
             if cm_index >= 0:
                 self.add_request(m.from_user.id, m.text[:cm_index])
                 return
-        self.add_request(m.from_user, m.text)
+        self.add_request(m.from_user.id, m.text)
 
 
 
