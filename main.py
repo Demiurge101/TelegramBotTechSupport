@@ -214,7 +214,7 @@ def is_number(text):
 def info_send(chat_id, data, do='w', output='info_output'):
     if data:
         bot.send_message(chat_id, data, parse_mode='HTML')
-        print(data)
+        # print(data)
         # f = open(output, do)
         # f.write(data)
         # f.close()
