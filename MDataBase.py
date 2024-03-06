@@ -611,6 +611,10 @@ class statDB(Database):
                 u = self._fetchall(f"select * from requests{filters} and user_id = {user['user_id']}")
                 if not len(u):
                     continue
+            else:
+                u = self._fetchall(f"select * from requests where user_id = {user['user_id']}")
+                if not len(u):
+                    continue
             counter += 1
             __id = user['user_id']
             __fname = user['fname']
@@ -619,7 +623,13 @@ class statDB(Database):
             if detailed:
                 subcounter = 0
                 data = {}
-                for request in self._fetchall(f"select * from requests where user_id = {__id}"):
+                rtext = f"select * from requests{filters}"
+                if filters:
+                    rtext += " and"
+                else:
+                    rtext += " where"
+                rtext += f" user_id = {__id}"
+                for request in self._fetchall(rtext):
                     if not request['request'] in data:
                         data[request['request']] = 1
                     else:
