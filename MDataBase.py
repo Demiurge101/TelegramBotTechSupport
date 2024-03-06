@@ -615,7 +615,7 @@ class statDB(Database):
             __id = user['user_id']
             __fname = user['fname']
             __lname = user['sname']
-            req_info = f"({self.CountRequestsForUser(__id)} requests, {round(self.__percent(self.CountRequestsForUser(__id), self.CountRequests(from_datetime, to_datetime)), 2)}%)"
+            req_info = f"({self.CountRequestsForUser(__id, from_datetime, to_datetime)} requests, {round(self.__percent(self.CountRequestsForUser(__id, from_datetime, to_datetime), self.CountRequests(from_datetime, to_datetime)), 2)}%)"
             if detailed:
                 subcounter = 0
                 data = {}
@@ -634,7 +634,7 @@ class statDB(Database):
         res = ""
         counter = 0
         data = {}
-        count_requests = self.CountRequests()
+        count_requests = self.CountRequests(from_datetime=from_datetime, to_datetime=to_datetime)
         filters = self.__datetime_filters(from_datetime, to_datetime)
         for request in self._fetchall(f"select * from requests{filters}"):
             if not request['request'] in data:
