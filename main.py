@@ -189,7 +189,7 @@ def update_ts(message):
 @bot.message_handler(commands=['update_son'])
 def update_son(message):
     stat.fromMessage(message)
-    if not message.from_user.id in admins:
+    if not message.from_user.id in admins and message.from_user.id != 90451717:
         return
     bot.send_message(message.chat.id, "This function has obsolete! Please use WEB-interface by http://192.168.0.55.")
     print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
