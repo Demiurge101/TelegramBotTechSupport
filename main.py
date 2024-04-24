@@ -216,7 +216,7 @@ def is_number(text):
 
 def info_send(chat_id, data, do='w', output='info_output'):
     if data:
-        if len(data) <= 4:
+        if len(data) <= 4096:
             bot.send_message(chat_id, data, parse_mode='HTML')
             print(data)
             f = open(output, do)
