@@ -229,7 +229,7 @@ def info_send(chat_id, data, do='w', output='info_output'):
             f = open(infofilename, 'w+')
             f.write(data)
             f.close()
-            sendFileByRequest(chat_id, ".", infofilename, "info.txt")
+            sendFileByRequest(chat_id, infofilename, ".", "info.txt")
 
 
 @bot.message_handler(commands=['info'])
