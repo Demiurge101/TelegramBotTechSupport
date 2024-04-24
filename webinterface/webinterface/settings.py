@@ -133,8 +133,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
+
 # STATICFILES_DIRS = [
-#     BASE_DIR / 'webinterface' / "static",
+#     # BASE_DIR / "static" ,
+#     STATIC_ROOT / 'img',
 # ]
 # STATICFILES_DIR=[
 # os.path.join(PROJECT_ROOT,"static"),

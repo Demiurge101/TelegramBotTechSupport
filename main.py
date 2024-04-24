@@ -18,6 +18,7 @@ from statistics import Statistics
 print('init...')
 TSDB = MDataBase.TSDB(host=Config.db_host, user=Config.db_login, password=Config.db_password, db_name=Config.db_name_dispatcher_ts)
 SN = MDataBase.SonDB(host=Config.db_host, user=Config.db_login, password=Config.db_password, db_name=Config.db_name_dispatcher_son)
+stat = MDataBase.statDB(host=Config.db_host, user=Config.db_login, password=Config.db_password, db_name=Config.db_name_statistics)
 
 
 # admins
@@ -52,8 +53,7 @@ print('threads init...')
 thr = Threads()
 print('son_controller init...')
 son_controller = SonController()
-stat = Statistics()
-son_stat = Statistics()
+
 
 main_menu_id = -1
 
@@ -93,6 +93,8 @@ def start_bot():
         TSDB.set_time_out(DB_timeout)
         SN.connect()
         SN.set_time_out(DB_timeout)
+        stat.connect()
+        stat.set_time_out(DB_timeout)
         set_main_menu_id()
         print(yellow_text(get_time()), "Runned.")
         bot.polling(none_stop=True, timeout=100)
@@ -113,8 +115,7 @@ def start_bot():
 @bot.message_handler(commands=['drop', 'stop'])
 def drop_bot(message):
     stat.fromMessage(message)
-    stat.save()
-    son_stat.save()
+
     if message.from_user.id == Config.ITGenerator:
         if message.text.lower() in ['yes', 'y'] or not prod:
             print(yellow_text(get_time()), f"Bot has dropped by {message.from_user.id}({green_text(str(message.from_user.username))})")
@@ -132,8 +133,7 @@ def drop_bot(message):
 @bot.message_handler(commands=['reborn'])
 def reborn(message):
     stat.fromMessage(message)
-    stat.save()
-    son_stat.save()
+
     print(yellow_text(get_time()), f"reborn {message.from_user.id} ({green_text(str(message.from_user.username))})")
     if message.from_user.id in admins:
         reset_live_countdown()
@@ -171,6 +171,8 @@ def reconnect_DB(message):
     TSDB.set_time_out(DB_timeout)
     SN.connect()
     SN.set_time_out(DB_timeout)
+    stat.connect()
+    stat.set_time_out(DB_timeout)
     set_main_menu_id()
     bot.send_message(message.chat.id, "Done!", reply_markup=TSDB.getSubMenu(get_pos(message)))
 
@@ -197,6 +199,20 @@ def update_son(message):
         os.system("python3 build_DB.py")
     reconnect_DB(message)
 
+def parse_date_value(raw_data):
+    bindex = raw_data.find('(')
+    if bindex >= 0:
+        eindex = raw_data[bindex:].find(')')
+        if eindex >= 0:
+            return raw_data[bindex+1:bindex+eindex]
+    return ""
+
+def is_number(text):
+    alphabet = set({'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'})
+    for c in text:
+        if not c in alphabet:
+            return False
+    return True
 
 def info_send(chat_id, data, do='w', output='info_output'):
     if data:
@@ -230,18 +246,40 @@ def info(message):
         detailed = False
         if mtext.find('detailed') > -1 or mtext.find('detail') > -1 or mtext.find('d') > -1:
             detailed = True
-        if mtext.find('son') > -1 or mtext.find('s') > -1:
-            info_text = f'\r\nSON stat ({son_stat.getSum()} requests, {son_stat.getCountUsers()} users):\r\n\r\n'
-            info_text += son_stat.getUsersInfo(detailed=detailed)
-            info_send(message.chat.id, info_text, 'a')
-            info_text = son_stat.getRequestsInfo()
-            info_send(message.chat.id, info_text, 'a')
-        else:
-            info_text = f'Menu stat ({stat.getSum()} requests, {stat.getCountUsers()} users):\r\n\r\n'
-            info_text += stat.getUsersInfo(detailed=detailed)
-            info_send(message.chat.id, info_text, 'a')
-            info_text = stat.getRequestsInfo()
-            info_send(message.chat.id, info_text, 'a')
+        from_date = ""
+        to_date = ""
+        dmtext = mtext.split()
+        today = None
+        for d in dmtext:
+            if is_number(d):
+                number = int(d)
+                if not from_date:
+                    today = datetime.datetime.today() - datetime.timedelta(days=number)
+                    from_date = today.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+                elif not to_date:
+                    today += datetime.timedelta(days=number)
+                    to_date = today.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+                    break
+        from_index =  mtext.find('from')
+        if from_index >= 0:
+            from_date = parse_date_value(mtext[from_index:])
+        to_index = mtext.find('to')
+        if to_index >= 0:
+            to_date = parse_date_value(mtext[to_index:])
+        print(f"From: {from_date}")
+        print(f"To: {to_date}")
+        info_text = "Статистика "
+        if from_date:
+            info_text += f" с {from_date}"
+        if to_date: 
+            info_text += f" до {to_date}"
+        if not from_date and not to_date:
+            info_text += " за все время."
+        info_text += f' ({stat.CountRequests(from_datetime=from_date, to_datetime=to_date)} requests, {stat.CountUsers(from_datetime=from_date, to_datetime=to_date)} users):\r\n\r\n'
+        info_text += stat.getUsersInfo(detailed=detailed, from_datetime=from_date, to_datetime=to_date)
+        info_send(message.chat.id, info_text, 'a')
+        info_text = stat.getRequestsInfo(from_datetime=from_date, to_datetime=to_date)
+        info_send(message.chat.id, info_text, 'a')
 
         # bot.send_message(message.chat.id, info_text, parse_mode='HTML')
 
@@ -268,10 +306,10 @@ def send_message_to_user(message):
 @bot.message_handler(commands=['cmd'])
 def control_command(message):
     if message.from_user.id == Config.ITGenerator:
-        print(f"Command: {message.text}")
-        status = os.system(message.text)
+        print(f"Command: {message.text[4:]}")
+        status = os.system(message.text[4:])
         print(status)
-        bot.send_message(message.chat.id, f"Done! (status {status})", reply_markup=TSDB.getSubMenu(get_pos(message)))
+        bot.send_message(message.chat.id, f"Done! (status {status}) \r\ncommand: {message.text[4:]}", reply_markup=TSDB.getSubMenu())
 
 
 @bot.message_handler(commands=['start'])
@@ -395,7 +433,7 @@ def site(message):
 @bot.message_handler(commands=['son'])
 def sysonenum(message):
     global main_menu_id
-    son_stat.fromMessage(message)
+    stat.fromMessage(message)
     if message.text == "Назад":
         main_menu_id = 1 # 
         bot.send_message(message.chat.id, TSDB.getContent()['content_text'], parse_mode='HTML', reply_markup=TSDB.getSubMenu())
@@ -579,7 +617,7 @@ def son(message, menu_id=0, overcount=0):
     global menu_position
     number = message.text
     client_id = message.from_user.id
-    son_stat.fromMessage(message)
+    stat.fromMessage(message)
     # SN.test(number, client_id)
     # print("Parsed:", son_controller.parse_type(message.text.lower()))
     if(message.text in return_keys) or message.text == '/start' or (overcount > 5):
@@ -951,8 +989,6 @@ while True:
     print()
     print(f"<<<{red_text(str(live_countdown))}>>>")
     start_bot()
-    stat.save()
-    son_stat.save()
     if live_countdown < 1:
         break
     print(f"Sleep {delay_between_errors}s")

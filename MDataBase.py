@@ -54,6 +54,7 @@ class Database:
     def _commit(self, cmd, err="commit error"):
         with self.connection.cursor() as cursor:
             try:
+                print(f"_commit({cmd})")
                 cursor.execute(cmd)
                 self.connection.commit()
                 return True
@@ -69,12 +70,12 @@ class Database:
     def _fetchall(self, cmd, err="fetch error"):
          with self.connection.cursor() as cursor:
             try:
-                # print(f"_fetchall({cmd})")
-                cursor.execute(self._checkQuote(cmd))
+                print(f"_fetchall({cmd})")
+                cursor.execute(cmd)
                 return cursor.fetchall()
             except Exception as ex:
                 print(red_text("Error:"), err)
-                print(self._checkQuote(cmd))
+                print(cmd)
                 print(ex)
                 self.__status = 0
                 self.heal()
@@ -88,6 +89,10 @@ class Database:
 
     def close_connect(self):
         self.connection.close()
+
+
+    def get_current_time(self):
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
 
 
@@ -396,9 +401,26 @@ class TSDB(Database):
     def getTitlesByParentId(self, id):
         return self._fetchall(f"select * from titles where parent_id = {id}")
 
+    def checkSlash(self, text):
+        # print(f"checkSlach({text})")
+        res = ""
+        for i in text:
+            # print(i)
+            if i == '"':
+                # print("spy")
+                res += "\\\""
+            elif i == "'":
+                # print("spy")
+                res += "\\\'"
+            else:
+                res += i
+        # print("res:", res)
+        return res
+
     def getIdByTitle(self, text):
-        res = self._fetchall(f"select title_id from titles where title = \'{text}\'", f"getIdByTitle(\"{text}\")")
-        print("have RES")
+        text = self.checkSlash(text)
+        res = self._fetchall(f"select title_id from titles where title = \'{text}\'", f"getIdByTitle(\'{text}\')")
+        print("have RES:")
         print(res)
         if(len(res) > 0):
             return res[0]['title_id']
@@ -406,7 +428,8 @@ class TSDB(Database):
             return -1
 
     def getIdByCommand(self, text):
-        res = self._fetchall(f"select title_id from titles where command = \"{text}\"", f"getIdByCommand(\"{text}\")")
+        text = self.checkSlash(text)
+        res = self._fetchall(f"select title_id from titles where command = \'{text}\'", f"getIdByCommand(\'{text}\')")
         if len(res) > 0:
             return res[0]['title_id']
         else:
@@ -517,3 +540,175 @@ class TSDB(Database):
             print("file:", file)
             res += file
         return res
+
+
+
+
+
+
+
+
+class statDB(Database):
+
+    def create_user(self, userid, usertag=None, username=None, userlastname=None):
+        self._commit(f"insert into users(user_id) value ({userid})")
+        self.update_user(userid, usertag, username, userlastname)
+
+    def update_user(self, userid, usertag=None, username=None, userlastname=None):
+        self.set_user_tag(userid, usertag)
+        self.set_user_name(userid, username)
+        self.set_user_last_name(userid, userlastname)
+
+    def set_user_tag(self, userid, usertag=None):
+        self._commit(f"update users set nick = \'{usertag}\' where user_id = {userid}")
+
+    def set_user_name(self, userid, name=None):
+        self._commit(f"update users set fname = \'{name}\' where user_id = {userid}")
+
+    def set_user_last_name(self, userid, lastname=None):
+        self._commit(f"update users set sname = \'{lastname}\' where user_id = {userid}")
+
+    def get_user(self, userid):
+        res = self._fetchall(f"select * from users where user_id = {userid}")
+        if len(res):
+            return res[0]
+        return None
+
+    def delete_user(self, userid):
+        self._commit(f"delete from requests where user_id = {userid}")
+        self._commit(f"delete from users where user_id = {userid}")
+
+
+
+
+    def add_request(self, userid, request, date_time = None):
+        if not date_time:
+            date_time = self.get_current_time()
+        self._commit(f"insert into requests(rdate, request, user_id) value (\'{date_time}\', \'{request}\', {userid})")
+
+
+    def fromMessage(self, m):
+        # print(f"about user: {m.from_user}")
+        if not self.get_user(m.from_user.id):
+            self.create_user(m.from_user.id, m.from_user.username, m.from_user.first_name, m.from_user.last_name)
+        # self.update_user(m.from_user.id, m.from_user.username, m.from_user.first_name, m.from_user.last_name)
+        if m.text[0] == '/':
+            cm_index = m.text.find(' ')
+            if cm_index >= 0:
+                self.add_request(m.from_user.id, m.text[:cm_index])
+                return
+        self.add_request(m.from_user.id, m.text)
+
+
+
+    def getUsersInfo(self, detailed=False, from_datetime="", to_datetime=""):
+        res = ""
+        counter = 0
+        filters = self.__datetime_filters(from_datetime, to_datetime)
+        users = self._fetchall(f"select * from users")
+        for user in users:
+            if filters:
+                u = self._fetchall(f"select * from requests{filters} and user_id = {user['user_id']}")
+                if not len(u):
+                    continue
+            else:
+                u = self._fetchall(f"select * from requests where user_id = {user['user_id']}")
+                if not len(u):
+                    continue
+            counter += 1
+            __id = user['user_id']
+            __fname = user['fname']
+            __lname = user['sname']
+            req_info = f"({self.CountRequestsForUser(__id, from_datetime, to_datetime)} requests, {round(self.__percent(self.CountRequestsForUser(__id, from_datetime, to_datetime), self.CountRequests(from_datetime, to_datetime)), 2)}%)"
+            if detailed:
+                subcounter = 0
+                data = {}
+                rtext = f"select * from requests{filters}"
+                if filters:
+                    rtext += " and"
+                else:
+                    rtext += " where"
+                rtext += f" user_id = {__id}"
+                for request in self._fetchall(rtext):
+                    if not request['request'] in data:
+                        data[request['request']] = 1
+                    else:
+                        data[request['request']] += 1
+                for request in data:
+                    subcounter += 1
+                    req_info += f"\r\n   {subcounter}) {request}: {data[request]}"
+            res += f"<b>{counter}.</b> {__id}:  <b>{user['nick']},  {__fname} {__lname}</b>  {req_info}\r\n"
+        return res
+
+    def getRequestsInfo(self, from_datetime="", to_datetime=""):
+        res = ""
+        counter = 0
+        data = {}
+        count_requests = self.CountRequests(from_datetime=from_datetime, to_datetime=to_datetime)
+        filters = self.__datetime_filters(from_datetime, to_datetime)
+        for request in self._fetchall(f"select * from requests{filters}"):
+            if not request['request'] in data:
+                data[request['request']] = 1
+            else:
+                data[request['request']] += 1
+        for request in data:
+            counter += 1
+            res += f"{counter}) '{request}':  {data[request]}  ({round(self.__percent(data[request], count_requests), 2)}%)\r\n"
+        return res
+
+    def CountUsers(self, from_datetime="", to_datetime=""):
+        filters = self.__datetime_filters(from_datetime, to_datetime)
+        if filters:
+            data = set()
+            reqs = self._fetchall(f"select * from requests{filters}")
+            for req in reqs:
+                data.add(req['user_id'])
+            return len(data)
+        res = self._fetchall(f"select count(*) from users")
+        return res[0]['count(*)']
+
+    def CountRequests(self, from_datetime="", to_datetime=""):
+        filters = self.__datetime_filters(from_datetime, to_datetime)
+        res = self._fetchall(f"select count(*) from requests{filters}")
+        print("getSum() = ")
+        print(res[0]['count(*)'])
+        return res[0]['count(*)']
+
+    def CountRequestsForUser(self, userid, from_datetime="", to_datetime=""):
+        filters = self.__datetime_filters(from_datetime, to_datetime, " ")
+        res = self._fetchall(f"select count(*) from requests where user_id = {userid}{filters}")
+        return res[0]['count(*)']
+
+    def __percent(self, c, a):
+        return c * 100 / a
+
+    def __datetime_filters(self, from_datetime="", to_datetime="", filters=""):
+        if from_datetime:
+            if not filters:
+                filters = " where"
+            else:
+                filters += " and"
+            filters += f" rdate >= \'{from_datetime}\'"
+        if to_datetime:
+            if not filters:
+                filters = " where"
+            else:
+                filters += " and"
+            filters += f" rdate <= \'{to_datetime}\'" 
+        return filters
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

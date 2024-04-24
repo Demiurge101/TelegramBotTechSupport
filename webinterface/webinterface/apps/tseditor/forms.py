@@ -67,7 +67,7 @@ class SelectFileForm(forms.Form):
 class AddTitleForm(forms.Form):
     title_name = forms.CharField(widget=forms.TextInput(attrs={'id':'title-name'}), max_length=65, label='Заголовок', required=True)
     command = forms.CharField(widget=forms.TextInput(attrs={'id':'command'}), max_length=65, label='Команда', required = False)
-    content_text = forms.CharField(widget=forms.TextInput(attrs={'id':'content-text'}), max_length=65, label='Текст', required=True)
+    content_text = forms.CharField(widget=forms.Textarea(attrs={'id':'content-text', 'cols':80}), max_length=3000, label='Текст', required=True)
 
 
     def clean_command(self):
@@ -78,6 +78,20 @@ class AddTitleForm(forms.Form):
         else:
             cm = None
         return cm
+
+    def clean_title_name(self):
+        tn = self.cleaned_data.get('title_name')
+        # print(f"tn: {tn}")
+        if tn:
+            return tn
+        return ""
+
+    def clean_content_text(self):
+        ct = self.cleaned_data.get('content_text')
+        # print(f"ct: {ct}")
+        if ct:
+            return ct
+        return ""
 
     def set_title(self, title):
         self.fields['title_name'].initial = title.title
@@ -90,3 +104,5 @@ class AddTitleForm(forms.Form):
     def set_content(self, content):
         self.fields['content_text'].initial = content.content_text
         self.fields['content_text'].required = False
+
+

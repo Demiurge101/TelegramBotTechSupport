@@ -387,27 +387,37 @@ def devices(request, pos=1):
 	if not request.user.is_authenticated:
 		return index(request)
 	filter_form = DeviceFilterForm()
-	devices = Devices.objects.all()[pos*step:(pos+1)*step]
-	count_devices = Devices.objects.count()
-	if pos < 0:
-		pos = 0
-	if pos > count_devices:
-		pos = count_devices
+	devices = Devices.objects.all()
 	pages = []
-	k = 0
-	while k * step < count_devices:
-		pages.append(k)
-		k += 1
+	count_devices = Devices.objects.count()
 	if request.method == 'POST':
 		filter_form = DeviceFilterForm(request.POST)
-		if request.POST['date_out']:
-			devices = devices.filter(date_out=request.POST['date_out'])
+		if request.POST['date_from']:
+			# devices = devices.filter(date_out=request.POST['date_out'])
+			# gte lte and range
+			devices = devices.filter(date_out__gte=request.POST['date_from'])
+		if request.POST['date_to']:
+			devices = devices.filter(date_out__lte=request.POST['date_to'])
 		if request.POST['org']:
 			devices = devices.filter(org=request.POST['org'])
 		if request.POST['mkcb']:
 			devices = devices.filter(mkcb=request.POST['mkcb'])
 		if request.POST['device_name']:
 			devices = devices.filter(device_name=request.POST['device_name'])
+		if request.POST['serial_number']:
+			devices = devices.filter(serial_number=request.POST['serial_number'])
+		count_devices = devices.count()
+	else:
+		devices = devices[pos*step:(pos+1)*step]
+		count_devices = Devices.objects.count()
+		if pos < 0:
+			pos = 0
+		if pos > count_devices:
+			pos = count_devices
+		k = 0
+		while k * step < count_devices:
+			pages.append(k)
+			k += 1
 	techsupport = ''
 	if check_user_access_to_group(request):
 		techsupport = 'techsupport'
@@ -507,12 +517,16 @@ def stations(request):
 	stations = Stations.objects.all()
 	if request.method == 'POST':
 		filter_form = StationFilterForm(request.POST)
-		if request.POST['date_out']:
-			stations = stations.filter(date_out=request.POST['date_out'])
 		if request.POST['org']:
 			stations = stations.filter(org=request.POST['org'])
 		if request.POST['mkcb']:
 			stations = stations.filter(mkcb=request.POST['mkcb'])
+		if request.POST['serial_number']:
+			stations = stations.filter(serial_number=request.POST['serial_number'])
+		if request.POST['date_from']:
+			stations = stations.filter(date_out__gte=request.POST['date_from'])
+		if request.POST['date_to']:
+			stations = stations.filter(date_out__lte=request.POST['date_to'])
 	techsupport = ''
 	if check_user_access_to_group(request):
 		techsupport = 'techsupport'
