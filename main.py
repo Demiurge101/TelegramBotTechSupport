@@ -200,11 +200,20 @@ def update_son(message):
 
 def info_send(chat_id, data, do='w', output='info_output'):
     if data:
-        bot.send_message(chat_id, data, parse_mode='HTML')
-        print(data)
-        f = open(output, do)
-        f.write(data)
-        f.close()
+        if len(data) <= 4096:
+            bot.send_message(chat_id, data, parse_mode='HTML')
+            print(data)
+            f = open(output, do)
+            f.write(data)
+            f.close()
+        else:
+            bot.send_message(chat_id, "Message very long!", parse_mode='HTML')
+            print("Info output very long!")
+            f = open("info.txt", 'w+')
+            f.write(data)
+            f.close()
+            bot.send_document(chat_id, "info.txt", caption="Info output very long!")
+
 
 @bot.message_handler(commands=['info'])
 def info(message):
