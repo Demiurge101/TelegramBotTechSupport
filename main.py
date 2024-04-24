@@ -189,10 +189,13 @@ def update_son(message):
     stat.fromMessage(message)
     if not message.from_user.id in admins:
         return
-    bot.send_message(message.chat.id, "This function obsolete! Use WEB-interface by http://192.168.0.55.")
-    # print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
-    # os.system("python.exe build_DB.py")
-    # reconnect_DB(message)
+    bot.send_message(message.chat.id, "This function has obsolete! Please use WEB-interface by http://192.168.0.55.")
+    print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
+    if(Config.operating_system == "windows"):
+        os.system("python.exe build_DB.py")
+    else:
+        os.system("python3 build_DB.py")
+    reconnect_DB(message)
 
 
 def info_send(chat_id, data, do='w', output='info_output'):
