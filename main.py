@@ -193,7 +193,7 @@ def update_son(message):
         return
     bot.send_message(message.chat.id, "This function has obsolete! Please use WEB-interface by http://192.168.0.55.")
     print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
-    if(Config.operating_system == "windows"):
+    if(operating_system == "windows"):
         os.system("python.exe build_DB.py")
     else:
         os.system("python3 build_DB.py")
@@ -216,19 +216,20 @@ def is_number(text):
 
 def info_send(chat_id, data, do='w', output='info_output'):
     if data:
-        if len(data) <= 4096:
+        if len(data) <= 4:
             bot.send_message(chat_id, data, parse_mode='HTML')
             print(data)
             f = open(output, do)
             f.write(data)
             f.close()
         else:
-            bot.send_message(chat_id, "Message very long!", parse_mode='HTML')
+            infofilename = "info_file"
+            bot.send_message(chat_id, "Message very long!")
             print("Info output very long!")
-            f = open("info.txt", 'w+')
+            f = open(infofilename, 'w+')
             f.write(data)
             f.close()
-            bot.send_document(chat_id, "info.txt", caption="Info output very long!")
+            sendFileByRequest(chat_id, ".", infofilename, "info.txt")
 
 
 @bot.message_handler(commands=['info'])
