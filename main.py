@@ -163,7 +163,7 @@ def get_drop_status(message):
 def reconnect_DB(message):
     stat.fromMessage(message)
     print(yellow_text(get_time()), f"reconnect {message.from_user.id} ({green_text(str(message.from_user.username))})")
-    if not message.from_user.id in admins:
+    if not message.from_user.id in admins and message.from_user.id != Config.anna_petrusova:
         return
     # DB.connect()
     # DB.set_time_out(DB_timeout)
@@ -182,16 +182,16 @@ def update_ts(message):
     if not message.from_user.id in admins:
         return
     # print(yellow_text(get_time()), f"DB TS has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
-    bot.send_message(message.chat.id, "This function obsolete! Use WEB-interface by http://192.168.0.55/tseditor.")
+    bot.send_message(message.chat.id, "This function is deprecated! Use WEB-interface by http://192.168.0.55/tseditor.")
     # os.system("python.exe build_tree.py")
     # reconnect_DB(message)
 
 @bot.message_handler(commands=['update_son'])
 def update_son(message):
     stat.fromMessage(message)
-    if not message.from_user.id in admins and message.from_user.id != 90451717:
+    if not message.from_user.id in admins and message.from_user.id != Config.anna_petrusova:
         return
-    bot.send_message(message.chat.id, "This function has obsolete! Please use WEB-interface by http://192.168.0.55.")
+    bot.send_message(message.chat.id, "Warning: This function is deprecated! Please use WEB-interface by http://192.168.0.55.")
     print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
     if(operating_system == "windows"):
         os.system("python.exe build_DB.py")
