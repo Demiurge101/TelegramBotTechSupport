@@ -17,6 +17,7 @@ class Database:
         self.password = password
         self.db_name = db_name
         self.__status = 1
+        self.__logs = True
 
 
     def set_time_out(self, tm=28800):
@@ -26,6 +27,9 @@ class Database:
 
     def __del__(self):
         self.close_connect()
+
+    def set_logs(self, log=True):
+        self.__logs = log
 
     def connect(self):
         try:
@@ -38,10 +42,12 @@ class Database:
                 cursorclass=pymysql.cursors.DictCursor
             )
             self.__status = 1
-            print(f"success {self.db_name}")
+            if self.__logs:
+                print(f"success {self.db_name}")
         except Exception as ex:
-            print(f"Connection refused {self.db_name}")
-            print(ex)
+            if self.__logs:
+                print(f"Connection refused {self.db_name}")
+                print(ex)
 
 
     def _checkSlash(self, line):
@@ -54,14 +60,16 @@ class Database:
     def _commit(self, cmd, err="commit error"):
         with self.connection.cursor() as cursor:
             try:
-                print(f"_commit({cmd})")
+                if self.__logs:
+                    print(f"_commit({cmd})")
                 cursor.execute(cmd)
                 self.connection.commit()
                 return True
             except Exception as ex:
-                print(cmd)
-                print(red_text("Error:"), err)
-                print(ex)
+                if self.__logs:
+                    print(cmd)
+                    print(red_text("Error:"), err)
+                    print(ex)
                 self.__status = 0
                 self.heal()
                 return False
@@ -70,13 +78,15 @@ class Database:
     def _fetchall(self, cmd, err="fetch error"):
          with self.connection.cursor() as cursor:
             try:
-                print(f"_fetchall({cmd})")
+                if self.__logs:
+                    print(f"_fetchall({cmd})")
                 cursor.execute(cmd)
                 return cursor.fetchall()
             except Exception as ex:
-                print(red_text("Error:"), err)
-                print(cmd)
-                print(ex)
+                if self.__logs:
+                    print(red_text("Error:"), err)
+                    print(cmd)
+                    print(ex)
                 self.__status = 0
                 self.heal()
                 return {}

@@ -28,6 +28,7 @@ mkcb_location = os.path.abspath(mkcb_location)
 mkcb_list = os.listdir(mkcb_location)
 
 SN = MDataBase.SonDB(host, login, password, Config.db_name_dispatcher_son)
+SN.set_logs(False)
 SN.connect()
 
 # add clients
