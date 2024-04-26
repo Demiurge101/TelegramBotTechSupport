@@ -52,12 +52,13 @@ for folder_name in mkcb_list:
 print()
 for name in source_list:
 	print(name) # org_name
-	if (name in clients) == False:
-		continue
+	# if (name in clients) == False:
+	# 	continue
 	org_id = SN.getOrgIdByName(name) # org_id
 	if org_id < 0:
-		print("Нет организации с таким именем в базе данных. Добавьте организацию в БД и повторите попытку.")
-		continue
+		SN.addClient(name, "gti")
+		print("Организация добавлена в базу")
+		# continue
 	mn = os.path.abspath(source_location + '/' + name)
 	list_dates = os.listdir(mn)
 	for date in list_dates:
