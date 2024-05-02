@@ -106,7 +106,8 @@ class SonController():
 				if len(number) == 10 or len(number) == 13 and number.find('-') == 10:
 					return 'mkcb'
 			return 'w_mkcb'
-		if len(number) == 8:
+		# if len(number) == 8:
+		if len(number) >= 5 and len(number) <= 10:
 			try:
 				int(number, 10)
 				return "number"
