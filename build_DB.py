@@ -4,6 +4,9 @@ import Config
 from sys import argv
 from getpass import getpass
 
+print("This script is deprecated!")
+quit()
+
 source_location = Config.sonDBfiles
 mkcb_location = Config.mkcb_location
 

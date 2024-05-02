@@ -8,6 +8,10 @@ content_file_type = ".cnt"
 
 
 
+print("This script is deprecated!")
+quit()
+
+
 TS = MDataBase.TSDB(Config.db_host, Config.db_login, Config.db_password, Config.db_name_dispatcher_ts)
 TS.set_logs(False)
 # TS = MDataBase.TSDB("localhost", "root", Config.password, "TS_Dispatcher")
