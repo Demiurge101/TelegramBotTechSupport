@@ -194,9 +194,9 @@ def update_son(message):
     bot.send_message(message.chat.id, "Warning: This function is deprecated! Please use WEB-interface by http://192.168.0.55.")
     print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
     if(operating_system == "windows"):
-        os.system("python.exe build_DB.py")
+        os.system("python.exe parser_son_db.py")
     else:
-        os.system("python3 build_DB.py")
+        os.system("python3 parser_son_db.py")
     reconnect_DB(message)
 
 def parse_date_value(raw_data):
