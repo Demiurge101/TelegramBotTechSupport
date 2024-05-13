@@ -9,3 +9,4 @@ Config.py
 /webinterface/webinterface/apps/tseditor/__pycache__
 /webinterface/webinterface/apps/showdb/__pycache__
 test.py
+/webinterface/webinterface/__pycache__ 

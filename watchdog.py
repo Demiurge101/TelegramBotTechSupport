@@ -7,9 +7,9 @@ path_for_key = "/mnt/share/ТНГ"
 
 
 while True:
-	if os.path.isdir(path_for_key):
+	if not os.path.isdir(path_for_key):
 		# print("Everything allrignt")
-	else:
+	# else:
 		# print("Need to reboot!!!")
 		f.open(f"log_{argv[0]}")
 		f.write(f"At {get_time()}")
