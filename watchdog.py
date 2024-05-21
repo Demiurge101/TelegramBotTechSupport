@@ -16,3 +16,7 @@ while True:
 		f.close()
 		os.system("reboot")
 	sleep(10)
+
+
+
+

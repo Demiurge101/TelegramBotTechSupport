@@ -171,7 +171,9 @@ class SonDB(Database):
         return uuid
 
     def add_file_bond(self, parent_number, uuid):
-        self._commit(f"insert into filebond(snumber, uuid) value(\"{parent_number}\", \"{uuid}\")")
+        r = self._fetchall(f"select * from filebond where snumber = \"{parent_number}\" and uuid = \"{uuid}\"")
+        if not len(r):
+            self._commit(f"insert into filebond(snumber, uuid) value(\"{parent_number}\", \"{uuid}\")")
 
     def delete_file(self, uuid):
         print(f"delete_file({uuid})")
@@ -207,6 +209,22 @@ class SonDB(Database):
                     res.append(file[0]['typef'])
                 # print(f"get_file_types(), FILE: {file}")
         return res
+
+    def delete_filebond(self, id=0):
+        self._commit(f"delete * from filebond where id = \"{id}\"")
+
+    def delete_dub_filebonds(self):
+        numbers = {}
+        bonds = self._fetchall(f"select * from filebond")
+        for bond in bonds:
+            if bond['snumber'] in numbers:
+                if bond['uuid'] in numbers[bond['snumber']]:
+                    self.delete_filebond(bond['id'])
+                else:
+                    numbers[bond['snumber']].append(bond['uuid'])
+            else:
+                numbers[bond['snumber']] = []
+                numbers[bond['snumber']].append(bond['uuid'])
 
 
 
