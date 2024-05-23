@@ -156,6 +156,7 @@ class SonDB(Database):
     def add_file_from_location(self, parent_number, typef, location, name, author='Unknown by SonDB class', rewrite=True):
         # print(green_text(f"add file:  {location}  {name}"))
         son_controller = SonController()
+        typef = typef.lower()
         if son_controller.getTextByCode(typef) == '-':
             print("Wrong file type!")
             return 'err_type'
