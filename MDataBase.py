@@ -5,6 +5,8 @@ from uuid import uuid4
 from datetime import datetime
 from shutil import copy
 
+from son import SonController
+
 class Database:
     "Base class for Database"
     host = "localhost"
@@ -153,6 +155,10 @@ class SonDB(Database):
 
     def add_file_from_location(self, parent_number, typef, location, name, author='Unknown by SonDB class', rewrite=True):
         # print(green_text(f"add file:  {location}  {name}"))
+        son_controller = SonController()
+        if son_controller.getTextByCode(typef) == '-':
+            print("Wrong file type!")
+            return 'err_type'
         file = self.get_files(number=parent_number, typef=typef)
         print(blue_text(f"FILE: {file}"))
         uuid = uuid4()

@@ -89,7 +89,8 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 				else:
 					i_loc = location.rfind('/')
 					uuid = SN.add_file_from_location(parent_number, file_type, location[:i_loc], location[i_loc+1:], rewrite=False)
-					path_list[location] = uuid
+					if uuid[:3] != "err":
+						path_list[location] = uuid
 		SN.add_file_from_location(parent_number, file_type, file_location, file_name, author, rewrite=False)
 	except Exception as e:
 		print(red_text("Error! (device)"), e)
