@@ -703,11 +703,11 @@ def son(message, menu_id=0, overcount=0):
         print(sub_menu)
         files_obj = set()
         if codes_location == 'uuid':
-            files_obj = SN.get_file_types(son_controller.getSerialNumber(message.from_user.id))
+            files_obj = set(SN.get_file_types(son_controller.getSerialNumber(message.from_user.id)))
             print(f"for {son_controller.getSerialNumber(message.from_user.id)}")
             print(f"get: {files_obj}")
         if mkcb_location == 'uuid':
-            files_obj = files_obj | SN.get_file_types(f'МКЦБ.{son_controller.getDecimalNumber(message.from_user.id)}')
+            files_obj = files_obj | set(SN.get_file_types(f'МКЦБ.{son_controller.getDecimalNumber(message.from_user.id)}'))
             print(f"for {son_controller.getDecimalNumber(message.from_user.id)}")
             print(f"get: {files_obj}")
         # print(f"get: {files_obj}")
