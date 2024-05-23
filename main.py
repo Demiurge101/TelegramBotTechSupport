@@ -701,23 +701,20 @@ def son(message, menu_id=0, overcount=0):
     if parsed_type in ['mkcb', 'number']:
         sub_menu = son_controller.getCodes(message.from_user.id, codes_location, mkcb_location)
         print(sub_menu)
-        files_obj = []
-        f_obj = []
+        files_obj = set()
         if codes_location == 'uuid':
-            f_obj = SN.get_file_types(son_controller.getSerialNumber(message.from_user.id))
+            files_obj = SN.get_file_types(son_controller.getSerialNumber(message.from_user.id))
             print(f"for {son_controller.getSerialNumber(message.from_user.id)}")
-            # print(f"get: {files_obj}")
+            print(f"get: {files_obj}")
         if mkcb_location == 'uuid':
-            f_obj += SN.get_file_types(f'МКЦБ.{son_controller.getDecimalNumber(message.from_user.id)}')
+            files_obj += SN.get_file_types(f'МКЦБ.{son_controller.getDecimalNumber(message.from_user.id)}')
             print(f"for {son_controller.getDecimalNumber(message.from_user.id)}")
-            # print(f"get: {files_obj}")
-        for fo in f_obj:
-            files_obj.append(fo)
-        print(f"get: {files_obj}")
+            print(f"get: {files_obj}")
+        # print(f"get: {files_obj}")
         for file_obj in files_obj:
             print(f"{file_obj}: {son_controller.getTextByCode(file_obj.lower())}")
             for ch in file_obj:
-                print(f"{ch}: {ord(ch)}")
+                print(f"{ch} = {ord(ch)}")
             sub_menu.append(son_controller.getTextByCode(file_obj.lower()))
 
         # print("sub_menu:", sub_menu)
