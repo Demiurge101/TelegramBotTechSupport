@@ -711,7 +711,9 @@ def son(message, menu_id=0, overcount=0):
             print(f"for {son_controller.getDecimalNumber(message.from_user.id)}")
             print(f"get: {files_obj}")
         for file_obj in files_obj:
-            print(file_obj)
+            print(f"{file_obj}: {son_controller.getTextByCode(file_obj.lower())}")
+            for ch in file_obj:
+                print(int(ch))
             sub_menu.append(son_controller.getTextByCode(file_obj.lower()))
 
         # print("sub_menu:", sub_menu)
