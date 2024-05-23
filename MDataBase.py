@@ -211,7 +211,7 @@ class SonDB(Database):
         return res
 
     def delete_filebond(self, id=0):
-        self._commit(f"delete * from filebond where id = \"{id}\"")
+        self._commit(f"delete * from filebond where id = {id}")
 
     def delete_dub_filebonds(self):
         numbers = {}
