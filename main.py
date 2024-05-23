@@ -713,7 +713,7 @@ def son(message, menu_id=0, overcount=0):
         for file_obj in files_obj:
             print(f"{file_obj}: {son_controller.getTextByCode(file_obj.lower())}")
             for ch in file_obj:
-                print(int(ch))
+                print(f"{ch}: {ord(ch)}")
             sub_menu.append(son_controller.getTextByCode(file_obj.lower()))
 
         # print("sub_menu:", sub_menu)
