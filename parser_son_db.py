@@ -108,7 +108,7 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 						path_list[location] = uuid
 		SN.add_file_from_location(parent_number, file_type, file_location, file_name, author, rewrite=False)
 	except Exception as e:
-		print(red_text("Error! (device)"), e)
+		print(red_text("Error! (file)"), e)
 		f = open(log_file, 'a')
 		f.write(f"{e}\r\n\r\n")
 		f.close()
