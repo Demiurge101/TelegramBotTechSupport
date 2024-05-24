@@ -246,9 +246,10 @@ class SonDB(Database):
                 numbers[bond['snumber']].append(bond['uuid'])
 
     def delete_links_from_db(self):
+        print(f"Searching links...")
         files = self._fetchall(f"select * from files")
         for file in files:
-            if file['namef'][:4] == ".lnk":
+            if file['namef'][-4:] == ".lnk":
                 # remove
                 print(f"Deleting file {file['namef']} ({file['typef']}): {file['load_date']} by {file['author']}")
                 print(f"File id: {file['file_id']}")
