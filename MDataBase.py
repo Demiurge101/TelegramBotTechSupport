@@ -173,8 +173,8 @@ class SonDB(Database):
         file = self.get_files(number=parent_number, typef=typef)
         print(blue_text(f"FILE: {file}"))
         uuid = uuid4()
-        if file:
-            print(yellow_text(f"Warning! This file exist! ({typef} for {parent_number})"))
+        if file and (file["namef"] == name):
+            print(yellow_text(f"Warning! This file exist! ({typef} '{name}' for {parent_number})"))
             if not rewrite:
                 return file[0]['uuid']
             uuid = file[0]['uuid']
