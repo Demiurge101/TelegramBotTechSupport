@@ -245,6 +245,17 @@ class SonDB(Database):
                 numbers[bond['snumber']] = []
                 numbers[bond['snumber']].append(bond['uuid'])
 
+    def delete_links_from_db(self):
+        files = self._fetchall(f"select * from files")
+        for file in files:
+            if file['namef'][:4] == ".lnk":
+                # remove
+                print(f"Deleting file {file['namef']} ({file['typef']}): {file['load_date']} by {file['author']}")
+                print(f"File id: {file['file_id']}")
+                uuid = file["uuid"]
+                self._commit(f"delete from files where uuid = \"{uuid}\"")
+                self._commit(f"delete from filebond where uuid = \"{uuid}\"")
+
 
 
 
