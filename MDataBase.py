@@ -72,6 +72,7 @@ class Database:
                     print(cmd)
                     print(red_text("Error:"), err)
                     print(ex)
+                    # input("Press enter to continue...")
                 self.__status = 0
                 self.heal()
                 return False
@@ -89,6 +90,7 @@ class Database:
                     print(red_text("Error:"), err)
                     print(cmd)
                     print(ex)
+                    # input("Press enter to continue...")
                 self.__status = 0
                 self.heal()
                 return {}
@@ -158,7 +160,7 @@ class SonDB(Database):
         son_controller = SonController()
         typef = typef.lower()
         if son_controller.getTextByCode(typef) == '-':
-            print("Wrong file type!")
+            print(red_text("Wrong file type!"))
             return 'err_type'
         file = self.get_files(number=parent_number, typef=typef)
         print(blue_text(f"FILE: {file}"))

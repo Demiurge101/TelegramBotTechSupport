@@ -228,6 +228,7 @@ if parse_devices:
 	key_id = 0
 	for org_name in source_list:
 		print(org_name) # org_name
+		input("checkpoint")
 		# if (org_name in clients) == False:
 		# 	continue
 		org_id = SN.getOrgIdByName(org_name) # org_id
@@ -235,11 +236,13 @@ if parse_devices:
 			print("Нет организации с таким именем в базе данных. Добавьте организацию в БД и повторите попытку.")
 			# continue
 			SN.addOrg(org_name, f"ga1n-{key_id}")
+			input("Organisation added")
 			key_id += 1
 		mn = os.path.abspath(source_location + '/' + org_name)
 		list_dates = os.listdir(mn)
 		for date_folder in list_dates:
 			print(" ", date_folder) 
+			continue
 			dd = date_folder[:2]
 			mm = date_folder[3:5]
 			yy = date_folder[6:]
@@ -256,5 +259,5 @@ if parse_devices:
 				
 
 
-SN.delete_dub_filebonds()
+# SN.delete_dub_filebonds()
 	
