@@ -97,6 +97,7 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 		f = open(log_file, 'a')
 		f.write(f"{e}\r\n\r\n")
 		f.close()
+		input("error...")
 
 
 
@@ -228,21 +229,21 @@ if parse_devices:
 	key_id = 0
 	for org_name in source_list:
 		print(org_name) # org_name
-		input("checkpoint")
 		# if (org_name in clients) == False:
 		# 	continue
 		org_id = SN.getOrgIdByName(org_name) # org_id
 		if org_id < 0:
 			print("Нет организации с таким именем в базе данных. Добавьте организацию в БД и повторите попытку.")
 			# continue
-			SN.addOrg(org_name, f"ga1n-{key_id}")
-			input("Organisation added")
-			key_id += 1
+			pwd = org_name
+			if len(pwd) > 7:
+				pwd = pwd[:7]
+			SN.addOrg(org_name, f"ga1n-{pwd}")
+			# key_id += 1
 		mn = os.path.abspath(source_location + '/' + org_name)
 		list_dates = os.listdir(mn)
 		for date_folder in list_dates:
 			print(" ", date_folder) 
-			continue
 			dd = date_folder[:2]
 			mm = date_folder[3:5]
 			yy = date_folder[6:]
