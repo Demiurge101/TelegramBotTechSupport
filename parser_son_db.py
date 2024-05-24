@@ -278,5 +278,5 @@ if parse_devices:
 				
 
 
-# SN.delete_dub_filebonds()
+SN.delete_dub_filebonds()
 	
