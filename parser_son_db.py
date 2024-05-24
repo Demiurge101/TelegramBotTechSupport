@@ -6,12 +6,16 @@ from getpass import getpass
 from includes import *
 
 
+version = "v.2.0"
+
 author = "parser_son_db"
 log_file = "son_parser_log.txt"
 rewrite = False
 
 parse_mkcb = True
 parse_devices = True
+check_err = False
+logs = True
 
 
 
@@ -29,7 +33,7 @@ password = Config.db_password
 
 for i in argv:
 	if i == '-f': # foreign database
-		host = input("host: ")
+		host = input("host (and port): ")
 		index = host.find(':')
 		if index >= 0:
 			port = int(host[index+1:])
@@ -42,6 +46,17 @@ for i in argv:
 		parse_mkcb = False
 	elif i == "--disable_devices":
 		parse_devices = False
+	elif i == "--check_err":
+		check_err = True
+	elif i == "--help":
+		help_text = f"Version {version}\n"
+		help_text += f"-f: foreign database\n"
+		help_text += f"-rw: rewrite files\n"
+		help_text += f"--disable_mkcb\n"
+		help_text += f"--disable_devices\n"
+		help_text += f"--check_err: pause on some errors\n"
+		print(help_text)
+		quit()
 
 clients = Config.clients
 
@@ -55,13 +70,12 @@ path_list = {}
 source_location = os.path.abspath(source_location)
 source_list = os.listdir(source_location)
 
-mkcb_location = os.path.abspath(mkcb_location)
-mkcb_list = os.listdir(mkcb_location)
-
 # common_location = os.path.abspath(common_location)
 
 SN = MDataBase.SonDB(host, login, password, Config.db_name_dispatcher_son)
 SN.connect()
+SN.set_logs(logs)
+SN.set_stop_errors(check_err)
 
 
 
@@ -83,6 +97,7 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 				if location[0] == '.':
 					location = common_location + location[1:]
 				print(green_text(f"LOCATION: {location}"))
+				# it should be file not dir
 				if location in path_list:
 					SN.add_file_bond(parent_number, path_list[location])
 					print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
@@ -97,7 +112,8 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 		f = open(log_file, 'a')
 		f.write(f"{e}\r\n\r\n")
 		f.close()
-		input("error...")
+		if check_err:
+			input("error...")
 
 
 
@@ -107,6 +123,8 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 
 #           parse mkcb
 if parse_mkcb:
+	mkcb_location = os.path.abspath(mkcb_location)
+	mkcb_list = os.listdir(mkcb_location)
 	for folder_name in mkcb_list:
 		if folder_name[:4] == 'МКЦБ':
 			index = folder_name.find(' ')

@@ -20,6 +20,7 @@ class Database:
         self.db_name = db_name
         self.__status = 1
         self.__logs = True
+        self.__stop_errors = False
 
 
     def set_time_out(self, tm=28800):
@@ -32,6 +33,9 @@ class Database:
 
     def set_logs(self, log=True):
         self.__logs = log
+
+    def set_stop_errors(self, stop_err=False):
+        self.__stop_errors = stop_err
 
     def connect(self):
         try:
@@ -50,6 +54,8 @@ class Database:
             if self.__logs:
                 print(f"Connection refused {self.db_name}")
                 print(ex)
+                if self.__stop_errors:
+                    input("Press enter to continue...")
 
 
     def _checkSlash(self, line):
@@ -72,7 +78,8 @@ class Database:
                     print(cmd)
                     print(red_text("Error:"), err)
                     print(ex)
-                    # input("Press enter to continue...")
+                    if self.__stop_errors:
+                        input("Press enter to continue...")
                 self.__status = 0
                 self.heal()
                 return False
@@ -90,7 +97,8 @@ class Database:
                     print(red_text("Error:"), err)
                     print(cmd)
                     print(ex)
-                    # input("Press enter to continue...")
+                    if self.__stop_errors:
+                        input("Press enter to continue...")
                 self.__status = 0
                 self.heal()
                 return {}

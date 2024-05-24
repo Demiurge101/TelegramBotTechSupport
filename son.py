@@ -134,9 +134,6 @@ class SonController():
 		return "unknown"
 
 	def getTextByCode(self, code):
-		print(f"getTextByCode({code})") #debug
-		for i in code: #debug
-			print(f"{i}: {ord(i)}") #debug
 		if code in self.__decimal_codes:
 			return self.__decimal_codes[code]
 		elif code in self.__serial_codes:
