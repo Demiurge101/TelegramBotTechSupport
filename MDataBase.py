@@ -173,13 +173,15 @@ class SonDB(Database):
         file = self.get_files(number=parent_number, typef=typef)
         print(blue_text(f"FILE: {file}"))
         uuid = uuid4()
-        if file and (file["namef"] == name):
-            print(yellow_text(f"Warning! This file exist! ({typef} '{name}' for {parent_number})"))
-            if not rewrite:
-                return file[0]['uuid']
-            uuid = file[0]['uuid']
-            self.delete_file(file[0]['uuid'])
-            sleep(0.1)
+        if file:
+            for fl in file:
+                if fl["namef"] == name:
+                    print(yellow_text(f"Warning! This file exist! ({typef} '{name}' for {parent_number})"))
+                    if not rewrite:
+                        return file[0]['uuid']
+                    uuid = file[0]['uuid']
+                    self.delete_file(file[0]['uuid'])
+                    sleep(0.1)
         date = datetime.now().strftime("%Y-%m-%d")
         # copy(location, common_location)
         shutil.copyfile(f"{location}/{name}", f"{self.common_location}/{uuid}")
