@@ -247,6 +247,7 @@ class SonDB(Database):
 
     def delete_links_from_db(self):
         print(f"Searching links...")
+        rm_counter = 0
         files = self._fetchall(f"select * from files")
         for file in files:
             if file['namef'][-4:] == ".lnk":
@@ -256,6 +257,8 @@ class SonDB(Database):
                 uuid = file["uuid"]
                 self._commit(f"delete from files where uuid = \"{uuid}\"")
                 self._commit(f"delete from filebond where uuid = \"{uuid}\"")
+                rm_counter += 1
+        print(f"Deleted {rm_counter} files.")
 
 
 
