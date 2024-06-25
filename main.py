@@ -56,6 +56,7 @@ son_controller = SonController()
 
 
 main_menu_id = -1
+update_state = True
 
 black_list = []
 is_sending = []
@@ -188,6 +189,7 @@ def update_ts(message):
 
 @bot.message_handler(commands=['update_son'])
 def update_son(message):
+    global update_state
     stat.fromMessage(message)
     if not message.from_user.id in admins and message.from_user.id != Config.anna_petrusova:
         return

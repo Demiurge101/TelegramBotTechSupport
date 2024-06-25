@@ -100,8 +100,8 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 				# it should be file not dir
 				if parent_number == 'МКЦБ.611137.101-18':
 					textlog = f"location: {location} \n"
-					textlog += f"in path list: {location in path_list}\n"
-					fl.open("log_611137", 'w+')
+					textlog += f"in path list: {location in path_list}\n\n"
+					fl = open("log_611137.101-18", 'w+')
 					fl.write(textlog)
 					fl.close()
 				if location in path_list:
