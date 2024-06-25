@@ -178,12 +178,12 @@ class SonDB(Database):
                 if fl["namef"] == name:
                     print(yellow_text(f"Warning! This file exist! ({typef} '{name}' for {parent_number})"))
                     if not rewrite:
-                        if parent_number == 'МКЦБ.611137.101-18':
-                            textlog = f"file: {file} \n"
-                            textlog += f"Already exist\n\n"
-                            fl = open("log_611137.101-18", 'w+')
-                            fl.write(textlog)
-                            fl.close()
+                        # if parent_number == 'МКЦБ.611137.101-18':
+                        #     textlog = f"file: {file} \n"
+                        #     textlog += f"Already exist\n\n"
+                        #     fl = open("log_611137.101-18", 'w+')
+                        #     fl.write(textlog)
+                        #     fl.close()
                         return fl['uuid']
                     uuid = fl['uuid']
                     self.delete_file(fl['uuid'])
@@ -193,12 +193,12 @@ class SonDB(Database):
         shutil.copyfile(f"{location}/{name}", f"{self.common_location}/{uuid}")
         self._commit(f"insert into files(uuid, typef, namef, author, load_date) value (\"{uuid}\", \"{typef.lower()}\", \"{name}\", \"{author}\", \"{date}\")")
         self._commit(f"insert into filebond(snumber, uuid) value (\"{parent_number}\", \"{uuid}\")")
-        if parent_number == 'МКЦБ.611137.101-18':
-            textlog = f"file: {file} \n"
-            textlog += f"Added\n\n"
-            fl = open("log_611137.101-18", 'w+')
-            fl.write(textlog)
-            fl.close()
+        # if parent_number == 'МКЦБ.611137.101-18':
+        #     textlog = f"file: {file} \n"
+        #     textlog += f"Added\n\n"
+        #     fl = open("log_611137.101-18", 'w+')
+        #     fl.write(textlog)
+        #     fl.close()
         return uuid
 
     def add_file_bond(self, parent_number, uuid):
