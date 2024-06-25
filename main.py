@@ -191,13 +191,18 @@ def update_son(message):
     stat.fromMessage(message)
     if not message.from_user.id in admins and message.from_user.id != Config.anna_petrusova:
         return
-    bot.send_message(message.chat.id, "Warning: This function is deprecated! Please use WEB-interface by http://192.168.0.55.")
-    print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
-    if(operating_system == "windows"):
-        os.system("python.exe parser_son_db.py")
+    if update_state:
+        update_state = False
+        bot.send_message(message.chat.id, "Warning: This function is deprecated! Please use WEB-interface by http://192.168.0.55.")
+        print(yellow_text(get_time()), f"DB SON has updated by {message.from_user.id}({green_text(str(message.from_user.username))})")
+        if(operating_system == "windows"):
+            os.system("python.exe parser_son_db.py")
+        else:
+            os.system("python3 parser_son_db.py")
+        reconnect_DB(message)
+        update_state = True
     else:
-        os.system("python3 parser_son_db.py")
-    reconnect_DB(message)
+        bot.send_message(message.chat.id, "Can't update now! Someone use it.")
 
 def parse_date_value(raw_data):
     bindex = raw_data.find('(')
