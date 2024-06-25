@@ -178,9 +178,9 @@ class SonDB(Database):
                 if fl["namef"] == name:
                     print(yellow_text(f"Warning! This file exist! ({typef} '{name}' for {parent_number})"))
                     if not rewrite:
-                        return file[0]['uuid']
-                    uuid = file[0]['uuid']
-                    self.delete_file(file[0]['uuid'])
+                        return fl['uuid']
+                    uuid = fl['uuid']
+                    self.delete_file(fl['uuid'])
                     sleep(0.1)
         date = datetime.now().strftime("%Y-%m-%d")
         # copy(location, common_location)
