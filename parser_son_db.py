@@ -6,7 +6,7 @@ from getpass import getpass
 from includes import *
 
 
-version = "v.2.0"
+version = "v.2.1"
 
 author = "parser_son_db"
 log_file = "son_parser_log.txt"

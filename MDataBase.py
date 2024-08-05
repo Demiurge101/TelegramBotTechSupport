@@ -272,6 +272,8 @@ class SonDB(Database):
                 numbers[bond['snumber']] = []
                 numbers[bond['snumber']].append(bond['uuid'])
 
+    
+
     def delete_links_from_db(self):
         print(f"Searching links...")
         rm_counter = 0
