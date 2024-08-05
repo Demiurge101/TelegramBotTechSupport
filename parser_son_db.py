@@ -110,7 +110,7 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 					if file['namef'] == file_name:
 						fl_key = False
 						break
-				if fl:
+				if fl_key:
 					SN.add_file_bond(parent_number, path_list[location])
 					print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
 					# if parent_number == "МКЦБ.611139.102-04":
