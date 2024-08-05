@@ -165,14 +165,22 @@ class SonDB(Database):
 
     def add_file_from_location(self, parent_number, typef, location, name, author='Unknown by SonDB class', rewrite=True):
         # print(green_text(f"add file:  {location}  {name}"))
+        if parent_number == "МКЦБ.611139.102-04":
+            input("МКЦБ.611139.102-04")
         son_controller = SonController()
         typef = typef.lower()
         if son_controller.getTextByCode(typef) == '-':
             print(red_text("Wrong file type!"))
+            if parent_number == "МКЦБ.611139.102-04":
+                input("МКЦБ.611139.102-04")
             return 'err_type'
         file = self.get_files(number=parent_number, typef=typef)
         print(blue_text(f"FILE: {file}"))
         uuid = uuid4()
+        if parent_number == "МКЦБ.611139.102-04":
+            print(file)
+            print(name)
+            print(typef)
         if file:
             for fl in file:
                 if fl["namef"] == name:
@@ -184,9 +192,11 @@ class SonDB(Database):
                         #     fl = open("log_611137.101-18", 'w+')
                         #     fl.write(textlog)
                         #     fl.close()
+                        if parent_number == "МКЦБ.611139.102-04":
+                            input("МКЦБ.611139.102-04")
                         return fl['uuid']
                     uuid = fl['uuid']
-                    self.delete_file(fl['uuid'])
+                    self.delete_filebond(fl['uuid'])
                     sleep(0.1)
         date = datetime.now().strftime("%Y-%m-%d")
         # copy(location, common_location)
@@ -199,6 +209,8 @@ class SonDB(Database):
         #     fl = open("log_611137.101-18", 'w+')
         #     fl.write(textlog)
         #     fl.close()
+        if parent_number == "МКЦБ.611139.102-04":
+            input("МКЦБ.611139.102-04")
         return uuid
 
     def add_file_bond(self, parent_number, uuid):
