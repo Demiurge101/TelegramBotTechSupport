@@ -165,14 +165,12 @@ class SonDB(Database):
 
     def add_file_from_location(self, parent_number, typef, location, name, author='Unknown by SonDB class', rewrite=True):
         # print(green_text(f"add file:  {location}  {name}"))
-        if parent_number == "МКЦБ.611139.102-04":
-            print("МКЦБ.611139.102-04")
+        # if parent_number == "МКЦБ.611139.102-04":
+        #     print("МКЦБ.611139.102-04")
         son_controller = SonController()
         typef = typef.lower()
         if son_controller.getTextByCode(typef) == '-':
             print(red_text("Wrong file type!"))
-            if parent_number == "МКЦБ.611139.102-04":
-                input("МКЦБ.611139.102-04")
             return 'err_type'
         file = self.get_files(number=parent_number, typef=typef)
         print(blue_text(f"FILE: {file}"))
@@ -188,8 +186,8 @@ class SonDB(Database):
                         #     fl = open("log_611137.101-18", 'w+')
                         #     fl.write(textlog)
                         #     fl.close()
-                        if parent_number == "МКЦБ.611139.102-04":
-                            input("МКЦБ.611139.102-04")
+                        # if parent_number == "МКЦБ.611139.102-04":
+                        #     input("МКЦБ.611139.102-04")
                         return fl['uuid']
                     uuid = fl['uuid']
                     self.delete_filebond(fl['uuid'])
@@ -205,17 +203,17 @@ class SonDB(Database):
         #     fl = open("log_611137.101-18", 'w+')
         #     fl.write(textlog)
         #     fl.close()
-        if parent_number == "МКЦБ.611139.102-04":
-            input("МКЦБ.611139.102-04")
+        # if parent_number == "МКЦБ.611139.102-04":
+        #     input("МКЦБ.611139.102-04")
         return uuid
 
     def add_file_bond(self, parent_number, uuid):
         r = self._fetchall(f"select * from filebond where snumber = \"{parent_number}\" and uuid = \"{uuid}\"")
         if not len(r):
             self._commit(f"insert into filebond(snumber, uuid) value(\"{parent_number}\", \"{uuid}\")")
-        if parent_number == "МКЦБ.611139.102-04":
-            print(f"r: {r}")
-            input("МКЦБ.611139.102-04")
+        # if parent_number == "МКЦБ.611139.102-04":
+        #     print(f"r: {r}")
+        #     input("МКЦБ.611139.102-04")
 
     def delete_file(self, uuid):
         print(f"delete_file({uuid})")
