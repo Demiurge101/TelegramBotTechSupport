@@ -211,8 +211,8 @@ class SonDB(Database):
         r = self._fetchall(f"select * from filebond where snumber = \"{parent_number}\" and uuid = \"{uuid}\"")
         if not len(r):
             self._commit(f"insert into filebond(snumber, uuid) value(\"{parent_number}\", \"{uuid}\")")
-        # if parent_number == "МКЦБ.611139.102-04":
-        #     print(f"r: {r}")
+        if parent_number == "МКЦБ.611139.102-04":
+            print(f"r: {r}")
         #     input("МКЦБ.611139.102-04")
 
     def delete_file(self, uuid):
