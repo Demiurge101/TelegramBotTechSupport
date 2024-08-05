@@ -91,28 +91,28 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 		global path_list
 		global author
 		index = file.rfind('.')
-		if index >= 0:
-			if file[index:] == '.lnk':
-				location = getLinkSource(f"{file_location}/{file_name}")
-				if location[0] == '.':
-					location = common_location + location[1:]
-				print(green_text(f"LOCATION: {location}"))
-				# it should be file not dir
-				# if parent_number == 'МКЦБ.611137.101-18':
-				# 	textlog = f"location: {location} \n"
-				# 	textlog += f"in path list: {location in path_list}\n\n"
-				# 	fl = open("log_611137.101-18", 'w+')
-				# 	fl.write(textlog)
-				# 	fl.close()
-				if location in path_list:
-					SN.add_file_bond(parent_number, path_list[location])
-					print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
-				else:
-					i_loc = location.rfind('/')
-					uuid = SN.add_file_from_location(parent_number, file_type, location[:i_loc], location[i_loc+1:], rewrite=False)
-					if uuid[:3] != "err":
-						path_list[location] = uuid
-		SN.add_file_from_location(parent_number, file_type, file_location, file_name, author, rewrite=False)
+		if index >= 0 and file[index:] == '.lnk':
+			location = getLinkSource(f"{file_location}/{file_name}")
+			if location[0] == '.':
+				location = common_location + location[1:]
+			print(green_text(f"LOCATION: {location}"))
+			# it should be file not dir
+			# if parent_number == 'МКЦБ.611137.101-18':
+			# 	textlog = f"location: {location} \n"
+			# 	textlog += f"in path list: {location in path_list}\n\n"
+			# 	fl = open("log_611137.101-18", 'w+')
+			# 	fl.write(textlog)
+			# 	fl.close()
+			if location in path_list:
+				SN.add_file_bond(parent_number, path_list[location])
+				print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
+			else:
+				i_loc = location.rfind('/')
+				uuid = SN.add_file_from_location(parent_number, file_type, location[:i_loc], location[i_loc+1:], rewrite=False)
+				if uuid[:3] != "err":
+					path_list[location] = uuid
+		else:
+			SN.add_file_from_location(parent_number, file_type, file_location, file_name, author, rewrite=False)
 	except Exception as e:
 		print(red_text("Error! (file)"), e)
 		f = open(log_file, 'a')
