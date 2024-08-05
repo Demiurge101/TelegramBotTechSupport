@@ -212,7 +212,6 @@ class SonDB(Database):
     def add_file_bond(self, parent_number, uuid):
         r = self._fetchall(f"select * from filebond where snumber = \"{parent_number}\" and uuid = \"{uuid}\"")
         if not len(r):
-            print(yellow_text("filebond added"))
             self._commit(f"insert into filebond(snumber, uuid) value(\"{parent_number}\", \"{uuid}\")")
         if parent_number == "МКЦБ.611139.102-04":
             print(f"r: {r}")
