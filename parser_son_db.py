@@ -108,7 +108,7 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 				print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
 				if parent_number == "МКЦБ.611139.102-04":
 		            input("МКЦБ.611139.102-04")
-			else:
+	        else:
 				i_loc = location.rfind('/')
 				uuid = SN.add_file_from_location(parent_number, file_type, location[:i_loc], location[i_loc+1:], rewrite=False)
 				if uuid[:3] != "err":
