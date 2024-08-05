@@ -107,8 +107,8 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 				SN.add_file_bond(parent_number, path_list[location])
 				print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
 				if parent_number == "МКЦБ.611139.102-04":
-		            input("МКЦБ.611139.102-04")
-	        else:
+					input("МКЦБ.611139.102-04")
+			else:
 				i_loc = location.rfind('/')
 				uuid = SN.add_file_from_location(parent_number, file_type, location[:i_loc], location[i_loc+1:], rewrite=False)
 				if uuid[:3] != "err":
@@ -129,7 +129,7 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 
 
 
-#           parse mkcb
+#		   parse mkcb
 if parse_mkcb:
 	mkcb_location = os.path.abspath(mkcb_location)
 	mkcb_list = os.listdir(mkcb_location)
@@ -144,15 +144,15 @@ if parse_mkcb:
 				print(f"   mkcb name: {mkcb_name}")
 				SN.addMKCB(mkcb_number, mkcb_name)
 				for subfolder in os.listdir(mkcb_location + '/' + folder_name):
-					print(f"      -subfolder: {subfolder}")
+					print(f"	  -subfolder: {subfolder}")
 					if os.path.isdir(mkcb_location + '/' + folder_name + '/' + subfolder):
-						print(f"       is dir")
+						print(f"	   is dir")
 						index = subfolder.find(' ')
 						if index >= 0:
 							typef = subfolder[:index]
 							location = os.path.abspath(mkcb_location + '/' + folder_name + '/' + subfolder)
 							for file in os.listdir(location):
-								print(f"         file: {file}")
+								print(f"		 file: {file}")
 								print(f"abspath: {location}")
 								# print(yellow_text(file))
 								add_file(mkcb_number, typef, location, file, rewrite=rewrite)
