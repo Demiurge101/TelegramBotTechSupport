@@ -253,6 +253,12 @@ class SonDB(Database):
     def delete_filebond(self, id=0):
         self._commit(f"delete from filebond where id = {id}")
 
+    def get_file(self, uuid):
+        res = self._fetchall(f"select * from files where uuid = '{uuid}'")
+        if len(res):
+            return res[0]
+        return {}
+
     def delete_dub_filebonds(self):
         numbers = {}
         bonds = self._fetchall(f"select * from filebond")

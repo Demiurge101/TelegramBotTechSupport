@@ -104,10 +104,17 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 			# 	fl.write(textlog)
 			# 	fl.close()
 			if location in path_list:
-				SN.add_file_bond(parent_number, path_list[location])
-				print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
-				if parent_number == "МКЦБ.611139.102-04":
-					input("МКЦБ.611139.102-04")
+				fl_key = False
+				files = SN.get_files(parent_number, file_type)
+				for file in files:
+					if file['namef'] == file_name:
+						fl_key = True
+						break
+				if fl:
+					SN.add_file_bond(parent_number, path_list[location])
+					print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
+					# if parent_number == "МКЦБ.611139.102-04":
+					# 	input("МКЦБ.611139.102-04")
 			else:
 				i_loc = location.rfind('/')
 				uuid = SN.add_file_from_location(parent_number, file_type, location[:i_loc], location[i_loc+1:], rewrite=False)
