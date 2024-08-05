@@ -104,11 +104,11 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 			# 	fl.write(textlog)
 			# 	fl.close()
 			if location in path_list:
-				fl_key = False
+				fl_key = True
 				files = SN.get_files(parent_number, file_type)
 				for file in files:
 					if file['namef'] == file_name:
-						fl_key = True
+						fl_key = False
 						break
 				if fl:
 					SN.add_file_bond(parent_number, path_list[location])
