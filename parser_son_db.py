@@ -90,8 +90,8 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 		global SN
 		global path_list
 		global author
-		index = file.rfind('.')
-		if index >= 0 and file[index:] == '.lnk':
+		index = file_name.rfind('.')
+		if index >= 0 and file_name[index:] == '.lnk':
 			location = getLinkSource(f"{file_location}/{file_name}")
 			if location[0] == '.':
 				location = common_location + location[1:]
