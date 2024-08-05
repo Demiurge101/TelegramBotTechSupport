@@ -177,10 +177,6 @@ class SonDB(Database):
         file = self.get_files(number=parent_number, typef=typef)
         print(blue_text(f"FILE: {file}"))
         uuid = uuid4()
-        if parent_number == "МКЦБ.611139.102-04":
-            print(file)
-            print(name)
-            print(typef)
         if file:
             for fl in file:
                 if fl["namef"] == name:
@@ -215,6 +211,9 @@ class SonDB(Database):
 
     def add_file_bond(self, parent_number, uuid):
         r = self._fetchall(f"select * from filebond where snumber = \"{parent_number}\" and uuid = \"{uuid}\"")
+        if parent_number == "МКЦБ.611139.102-04":
+            print(f"r: {r}")
+            input("МКЦБ.611139.102-04")
         if not len(r):
             self._commit(f"insert into filebond(snumber, uuid) value(\"{parent_number}\", \"{uuid}\")")
 
