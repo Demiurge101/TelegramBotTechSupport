@@ -357,6 +357,7 @@ def delete_mkcb(request, decimal_number):
 	if not request.user.is_authenticated:
 		return index(request)
 	DecimalNumbers.objects.filter(mkcb=decimal_number).delete()
+	Filebond.objects.filter(snumber=decimal_number).delete()
 	return HttpResponseRedirect( reverse('showdb:mkcb'))
 
 
