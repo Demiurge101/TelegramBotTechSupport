@@ -104,12 +104,16 @@ def add_file(parent_number, file_type, file_location, file_name, rewrite=False):
 			# 	fl.write(textlog)
 			# 	fl.close()
 			if location in path_list:
-				fl_key = True
-				files = SN.get_files(parent_number, file_type)
-				for file in files:
-					if file['namef'] == file_name:
-						fl_key = False
-						break
+				i_loc = location.rfind('/')
+				underlink_name = ""
+				if i_loc >= 0:
+					underlink_name = location[i_loc+1:]
+					fl_key = True
+					files = SN.get_files(parent_number, file_type)
+					for file in files:
+						if file['namef'] == underlink_name:
+							fl_key = False
+							break
 				if fl_key:
 					SN.add_file_bond(parent_number, path_list[location])
 					print(green_text(f"From {file_location}/{file_name}, get ({location}, {path_list[location]})"))
