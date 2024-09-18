@@ -226,9 +226,9 @@ def info_send(chat_id, data, do='w', output='info_output'):
         if len(data) <= 4096:
             bot.send_message(chat_id, data, parse_mode='HTML')
             print(data)
-            f = open(output, do)
-            f.write(data)
-            f.close()
+            # f = open(output, do)
+            # f.write(data)
+            # f.close()
         else:
             infofilename = "info_file"
             bot.send_message(chat_id, "Message very long!")
