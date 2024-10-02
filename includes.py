@@ -256,3 +256,20 @@ def getLinkSource(link_path) -> (str):
       else:
         return os.path.realpath(link_path)
     return ''
+
+
+
+def sendFileByRequest(chat_id, fname, flocation, fnewname='document.txt'):
+  fabsname = fname
+  if flocation and flocation != "":
+    fabsname = f"{flocation}/{fname}"
+  document = open(fabsname, "rb")
+  url = f"https://api.telegram.org/bot{token}/sendDocument"
+  response = requests.post(url, data={'chat_id': chat_id}, files={'document': (fnewname, document)})
+  # part below, just to make human readable response for such noobies as I
+  content = response.content.decode("utf8")
+  js = json.loads(content)
+  # print()
+  # print(f"js: {js['result']['document']}")
+
+  return js['result']['document']['file_id']

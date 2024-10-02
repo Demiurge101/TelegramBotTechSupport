@@ -1,2 +1,2 @@
 cd /home/gen/tg_bot/webinterface
-screen -dmS web sudo python3 manage.py runserver 192.168.0.55:80
+screen -dmS web python3 manage.py runserver 192.168.0.55:8080
