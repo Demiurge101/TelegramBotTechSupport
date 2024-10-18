@@ -1,0 +1,1 @@
+sudo iptables -t nat -A PREROUTING -i enp2s0 -p tcp --dport 80 -j DNAT --to-destination 192.168.0.55:8080
